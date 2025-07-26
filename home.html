@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>차바 - 내 차 바주세요!</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f4f4f4; 
+            color: #333; 
+        }
+        
+        .container { 
+            max-width: 420px; 
+            margin: 0 auto; 
+            background-color: #fff; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+            min-height: 100vh;
+            padding-bottom: 60px; /* GNB 높이만큼 패딩 */
+        }
+        
+        header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 15px; 
+            border-bottom: 1px solid #eee; 
+            background-color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        header .logo { 
+            font-size: 24px; 
+            font-weight: bold; 
+            color: #4852EA; 
+            cursor: pointer; 
+        }
+        
+        header .icons { 
+            font-size: 20px; 
+            display: flex; 
+            align-items: center; 
+        }
+        
+        header .icons .menu-icon { 
+            margin-left: 10px; 
+            cursor: pointer; 
+        }
+
+        .hero-section { 
+            padding: 20px 15px; 
+            text-align: center; 
+            background-color: #F0F2F7; 
+        }
+        
+        .hero-section .social-proof { 
+            font-size: 14px; 
+            color: #555; 
+            margin-bottom: 10px; 
+        }
+        
+        .hero-section h1 { 
+            font-size: 22px; 
+            color: #4852EA; 
+            margin-bottom: 15px; 
+            line-height: 1.4; 
+        }
+        
+        .testimonial-wrapper { 
+            position: relative; 
+            margin: 15px auto; 
+            max-width: 90%; 
+        }
+        
+        .testimonial-card { 
+            background-color: #fff; 
+            border-radius: 8px; 
+            padding: 15px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+            min-height: 100px;
+        }
+        
+        .testimonial-card .quote { 
+            font-size: 15px; 
+            line-height: 1.5; 
+            margin-bottom: 10px; 
+            min-height: 60px;
+        }
+        
+        .testimonial-card .author { 
+            font-size: 13px; 
+            text-align: right; 
+            color: #777; 
+        }
+        
+        .pagination { 
+            text-align: center; 
+            margin-top: 10px; 
+        }
+        
+        .pagination span { 
+            display: inline-block; 
+            width: 8px; 
+            height: 8px; 
+            border-radius: 50%; 
+            background-color: #bbb; 
+            margin: 0 4px; 
+            transition: background-color 0.3s;
+        }
+        
+        .pagination .active { 
+            background-color: #4852EA; 
+        }
+        
+        .testimonial-nav { 
+            position: absolute; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            background-color: rgba(255,255,255,0.9); 
+            border: 1px solid #ddd; 
+            border-radius: 50%; 
+            width: 30px; 
+            height: 30px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            cursor: pointer; 
+            font-size: 18px; 
+            font-weight: bold; 
+            color: #555; 
+            z-index: 10; 
+            transition: all 0.2s;
+        }
+        
+        .testimonial-nav:hover {
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .testimonial-nav.left { left: -15px; }
+        .testimonial-nav.right { right: -15px; }
+
+        .cta-button { 
+            display: block; 
+            width: calc(100% - 30px); 
+            padding: 15px; 
+            background-color: #4852EA; 
+            color: #fff; 
+            text-align: center; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            margin: 20px auto 0; 
+            font-size: 18px; 
+            font-weight: bold; 
+            transition: background-color 0.2s;
+        }
+        
+        .cta-button:hover {
+            background-color: #3a42d8;
+        }
+        
+        .quick-links { 
+            display: flex; 
+            justify-content: space-around; 
+            padding: 15px; 
+            background-color: #f8f8f8; 
+            border-bottom: 1px solid #eee; 
+            flex-wrap: wrap; 
+            gap: 10px; 
+        }
+        
+        .quick-links a { 
+            flex: 1 1 calc(50% - 10px); 
+            text-align: center; 
+            padding: 15px 10px; 
+            background-color: #fff; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            text-decoration: none; 
+            color: #4852EA; 
+            font-size: 16px; 
+            font-weight: bold; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+            transition: all 0.2s;
+        }
+        
+        .quick-links a:hover {
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .section-title { 
+            font-size: 18px; 
+            font-weight: bold; 
+            padding: 15px; 
+            border-bottom: 1px solid #eee; 
+        }
+        
+        .featured-services-wrapper { 
+            position: relative; 
+            padding: 15px 0; 
+        }
+        
+        .featured-services { 
+            display: flex; 
+            overflow-x: auto; 
+            padding: 0 15px; 
+            gap: 10px; 
+            scroll-behavior: smooth; 
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .featured-services::-webkit-scrollbar { 
+            display: none; 
+        }
+        
+        .featured-services .card { 
+            flex: 0 0 150px; 
+            background-color: #e0e0e0; 
+            height: 100px; 
+            border-radius: 8px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 14px; 
+            color: #555; 
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .featured-services .card:hover {
+            background-color: #d0d0d0;
+            transform: scale(1.02);
+        }
+        
+        .featured-services-nav { 
+            position: absolute; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            background-color: rgba(255,255,255,0.9); 
+            border: 1px solid #ddd; 
+            border-radius: 50%; 
+            width: 30px; 
+            height: 30px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            cursor: pointer; 
+            font-size: 18px; 
+            font-weight: bold; 
+            color: #555; 
+            z-index: 10; 
+            transition: all 0.2s;
+        }
+        
+        .featured-services-nav:hover {
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .featured-services-nav.left { left: 5px; }
+        .featured-services-nav.right { right: 5px; }
+
+        .nearby-shops { 
+            padding: 15px; 
+        }
+        
+        .tab-menu { 
+            display: flex; 
+            margin-bottom: 15px; 
+            border-bottom: 1px solid #eee; 
+        }
+        
+        .tab-menu button { 
+            flex: 1; 
+            padding: 10px 0; 
+            background-color: #fff; 
+            border: none; 
+            border-bottom: 2px solid transparent; 
+            font-size: 16px; 
+            cursor: pointer; 
+            transition: all 0.2s;
+        }
+        
+        .tab-menu button.active { 
+            border-color: #4852EA; 
+            font-weight: bold; 
+            color: #4852EA; 
+        }
+        
+        .shop-item { 
+            display: flex; 
+            margin-bottom: 20px; 
+            border: 1px solid #eee; 
+            padding: 10px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            transition: all 0.2s;
+        }
+        
+        .shop-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .shop-item .shop-img { 
+            width: 80px; 
+            height: 80px; 
+            background-color: #ddd; 
+            border-radius: 4px; 
+            margin-right: 10px; 
+            overflow: hidden; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            position: relative; 
+            flex-shrink: 0;
+        }
+        
+        .shop-item .shop-img img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+        }
+        
+        .shop-item .kapos-mark { 
+            position: absolute; 
+            top: 5px; 
+            left: 5px; 
+            background-color: rgba(255, 255, 255, 0.9); 
+            padding: 2px 5px; 
+            border-radius: 4px; 
+            font-size: 10px; 
+            font-weight: bold; 
+            color: #4852EA; 
+        }
+        
+        .shop-item .shop-info { 
+            flex: 1; 
+        }
+        
+        .shop-item .shop-name { 
+            font-weight: bold; 
+            font-size: 16px; 
+            margin-bottom: 5px; 
+        }
+        
+        .shop-item .shop-distance { 
+            float: right; 
+            font-size: 14px; 
+            color: #777; 
+        }
+        
+        .shop-item .shop-address, 
+        .shop-item .shop-hours { 
+            font-size: 13px; 
+            color: #555; 
+            margin-bottom: 3px; 
+        }
+        
+        .shop-item .shop-tags { 
+            margin-top: 5px; 
+        }
+        
+        .shop-item .shop-tags span { 
+            display: inline-block; 
+            background-color: #E8E9FC; 
+            color: #3A42B0; 
+            border-radius: 4px; 
+            padding: 2px 6px; 
+            font-size: 12px; 
+            margin-right: 5px; 
+            margin-bottom: 5px; 
+        }
+        
+        .load-more { 
+            display: block; 
+            text-align: center; 
+            padding: 10px; 
+            margin-top: 10px; 
+            color: #4852EA; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: opacity 0.2s;
+        }
+        
+        .load-more:hover {
+            opacity: 0.7;
+        }
+        
+        .expert-column { 
+            padding: 15px; 
+        }
+        
+        .column-item { 
+            display: flex; 
+            margin-bottom: 15px; 
+            cursor: pointer; 
+            transition: opacity 0.2s;
+        }
+        
+        .column-item:hover {
+            opacity: 0.8;
+        }
+        
+        .column-item .col-img { 
+            width: 90px; 
+            height: 70px; 
+            background-color: #ddd; 
+            border-radius: 4px; 
+            margin-right: 10px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 12px; 
+            color: #777; 
+            overflow: hidden; 
+            flex-shrink: 0;
+        }
+        
+        .column-item .col-img img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+        }
+        
+        .column-item .col-content { 
+            flex: 1; 
+        }
+        
+        .column-item .col-views { 
+            font-size: 12px; 
+            color: #999; 
+            margin-bottom: 5px; 
+        }
+        
+        .column-item .col-title { 
+            font-size: 15px; 
+            font-weight: bold; 
+            line-height: 1.4; 
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        
+        .column-item .col-date { 
+            font-size: 12px; 
+            color: #999; 
+            margin-top: 5px; 
+        }
+
+        footer { 
+            background-color: #333; 
+            color: #fff; 
+            padding: 20px 15px 15px; 
+            font-size: 13px; 
+            line-height: 1.6; 
+        }
+        
+        footer h4 { 
+            color: #4852EA; 
+            margin-top: 0; 
+            margin-bottom: 10px; 
+            font-size: 14px; 
+        }
+        
+        footer ul { 
+            list-style: none; 
+            padding: 0; 
+            margin: 0 0 15px 0; 
+        }
+        
+        footer ul li { 
+            margin-bottom: 5px; 
+        }
+        
+        footer ul li a { 
+            color: #C0C4F0; 
+            text-decoration: none; 
+            transition: color 0.2s;
+        }
+        
+        footer ul li a:hover {
+            color: #fff;
+        }
+        
+        footer .links a { 
+            color: #A0A8F0; 
+            text-decoration: none; 
+            margin-right: 10px; 
+        }
+        
+        footer .company-info p { 
+            margin: 5px 0; 
+        }
+        
+        footer .copyright { 
+            text-align: center; 
+            margin-top: 15px; 
+            font-size: 12px; 
+            color: #C0C4F0; 
+        }
+        
+        .footer-section-title { 
+            font-size: 16px; 
+            font-weight: bold; 
+            margin-bottom: 10px; 
+        }
+        
+        .footer-chaba-name { 
+            font-size: 18px; 
+            font-weight: bold; 
+            margin-bottom: 15px; 
+        }
+        
+        .footer-link-group { 
+            margin-bottom: 20px; 
+        }
+
+        .partner-section {
+            background-color: #f8f8f8;
+            padding: 20px 15px;
+            text-align: center;
+            border-top: 1px solid #eee;
+        }
+        
+        .partner-section h4 {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        
+        .partner-section a {
+            text-decoration: none;
+            color: #4852EA;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+        
+        .partner-section a:hover {
+            opacity: 0.7;
+        }
+
+        nav.gnb { 
+            display: flex; 
+            justify-content: space-around; 
+            padding: 10px 0; 
+            background-color: #fff; 
+            border-top: 1px solid #eee; 
+            position: fixed; 
+            bottom: 0; 
+            left: 0;
+            right: 0;
+            max-width: 420px;
+            margin: 0 auto;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1); 
+            z-index: 1000; 
+        }
+        
+        nav.gnb a { 
+            text-align: center; 
+            text-decoration: none; 
+            color: #555; 
+            font-size: 12px; 
+            padding: 5px;
+            transition: color 0.2s;
+        }
+        
+        nav.gnb a.active { 
+            color: #4852EA; 
+            font-weight: bold; 
+        }
+        
+        nav.gnb a span { 
+            display: block; 
+            margin-top: 5px; 
+        }
+        
+        .hidden { 
+            display: none !important; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo" onclick="location.reload()">차바</div>
+            <div class="icons">
+                <span id="header-user-icon" class="menu-icon">👤</span>
+            </div>
+        </header>
+
+        <section class="hero-section">
+            <p class="social-proof">지금 5,640명이 차바를 이용하고 있어요!</p>
+            <h1>아직도 검사소에서 검사 받으세요??<br>자동차 검사, 이제 가까운 카센터에서 하세요!!</h1>
+            <div class="testimonial-wrapper">
+                <div class="testimonial-nav left" id="testimonial-prev">&lt;</div>
+                <div class="testimonial-card">
+                    <div class="quote" id="testimonial-quote"></div>
+                    <div class="author" id="testimonial-author"></div>
+                </div>
+                <div class="testimonial-nav right" id="testimonial-next">&gt;</div>
+            </div>
+            <div class="pagination" id="testimonial-pagination"></div>
+            <a href="search-01.html" class="cta-button">가까운 카센터에서 편하게 검사하기</a>
+        </section>
+
+        <section class="quick-links">
+            <a href="search-03.html" >내 주변 검사소 찾기</a>
+            <a href="search-02.html" >내 주변 카센터 찾기</a>
+        </section>
+
+        <section class="section-title">차바 추천 서비스</section>
+        <section class="featured-services-wrapper">
+            <div class="featured-services-nav left" id="featured-prev">&lt;</div>
+            <div class="featured-services" id="featured-services-scroll">
+                <div class="card">추천정비1</div>
+                <div class="card">추천정비2</div>
+                <div class="card">추천정비3</div>
+                <div class="card">추천정비4</div>
+                <div class="card">추천정비5</div>
+                <div class="card">추천정비6</div>
+            </div>
+            <div class="featured-services-nav right" id="featured-next">&gt;</div>
+        </section>
+
+        <section class="nearby-shops">
+            <div class="section-title" style="border-bottom: none; padding-bottom: 5px;">내 주변 추천 업체</div>
+            <div class="tab-menu">
+                <button class="active" onclick="switchTab('repair')">정비소</button>
+                <button onclick="switchTab('inspection')">검사소</button>
+            </div>
+            <div id="shop-list"></div>
+            <div class="load-more" onclick="loadMoreShops()">+ 더보기</div>
+        </section>
+
+        <section class="expert-column">
+            <div class="section-title" style="border-bottom: none; padding-bottom: 5px;">카센터 전문가 칼럼</div>
+            <div class="column-list"></div>
+            <div class="load-more" id="load-more-columns" onclick="loadColumns()">+ 더보기</div>
+        </section>
+
+        <section class="partner-section">
+            <h4>정비소 사장님이세요??</h4>
+            <a href="partnerdoor-01.html">로그인/회원가입으로 이동하기</a>
+        </section>
+        
+        <footer>
+            <div class="footer-section-title">내 차 바주세요!</div>
+            <div class="footer-chaba-name">차바(Chaba)</div>
+
+            <div class="footer-link-group">
+                <h4>전국 정비소 목록</h4>
+                <ul>
+                    <li><a href="#">전국 검사소 찾기</a></li>
+                    <li><a href="#">전국 카센터 찾기</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-link-group">
+                <h4>고객지원</h4>
+                <ul>
+                    <li><a href="#">공식 블로그</a></li>
+                    <li><a href="#">자주 묻는 질문 (FAQ)</a></li>
+                    <li><a href="#">공지사항</a></li>
+                    <li><a href="#">1:1 문의</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-link-group">
+                <h4>회사정보</h4>
+                <div class="company-info">
+                    <p>차바(주)</p>
+                    <p>대표: 최동남</p>
+                    <p>사업자등록번호: 123-45-67890</p>
+                    <p>주소: 서울특별시 강남구 테헤란로 123 (차바 빌딩)</p>
+                    <p>고객센터: 1588-1234</p>
+                    <p>이메일: cs@chaba.co.kr</p>
+                </div>
+            </div>
+            
+            <p class="copyright">© 2025 ChaBa. All rights reserved.</p>
+        </footer>
+
+        <nav class="gnb">
+            <a href="#" class="active">🏠 <span>홈</span></a>
+            <a href="res-01.html">🗓️ <span>예약내역</span></a>
+            <a href="my-01.html">👤 <span>마이페이지</span></a>
+        </nav>
+    </div>
+
+    <script>
+        // Testimonial Slider
+        const testimonials = [
+            { quote: "10대 중 2대가 불합격이래요! 😨 카센터에서 미리 점검받으니 안심하고 통과했어요.", author: "김OO 고객님 후기" },
+            { quote: "검사소 대기 시간은 이제 그만! 🙅‍♀️ 집 앞 카센터 예약하니 기다릴 필요 없어 최고예요.", author: "박XX 회원님 후기" },
+            { quote: "검사 맡기면서 엔진오일 교환까지 한번에! ✨ 시간도 비용도 제대로 아꼈습니다. 강추!", author: "최OO 이용자 후기" }
+        ];
+        
+        let currentTestimonialIndex = 0;
+        const testimonialQuote = document.getElementById('testimonial-quote');
+        const testimonialAuthor = document.getElementById('testimonial-author');
+        const testimonialPagination = document.getElementById('testimonial-pagination');
+        const testimonialPrev = document.getElementById('testimonial-prev');
+        const testimonialNext = document.getElementById('testimonial-next');
+        let testimonialInterval;
+
+        function showTestimonial(index) {
+            testimonialQuote.textContent = testimonials[index].quote;
+            testimonialAuthor.textContent = testimonials[index].author;
+            updatePagination(index);
+        }
+
+        function updatePagination(activeIndex) {
+            testimonialPagination.innerHTML = '';
+            testimonials.forEach((_, index) => {
+                const dot = document.createElement('span');
+                if (index === activeIndex) {
+                    dot.classList.add('active');
+                }
+                testimonialPagination.appendChild(dot);
+            });
+        }
+
+        function nextTestimonial() {
+            currentTestimonialIndex = (currentTestimonialIndex + 1) % testimonials.length;
+            showTestimonial(currentTestimonialIndex);
+        }
+
+        function prevTestimonial() {
+            currentTestimonialIndex = (currentTestimonialIndex - 1 + testimonials.length) % testimonials.length;
+            showTestimonial(currentTestimonialIndex);
+        }
+
+        function startTestimonialSlider() {
+            testimonialInterval = setInterval(nextTestimonial, 3000);
+        }
+
+        function stopTestimonialSlider() {
+            clearInterval(testimonialInterval);
+        }
+
+        testimonialPrev.addEventListener('click', () => {
+            stopTestimonialSlider();
+            prevTestimonial();
+            startTestimonialSlider();
+        });
+        
+        testimonialNext.addEventListener('click', () => {
+            stopTestimonialSlider();
+            nextTestimonial();
+            startTestimonialSlider();
+        });
+
+        showTestimonial(currentTestimonialIndex);
+        startTestimonialSlider();
+
+        // Featured Services Slider
+        const featuredServicesScroll = document.getElementById('featured-services-scroll');
+        const featuredPrev = document.getElementById('featured-prev');
+        const featuredNext = document.getElementById('featured-next');
+        const cardWidth = 160; // 카드 너비 + 간격
+        let isAnimating = false;
+
+        featuredNext.addEventListener('click', () => {
+            if (isAnimating) return;
+            isAnimating = true;
+            
+            featuredServicesScroll.scrollBy({ left: cardWidth, behavior: 'smooth' });
+            
+            setTimeout(() => {
+                const firstCard = featuredServicesScroll.firstElementChild;
+                featuredServicesScroll.appendChild(firstCard);
+                featuredServicesScroll.scrollBy({ left: -cardWidth, behavior: 'auto' });
+                isAnimating = false;
+            }, 300);
+        });
+
+        featuredPrev.addEventListener('click', () => {
+            if (isAnimating) return;
+            isAnimating = true;
+            
+            const lastCard = featuredServicesScroll.lastElementChild;
+            featuredServicesScroll.prepend(lastCard);
+            featuredServicesScroll.scrollBy({ left: cardWidth, behavior: 'auto' });
+            
+            setTimeout(() => {
+                featuredServicesScroll.scrollBy({ left: -cardWidth, behavior: 'smooth' });
+                isAnimating = false;
+            }, 10);
+        });
+
+        // Shop List Data
+        const allRepairShops = [
+            {
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비1",
+                name: "우리 정비소",
+                distance: "3km",
+                address: "서울시 강남구 테헤란로 123",
+                hours: "평일 09:00~18:00 (토요일 ~13:00)",
+                tags: ["#수입차", "#전기/전자장치", "#엔진"],
+                cert: "#정비기능사",
+                extra_services: ["#워셔액교체", "#엔진룸청소"],
+                kapos: true
+            },
+            {
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비2",
+                name: "차바 베스트 카센터",
+                distance: "5km",
+                address: "서울시 서초구 서초대로 456",
+                hours: "평일 09:00~19:00",
+                tags: ["#국산차", "#하이브리드", "#정비"],
+                cert: "",
+                extra_services: ["#무료견적", "#픽업서비스"],
+                kapos: false
+            },
+            {
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비3",
+                name: "강남 자동차 병원",
+                distance: "2km",
+                address: "서울시 강남구 역삼로 789",
+                hours: "평일 10:00~18:00",
+                tags: ["#엔진오일", "#브레이크", "#배터리"],
+                cert: "#자동차정비산업기사",
+                extra_services: [],
+                kapos: true
+            },
+            {
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비4",
+                name: "굿모닝 타이어",
+                distance: "7km",
+                address: "서울시 송파구 올림픽로 101",
+                hours: "평일 09:00~20:00",
+                tags: ["#타이어", "#휠", "#얼라인먼트"],
+                cert: "#타이어전문가",
+                extra_services: ["#펑크수리", "#무료공기압"],
+                kapos: false
+            },
+            {
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비5",
+                name: "명품 수입차 정비",
+                distance: "4km",
+                address: "서울시 강남구 압구정로 202",
+                hours: "평일 09:30~18:30",
+                tags: ["#수입차전문", "#도장", "#판금"],
+                cert: "#수입차정비사",
+                extra_services: ["#딜리버리서비스"],
+                kapos: true
+            },
+            {
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비6",
+                name: "빠른 정비 솔루션",
+                distance: "1km",
+                address: "서울시 강남구 봉은사로 303",
+                hours: "매일 08:00~22:00",
+                tags: ["#경정비", "#빠른서비스"],
+                cert: "",
+                extra_services: ["#야간정비"],
+                kapos: false
+            }
+        ];
+
+        const allInspectionShops = [
+            {
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=검사1",
+                name: "강남 자동차 검사소",
+                distance: "1.5km",
+                address: "서울시 강남구 역삼동 111",
+                hours: "평일 09:00~17:00",
+                tags: ["#정기검사", "#종합검사"],
+                cert: "#교통안전공단지정",
+                extra_services: [],
+                kapos: false
+            },
+            {
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=검사2",
+                name: "서초 차량 검사센터",
+                distance: "4km",
+                address: "서울시 서초구 반포동 222",
+                hours: "평일 09:30~17:30",
+                tags: ["#배출가스", "#구조변경"],
+                cert: "",
+                extra_services: ["#예약우선"],
+                kapos: false
+            },
+            {
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=검사3",
+                name: "송파 종합 검사소",
+                distance: "6km",
+                address: "서울시 송파구 잠실동 333",
+                hours: "평일 08:30~18:00",
+                tags: ["#신규등록", "#재검사"],
+                cert: "#국토교통부지정",
+                extra_services: [],
+                kapos: true
+            }
+        ];
+
+        let loadedShopCount = 0;
+        const shopsPerLoad = 5;
+        let currentShopType = 'repair';
+
+        function loadShops(shopType, reset = false) {
+            const shopListDiv = document.getElementById('shop-list');
+            const loadMoreBtn = document.querySelector('.nearby-shops .load-more');
+            let dataSource = shopType === 'repair' ? allRepairShops : allInspectionShops;
+
+            if (reset) {
+                shopListDiv.innerHTML = '';
+                loadedShopCount = 0;
+            }
+
+            const initialLoadCount = loadedShopCount === 0 ? 3 : shopsPerLoad;
+
+            for (let i = loadedShopCount; i < loadedShopCount + initialLoadCount && i < dataSource.length; i++) {
+                const shop = dataSource[i];
+                const shopItem = document.createElement('div');
+                shopItem.classList.add('shop-item');
+                shopItem.setAttribute('onclick', `location.href='DETAIL-01.html?id=${i+1}'`);
+
+                let tagsHtml = '';
+                shop.tags.forEach(tag => { tagsHtml += `<span>${tag}</span>`; });
+                if (shop.cert) { tagsHtml += `<span>${shop.cert}</span>`; }
+                if (shop.extra_services && shop.extra_services.length > 0) {
+                    shop.extra_services.forEach(service => { tagsHtml += `<span>${service}</span>`; });
+                }
+
+                shopItem.innerHTML = `
+                    <div class="shop-img">
+                        <img src="${shop.img}" alt="${shop.name}" onerror="this.onerror=null;this.src='https://placehold.co/80x80/E0E0E0/333?text=Image';">
+                        ${shop.kapos ? '<span class="kapos-mark">카포스 마크</span>' : ''}
+                    </div>
+                    <div class="shop-info">
+                        <div class="shop-name">${shop.name} <span class="shop-distance">${shop.distance}</span></div>
+                        <div class="shop-address">${shop.address}</div>
+                        <div class="shop-hours">${shop.hours}</div>
+                        <div class="shop-tags">
+                            ${tagsHtml}
+                        </div>
+                    </div>
+                `;
+                shopListDiv.appendChild(shopItem);
+            }
+            
+            loadedShopCount += initialLoadCount;
+
+            if (loadedShopCount >= dataSource.length) {
+                loadMoreBtn.classList.add('hidden');
+            } else {
+                loadMoreBtn.classList.remove('hidden');
+            }
+        }
+
+        function loadMoreShops() {
+            loadShops(currentShopType, false);
+        }
+
+        function switchTab(tabType) {
+            const repairTabBtn = document.querySelector('.tab-menu button:nth-child(1)');
+            const inspectionTabBtn = document.querySelector('.tab-menu button:nth-child(2)');
+            
+            if (tabType === 'repair') {
+                repairTabBtn.classList.add('active');
+                inspectionTabBtn.classList.remove('active');
+                currentShopType = 'repair';
+            } else {
+                inspectionTabBtn.classList.add('active');
+                repairTabBtn.classList.remove('active');
+                currentShopType = 'inspection';
+            }
+            
+            loadShops(currentShopType, true);
+        }
+
+        // Initial load
+        loadShops('repair', true);
+
+        // Header User Icon
+        const headerUserIcon = document.getElementById('header-user-icon');
+        let isLoggedIn = false;
+
+        headerUserIcon.addEventListener('click', () => {
+            if (isLoggedIn) {
+                window.location.href = 'my-01.html'; // Assuming my-01.html is the main menu/mypage
+            } else {
+                window.location.href = 'my-01.html'; // Assuming my-01.html is the login page
+            }
+        });
+
+        // Column List
+        const allColumns = [
+            { img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼1", views: 204, title: "여름철 에어컨 관리 꿀팁", date: "2025.07.22" },
+            { img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼2", views: 103, title: "초보운전자를 위한 타이어 점검법", date: "2025.07.10" },
+            { img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼3", views: 432, title: "엔진오일, 언제 갈아야 할까?", date: "2025.06.25" },
+            { img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼4", views: 150, title: "자동차 배터리 수명 연장법", date: "2025.06.01" },
+            { img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼5", views: 88, title: "브레이크 패드 교체 시기", date: "2025.05.15" },
+            { img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼6", views: 300, title: "장마철 차량 관리 요령", date: "2025.05.01" },
+            { img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼7", views: 210, title: "자동차 검사 불합격 피하는 법", date: "2025.04.20" },
+            { img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼8", views: 95, title: "겨울철 부동액 점검의 중요성", date: "2025.04.05" },
+            { img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼9", views: 180, title: "차량 실내 공기 정화 방법", date: "2025.03.25" },
+            { img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼10", views: 250, title: "엔진룸 청소, 해도 될까?", date: "2025.03.10" }
+        ];
+        
+        let loadedColumnCount = 0;
+        const columnsPerLoad = 5;
+
+        function loadColumns() {
+            const columnListDiv = document.querySelector('.expert-column .column-list');
+            const loadMoreBtn = document.getElementById('load-more-columns');
+
+            const initialLoadCount = loadedColumnCount === 0 ? 3 : columnsPerLoad;
+
+            for (let i = loadedColumnCount; i < loadedColumnCount + initialLoadCount && i < allColumns.length; i++) {
+                const column = allColumns[i];
+                const columnItem = document.createElement('div');
+                columnItem.classList.add('column-item');
+                columnItem.setAttribute('onclick', `window.location.href = 'column-detail.html?id=${i+1}'`);
+
+                columnItem.innerHTML = `
+                    <div class="col-img">
+                        <img src="${column.img}" alt="칼럼 이미지" onerror="this.onerror=null;this.src='https://placehold.co/90x70/E0E0E0/333?text=Image';">
+                    </div>
+                    <div class="col-content">
+                        <div class="col-views">Views ${column.views}</div>
+                        <div class="col-title">${column.title}</div>
+                        <div class="col-date">${column.date}</div>
+                    </div>
+                `;
+                columnListDiv.appendChild(columnItem);
+            }
+            
+            loadedColumnCount += initialLoadCount;
+
+            if (loadedColumnCount >= allColumns.length) {
+                loadMoreBtn.classList.add('hidden');
+            } else {
+                loadMoreBtn.classList.remove('hidden');
+            }
+        }
+
+        // Initial load
+        loadColumns();
+    </script>
+</body>
+</html>

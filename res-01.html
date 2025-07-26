@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예약 완료 - 차바</title>
+    <style>
+        /* 기본 스타일 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* 컨테이너 */
+        .container {
+            max-width: 420px;
+            margin: 0 auto;
+            background-color: #fff;
+            min-height: 100vh;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        /* 헤더 */
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 0;
+            background-color: #fff;
+            z-index: 10;
+        }
+
+        .header .back-btn {
+            font-size: 24px;
+            text-decoration: none;
+            color: #333;
+            margin-right: 12px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        .header .back-btn:hover {
+            opacity: 0.8;
+        }
+
+        .header .title {
+            font-weight: bold;
+            font-size: 17px;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        /* 섹션 공통 스타일 */
+        .section {
+            padding: 24px 16px;
+            border-bottom: 8px solid #f8f9fa;
+        }
+        
+        .section:last-of-type {
+            border-bottom: none;
+        }
+
+        .section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 16px 0;
+        }
+
+        /* 예약 확인 박스 */
+        .confirmation-box {
+            background-color: #e0e8ff;
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            color: #5d5fef;
+        }
+        
+        .confirmation-box .icon {
+            font-size: 48px;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 12px;
+            animation: checkmark 0.5s ease-in-out;
+        }
+        
+        @keyframes checkmark {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .confirmation-box .main-text {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 8px 0;
+        }
+        
+        .confirmation-box .sub-text {
+            font-size: 14px;
+            color: #555;
+        }
+
+        /* 카센터 정보 */
+        .provider-info .name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .provider-info .address {
+            font-size: 14px;
+            color: #555;
+            margin-top: 4px;
+        }
+
+        /* 카센터 액션 버튼 */
+        .provider-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        
+        .provider-actions .btn {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.2s;
+            outline: none;
+            background-color: #fff;
+            cursor: pointer;
+        }
+        
+        .provider-actions .btn:hover {
+            background-color: #f0f0f0;
+            border-color: #aaa;
+        }
+
+        /* 상세 정보 목록 */
+        .details-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: 15px;
+        }
+        
+        .details-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .details-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .details-list li .label {
+            color: #777;
+        }
+        
+        .details-list li .value {
+            font-weight: 500;
+            text-align: right;
+            max-width: 60%;
+            word-break: break-word;
+        }
+        
+        .details-list li.total {
+            border-top: 1px solid #f0f0f0;
+            margin-top: 8px;
+            padding-top: 12px;
+            font-weight: bold;
+        }
+        
+        .details-list li.total .value {
+            color: #5d5fef;
+        }
+
+        /* 예약 변경/취소/완료 버튼 섹션 */
+        .reservation-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 24px 16px;
+            border-top: 1px solid #f0f0f0;
+            border-bottom: 8px solid #f8f9fa;
+        }
+        
+        .reservation-actions .btn {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.2s;
+            outline: none;
+            background-color: #fff;
+            cursor: pointer;
+        }
+        
+        .reservation-actions .btn:hover {
+            background-color: #f0f0f0;
+            border-color: #aaa;
+        }
+        
+        .reservation-actions .btn.complete {
+            grid-column: span 2;
+            background-color: #5d5fef;
+            color: white;
+            border-color: #5d5fef;
+            font-weight: bold;
+        }
+        
+        .reservation-actions .btn.complete:hover {
+            background-color: #4a4cdb;
+            border-color: #4a4cdb;
+        }
+
+        /* 하단 정보 */
+        .footer-info {
+            padding: 24px 16px;
+            background-color: #f8f9fa;
+            text-align: center;
+            font-size: 13px;
+            color: #777;
+            line-height: 1.6;
+        }
+        
+        .footer-info a {
+            color: #007aff;
+            font-weight: 500;
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+        
+        .footer-info a:hover {
+            color: #0056b3;
+        }
+
+        /* 로딩 스피너 */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 50px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        /* 에러 메시지 */
+        .error-message {
+            display: none;
+            background-color: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 16px;
+            text-align: center;
+        }
+        
+        .error-message.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <header class="header">
+            <a href="#" class="back-btn" onclick="goBack(); return false;">&lt;</a>
+            <div class="title">예약 완료</div>
+        </header>
+
+        <main>
+            <!-- 로딩 상태 -->
+            <div class="loading" id="loadingState">
+                예약 정보를 불러오는 중입니다...
+            </div>
+
+            <!-- 에러 메시지 -->
+            <div class="error-message" id="errorMessage">
+                예약 정보를 불러올 수 없습니다.
+            </div>
+
+            <!-- 예약 완료 확인 섹션 -->
+            <section class="section" id="confirmationSection">
+                <div class="confirmation-box">
+                    <div class="icon">✓</div>
+                    <div class="main-text">예약이 완료되었습니다!</div>
+                    <div class="sub-text" id="reservationDateTime">2025년 7월 24일 (목) 오전 09:00</div>
+                </div>
+            </section>
+
+            <!-- 방문 카센터 정보 섹션 -->
+            <section class="section" id="providerSection">
+                <h3>방문하실 카센터</h3>
+                <div class="provider-info">
+                    <div class="name" id="providerName">우리 정비소</div>
+                    <div class="address" id="providerAddress">서울시 강남구 테헤란로 123</div>
+                </div>
+                <div class="provider-actions">
+                    <a href="#" class="btn" onclick="openNavigation(); return false;">🗺️ 길찾기</a>
+                    <a href="#" class="btn" id="phoneCallBtn">📞 전화걸기</a>
+                </div>
+            </section>
+
+            <!-- 예약 상세 정보 섹션 -->
+            <section class="section">
+                <h3>예약 상세 정보</h3>
+                <ul class="details-list">
+                    <li><span class="label">예약번호</span> <span class="value" id="reservationNumber">20250724-123456</span></li>
+                    <li><span class="label">예약 상품</span> <span class="value" id="reservationProducts">자동차 검사 대행</span></li>
+                    <li><span class="label">차량 정보</span> <span class="value" id="carInfo">12가 3456</span></li>
+                    <li><span class="label">예약 일시</span> <span class="value" id="reservationDateTimeFull">2025년 7월 24일 (목) 오전 09:00</span></li>
+                    <li><span class="label">요청사항</span> <span class="value" id="requestMessage">엔진오일 교체도 함께 문의 예정</span></li>
+                </ul>
+            </section>
+
+            <!-- 결제 정보 섹션 -->
+            <section class="section">
+                <h3>결제 정보</h3>
+                <ul class="details-list">
+                    <li><span class="label">결제 수단</span> <span class="value" id="paymentMethod">카카오페이</span></li>
+                    <li class="total"><span class="label">최종 결제 금액</span> <span class="value" id="totalAmount">35,000 원 (결제 완료)</span></li>
+                </ul>
+            </section>
+            
+            <!-- 예약 변경/취소/완료 버튼 섹션 -->
+            <section class="reservation-actions">
+                <a href="#" class="btn" onclick="changeReservation(); return false;">예약 변경</a>
+                <a href="#" class="btn" onclick="cancelReservation(); return false;">예약 취소</a>
+                <a href="#" class="btn complete" onclick="completeReservation(); return false;">예약 완료</a>
+            </section>
+
+            <!-- 하단 안내 정보 -->
+            <div class="footer-info">
+                <p>예약 내용은 마이페이지 > 예약내역에서<br>언제든지 다시 확인할 수 있습니다.</p>
+                <p>예약 취소/변경 문의: <a href="#" onclick="contactCustomerService(); return false;">차바 고객센터</a></p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 페이지 로드 시 예약 정보 로드
+        window.addEventListener('load', () => {
+            loadReservationInfo();
+        });
+
+        // 예약 정보 로드
+        function loadReservationInfo() {
+            const loadingState = document.getElementById('loadingState');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // 로딩 상태 표시
+            loadingState.classList.add('active');
+            
+            try {
+                // sessionStorage에서 예약 정보 가져오기
+                const bookingInfo = JSON.parse(sessionStorage.getItem('bookingInfo') || '{}');
+                
+                if (Object.keys(bookingInfo).length === 0) {
+                    // 예약 정보가 없는 경우 더미 데이터 사용
+                    bookingInfo.products = [{name: '자동차 검사 대행', price: 35000}];
+                    bookingInfo.date = '2025-07-24';
+                    bookingInfo.time = '09:00';
+                    bookingInfo.carInfo = '소형 · 승용차 · 준중형 · 가솔린';
+                    bookingInfo.phoneNumber = '010-1234-5678';
+                    bookingInfo.carNumber = '12가 3456';
+                    bookingInfo.requestMessage = '엔진오일 교체도 함께 문의 예정';
+                    bookingInfo.paymentMethod = '카카오페이';
+                }
+                
+                // 예약 정보 표시
+                displayReservationInfo(bookingInfo);
+                
+                // 로딩 상태 숨기기
+                loadingState.classList.remove('active');
+                
+            } catch (error) {
+                console.error('예약 정보 로드 실패:', error);
+                loadingState.classList.remove('active');
+                errorMessage.classList.add('active');
+            }
+        }
+
+        // 예약 정보 표시
+        function displayReservationInfo(bookingInfo) {
+            // 예약 번호 생성
+            const reservationNumber = generateReservationNumber();
+            document.getElementById('reservationNumber').textContent = reservationNumber;
+            
+            // 날짜 및 시간 포맷팅
+            const formattedDateTime = formatDateTime(bookingInfo.date, bookingInfo.time);
+            document.getElementById('reservationDateTime').textContent = formattedDateTime;
+            document.getElementById('reservationDateTimeFull').textContent = formattedDateTime;
+            
+            // 상품 정보
+            if (bookingInfo.products && bookingInfo.products.length > 0) {
+                const productNames = bookingInfo.products.map(p => p.name).join(', ');
+                const totalPrice = bookingInfo.products.reduce((sum, p) => sum + p.price, 0);
+                document.getElementById('reservationProducts').textContent = productNames;
+                document.getElementById('totalAmount').textContent = `${totalPrice.toLocaleString('ko-KR')} 원 (결제 완료)`;
+            }
+            
+            // 차량 정보
+            if (bookingInfo.carNumber) {
+                document.getElementById('carInfo').textContent = bookingInfo.carNumber;
+            }
+            
+            // 요청사항
+            if (bookingInfo.requestMessage) {
+                document.getElementById('requestMessage').textContent = bookingInfo.requestMessage;
+            } else {
+                document.getElementById('requestMessage').textContent = '없음';
+            }
+            
+            // 결제 수단
+            if (bookingInfo.paymentMethod) {
+                document.getElementById('paymentMethod').textContent = bookingInfo.paymentMethod;
+            }
+            
+            // 카센터 정보 (더미 데이터 - 실제로는 예약 시 저장된 정보 사용)
+            const providerInfo = {
+                name: '우리 정비소',
+                address: '서울시 강남구 테헤란로 123',
+                phone: '02-1234-5678'
+            };
+            
+            document.getElementById('providerName').textContent = providerInfo.name;
+            document.getElementById('providerAddress').textContent = providerInfo.address;
+            
+            // 전화번호 설정
+            const phoneCallBtn = document.getElementById('phoneCallBtn');
+            phoneCallBtn.href = `tel:${providerInfo.phone}`;
+        }
+
+        // 예약 번호 생성
+        function generateReservationNumber() {
+            const now = new Date();
+            const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
+            const randomNum = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+            return `${dateStr}-${randomNum}`;
+        }
+
+        // 날짜 및 시간 포맷팅
+        function formatDateTime(dateStr, timeStr) {
+            const date = new Date(dateStr);
+            const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const dayOfWeek = daysOfWeek[date.getDay()];
+            
+            const [hour, minute] = timeStr.split(':');
+            const hourNum = parseInt(hour);
+            const period = hourNum < 12 ? '오전' : '오후';
+            const displayHour = hourNum === 0 ? 12 : (hourNum > 12 ? hourNum - 12 : hourNum);
+            
+            return `${year}년 ${month}월 ${day}일 (${dayOfWeek}) ${period} ${displayHour}:${minute}`;
+        }
+
+        // 뒤로가기
+        function goBack() {
+            // 예약 완료 후에는 홈으로 이동
+            window.location.href = 'home.html';
+        }
+
+        // 길찾기
+        function openNavigation() {
+            const address = document.getElementById('providerAddress').textContent;
+            // 실제로는 네이티브 지도 앱 연동
+            alert(`길찾기 앱이 열립니다.\n목적지: ${address}`);
+        }
+
+        // 예약 변경
+        function changeReservation() {
+            if (confirm('예약을 변경하시겠습니까?')) {
+                alert('예약 변경 페이지로 이동합니다.');
+                // window.location.href = 'reservation-change.html';
+            }
+        }
+
+        // 예약 취소
+        function cancelReservation() {
+            if (confirm('정말 예약을 취소하시겠습니까?\n취소 수수료가 발생할 수 있습니다.')) {
+                alert('예약이 취소되었습니다.');
+                // 취소 API 호출 후 홈으로 이동
+                window.location.href = 'home.html';
+            }
+        }
+
+        // 예약 완료 (홈으로 이동)
+        function completeReservation() {
+            // 예약 정보 정리
+            sessionStorage.removeItem('bookingInfo');
+            sessionStorage.removeItem('selectedCarInfoForDetail');
+            
+            // 홈으로 이동
+            window.location.href = 'home.html';
+        }
+
+        // 고객센터 연결
+        function contactCustomerService() {
+            if (confirm('차바 고객센터(1588-1234)로 전화하시겠습니까?')) {
+                window.location.href = 'tel:1588-1234';
+            }
+        }
+    </script>
+</body>
+</html>

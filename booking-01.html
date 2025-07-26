@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예약하기 - 차바</title>
+    <style>
+        /* 모든 요소에 box-sizing 적용 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 모달 컨테이너 (바텀 시트 스타일) */
+        .modal-container {
+            width: 420px;
+            max-width: 100%;
+            background-color: #fff;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(0);
+            transition: transform 0.3s ease-out;
+        }
+
+        /* 모달 헤더 */
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid #eee;
+            flex-shrink: 0;
+            background-color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .modal-header .title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .modal-header .close-btn {
+            font-size: 28px;
+            color: #777;
+            background: none;
+            border: none;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            transition: color 0.2s;
+        }
+        
+        .modal-header .close-btn:hover {
+            color: #333;
+        }
+
+        /* 모달 본문 */
+        .modal-body {
+            padding: 20px 16px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        /* 섹션 제목 */
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #f0f0f0;
+            margin-top: 20px;
+        }
+        
+        .section-title:first-of-type {
+            border-top: none;
+            margin-top: 0;
+        }
+
+        /* 선택 상품 카드 */
+        .selected-product-card {
+            background-color: #f8f8f8;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .selected-product-card .price {
+            font-weight: bold;
+            color: #4852EA;
+        }
+
+        /* 날짜 선택 */
+        .date-picker-horizontal {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px 0;
+            background-color: #f9f9f9;
+        }
+        
+        .date-picker-horizontal .nav-arrow {
+            font-size: 20px;
+            padding: 0 10px;
+            cursor: pointer;
+            color: #555;
+            transition: opacity 0.2s;
+        }
+        
+        .date-picker-horizontal .nav-arrow:hover {
+            opacity: 0.6;
+        }
+        
+        .date-picker-horizontal .date-list {
+            display: flex;
+            flex-grow: 1;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            justify-content: space-around;
+        }
+        
+        .date-picker-horizontal .date-item {
+            flex-shrink: 0;
+            width: calc(100% / 7);
+            text-align: center;
+            padding: 5px 0;
+            cursor: pointer;
+            font-size: 14px;
+            color: #555;
+            transition: all 0.2s;
+            border-radius: 8px;
+        }
+        
+        .date-picker-horizontal .date-item:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .date-picker-horizontal .date-item .day-of-week {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        
+        .date-picker-horizontal .date-item.selected {
+            background-color: #4852EA;
+            color: white;
+        }
+
+        /* 시간 선택 그리드 */
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .time-slot {
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px 5px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .time-slot:hover:not(.disabled) {
+            background-color: #e0e0e0;
+        }
+        
+        .time-slot.selected {
+            background-color: #4852EA;
+            color: white;
+            border-color: #4852EA;
+        }
+        
+        .time-slot.disabled {
+            background-color: #e9ecef;
+            color: #bbb;
+            border-color: #e0e0e0;
+            cursor: not-allowed;
+            text-decoration: line-through;
+        }
+        
+        .time-slot-info {
+            font-size: 13px;
+            color: #777;
+            text-align: center;
+            margin-top: -10px;
+            margin-bottom: 20px;
+        }
+
+        /* 차량 정보 표시 */
+        .car-info-display {
+            background-color: #f8f8f8;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 15px;
+            color: #555;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* 예약자 정보 입력 필드 */
+        .input-field-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-field-group input,
+        .input-field-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #333;
+            margin-top: 8px;
+            transition: border-color 0.2s;
+        }
+        
+        .input-field-group input:focus,
+        .input-field-group textarea:focus {
+            outline: none;
+            border-color: #4852EA;
+            box-shadow: 0 0 0 2px rgba(72, 82, 234, 0.1);
+        }
+        
+        .input-field-group input::placeholder,
+        .input-field-group textarea::placeholder {
+            color: #999;
+        }
+        
+        .input-field-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        /* 약관 동의 섹션 */
+        .terms-agreement {
+            padding: 15px 0;
+            border-top: 1px solid #f0f0f0;
+            margin-top: 20px;
+        }
+        
+        .terms-agreement .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .terms-agreement .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        
+        .terms-agreement .checkbox-item .view-link {
+            color: #007aff;
+            text-decoration: none;
+            margin-left: auto;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+        
+        .terms-agreement .checkbox-item .view-link:hover {
+            opacity: 0.7;
+        }
+        
+        .terms-agreement .all-agree {
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* 하단 CTA 버튼 그룹 */
+        .modal-footer {
+            padding: 16px;
+            background-color: #fff;
+            border-top: 1px solid #eee;
+            flex-shrink: 0;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .social-login-button {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: opacity 0.2s;
+        }
+        
+        .social-login-button:last-of-type {
+            margin-bottom: 0;
+        }
+        
+        .social-login-button.google {
+            background-color: #4285F4;
+            color: white;
+        }
+        
+        .social-login-button.naver {
+            background-color: #03C75A;
+            color: white;
+        }
+        
+        .social-login-button.kakao {
+            background-color: #FEE500;
+            color: #3C1E1E;
+        }
+        
+        .social-login-button:hover:not(:disabled) {
+            opacity: 0.9;
+        }
+        
+        .social-login-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .social-login-button span {
+            font-size: 14px;
+        }
+        
+        .social-login-info {
+            font-size: 12px;
+            color: #777;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        /* 모달 단계별 화면 스타일 */
+        .modal-step-content {
+            display: none;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 20px 16px;
+            overflow-y: auto;
+        }
+        
+        .modal-step-content.active {
+            display: flex;
+        }
+        
+        .modal-step-content h2 {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .modal-step-content p {
+            font-size: 16px;
+            color: #555;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-step-content .action-button {
+            width: 100%;
+            padding: 15px;
+            background-color: #4852EA;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: auto;
+            transition: background-color 0.2s;
+        }
+        
+        .modal-step-content .action-button:hover {
+            background-color: #3a42d8;
+        }
+        
+        .modal-step-content .action-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        /* 로고 이미지 스타일 */
+        .social-login-button img {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <div class="modal-container">
+        <div class="modal-header">
+            <span class="title" id="modalTitle">예약하기</span>
+            <button class="close-btn" onclick="closeBookingModal()">×</button>
+        </div>
+
+        <div class="modal-body">
+            <!-- 1단계: 예약 정보 입력 폼 -->
+            <div id="bookingFormStep" class="modal-step-content active">
+                <div class="section-title">선택 상품</div>
+                <div class="selected-product-card">
+                    <span id="selectedProductName">자동차 검사 대행</span>
+                    <span class="price" id="selectedProductPrice">35,000원</span>
+                </div>
+
+                <div class="section-title">날짜 선택</div>
+                <div class="date-picker-horizontal">
+                    <span class="nav-arrow" onclick="scrollDateList(-1)">‹</span>
+                    <div class="date-list" id="bookingDateList"></div>
+                    <span class="nav-arrow" onclick="scrollDateList(1)">›</span>
+                </div>
+
+                <div class="section-title">시간 선택</div>
+                <div class="time-grid" id="timeGrid"></div>
+                <div class="time-slot-info">
+                    (검사 대행 포함 시 15:00 마감)
+                </div>
+
+                <div class="section-title">차량 정보</div>
+                <div class="car-info-display" id="carInfoDisplay">
+                    소형 · 승용차 · 준중형 · 가솔린
+                </div>
+
+                <div class="section-title">예약자 정보</div>
+                <div class="input-field-group">
+                    <input type="tel" id="phoneNumber" placeholder="(필수) 전화번호를 입력하세요" required>
+                </div>
+                <div class="input-field-group">
+                    <input type="text" id="carNumber" placeholder="(필수) 차량번호를 입력하세요" required>
+                </div>
+
+                <div class="section-title">요청사항 (선택)</div>
+                <div class="input-field-group">
+                    <textarea id="requestMessage" placeholder="추가 요청사항을 입력해주세요."></textarea>
+                </div>
+
+                <div class="terms-agreement">
+                    <div class="checkbox-item all-agree">
+                        <label>
+                            <input type="checkbox" id="allAgreeCheckbox"> 전체 동의
+                        </label>
+                    </div>
+                    <div class="checkbox-item">
+                        <label>
+                            <input type="checkbox" id="termsOfServiceCheckbox" class="required-checkbox"> 이용약관 동의 (필수)
+                        </label>
+                        <a href="#" onclick="alert('이용약관 내용 표시'); return false;" class="view-link">보기</a>
+                    </div>
+                    <div class="checkbox-item">
+                        <label>
+                            <input type="checkbox" id="privacyPolicyCheckbox" class="required-checkbox"> 개인정보 수집 및 이용 동의 (필수)
+                        </label>
+                        <a href="#" onclick="alert('개인정보 처리방침 표시'); return false;" class="view-link">보기</a>
+                    </div>
+                    <div class="checkbox-item">
+                        <label>
+                            <input type="checkbox" id="marketingConsentCheckbox"> 이벤트 및 혜택 알림 받기 (선택)
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2단계: 소셜 로그인/회원가입 화면 -->
+            <div id="socialLoginStep" class="modal-step-content">
+                <h2>소셜 로그인/회원가입 화면</h2>
+                <p>소셜 계정으로 간편하게 로그인하고 예약하세요.</p>
+                <div class="social-login-buttons-container">
+                    <button class="social-login-button google" data-social="Google" style="display: none;">
+                        <span>Google 계정으로 로그인/회원가입</span>
+                    </button>
+                    <button class="social-login-button naver" data-social="Naver" style="display: none;">
+                        <span>Naver 계정으로 로그인/회원가입</span>
+                    </button>
+                    <button class="social-login-button kakao" data-social="Kakao" style="display: none;">
+                        <span>Kakao 계정으로 로그인/회원가입</span>
+                    </button>
+                    <div class="social-login-info" style="margin-top: 5px; display: none;">
+                        (클릭시 결제하기로 연결됩니다.)
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3단계: 결제 화면 -->
+            <div id="paymentStep" class="modal-step-content">
+                <h2>결제 화면</h2>
+                <p>선택하신 상품에 대한 결제를 진행합니다.</p>
+                <button class="action-button" onclick="completeReservation()">결제 완료</button>
+            </div>
+        </div>
+
+        <div class="modal-footer" id="modalFooter"></div>
+    </div>
+
+    <script>
+        // 현재 예약 상품이 '자동차 검사 대행'을 포함하는지 여부
+        const isInspectionIncluded = true;
+        let totalSelectedPrice = 35000;
+        let selectedProducts = [];
+
+        // DOM 요소 참조
+        const modalTitle = document.getElementById('modalTitle');
+        const bookingFormStep = document.getElementById('bookingFormStep');
+        const socialLoginStep = document.getElementById('socialLoginStep');
+        const paymentStep = document.getElementById('paymentStep');
+        const modalFooter = document.getElementById('modalFooter');
+        const allAgreeCheckbox = document.getElementById('allAgreeCheckbox');
+        const requiredCheckboxes = document.querySelectorAll('.required-checkbox');
+        const phoneNumberInput = document.getElementById('phoneNumber');
+        const carNumberInput = document.getElementById('carNumber');
+
+        // 페이지 로드 시 초기화
+        window.addEventListener('load', () => {
+            loadSelectedProducts();
+            initializeBookingDates();
+            renderTimeSlots();
+            resetBookingFlowState();
+            loadCarInfo();
+        });
+
+        // 수정 후
+        function loadSelectedProducts() {
+            // sessionStorage에서 상품 정보 가져오기
+            const savedProducts = sessionStorage.getItem('selectedProducts');
+    
+            if (savedProducts) {
+                selectedProducts = JSON.parse(savedProducts);
+                updateSelectedProductDisplay();
+        
+                // 사용 후 삭제 (선택사항)
+                // sessionStorage.removeItem('selectedProducts');
+            } else {
+                // 기본값 설정 (테스트용)
+                selectedProducts = [{name: '자동차 검사 대행', price: 35000}];
+                updateSelectedProductDisplay();
+    }
+}
+
+        // 선택된 상품 표시 업데이트
+        function updateSelectedProductDisplay() {
+            if (selectedProducts.length > 0) {
+                const productNames = selectedProducts.map(p => p.name).join(', ');
+                const totalPrice = selectedProducts.reduce((sum, p) => sum + p.price, 0);
+                
+                document.getElementById('selectedProductName').textContent = productNames;
+                document.getElementById('selectedProductPrice').textContent = `${totalPrice.toLocaleString('ko-KR')}원`;
+                totalSelectedPrice = totalPrice;
+            }
+        }
+
+        // 차량 정보 로드
+        function loadCarInfo() {
+            const savedCarInfo = sessionStorage.getItem('selectedCarInfoForDetail');
+            if (savedCarInfo && savedCarInfo !== '내 차 정보 등록하기') {
+                document.getElementById('carInfoDisplay').textContent = savedCarInfo;
+            }
+        }
+
+        // 모달 닫기 함수
+        function closeBookingModal() {
+            if (confirm('예약을 취소하시겠습니까?')) {
+                resetBookingFlowState();
+                window.history.back();
+            }
+        }
+
+        // 예약 플로우 상태 초기화
+        function resetBookingFlowState() {
+            modalTitle.textContent = '예약하기';
+            bookingFormStep.classList.add('active');
+            socialLoginStep.classList.remove('active');
+            paymentStep.classList.remove('active');
+
+            renderFooterButtons('initial');
+
+            phoneNumberInput.value = '';
+            carNumberInput.value = '';
+            document.getElementById('requestMessage').value = '';
+            allAgreeCheckbox.checked = false;
+            requiredCheckboxes.forEach(checkbox => checkbox.checked = false);
+            document.getElementById('marketingConsentCheckbox').checked = false;
+
+            document.querySelectorAll('.date-item').forEach(item => item.classList.remove('selected'));
+            if (document.querySelector('.date-item')) {
+                document.querySelector('.date-item').classList.add('selected');
+            }
+            document.querySelectorAll('.time-slot').forEach(item => item.classList.remove('selected'));
+            
+            updateBookingButtonState();
+        }
+
+        // 푸터 버튼 렌더링 함수
+        function renderFooterButtons(step) {
+            modalFooter.innerHTML = '';
+            const formattedPrice = totalSelectedPrice.toLocaleString('ko-KR');
+
+            if (step === 'initial') {
+                const buttonsHtml = `
+                    <button class="social-login-button google" data-social="Google">
+                        <span>${formattedPrice}원 결제하고 예약 확정하기 (Google)</span>
+                    </button>
+                    <button class="social-login-button naver" data-social="Naver">
+                        <span>${formattedPrice}원 결제하고 예약 확정하기 (Naver)</span>
+                    </button>
+                    <button class="social-login-button kakao" data-social="Kakao">
+                        <span>${formattedPrice}원 결제하고 예약 확정하기 (Kakao)</span>
+                    </button>
+                    <div class="social-login-info">
+                        (버튼 클릭 시 소셜 로그인으로 연결됩니다)
+                    </div>
+                `;
+                modalFooter.innerHTML = buttonsHtml;
+                
+                modalFooter.querySelectorAll('.social-login-button').forEach(button => {
+                    button.addEventListener('click', handleSocialLoginButtonClick);
+                });
+            }
+        }
+
+        // 날짜 선택 관련 변수 및 함수
+        let currentBookingDateIndex = 0;
+        const bookingDates = [];
+        const daysOfWeekKorean = ['일', '월', '화', '수', '목', '금', '토'];
+
+        function initializeBookingDates() {
+            const today = new Date();
+            for (let i = 0; i < 30; i++) {
+                const date = new Date(today);
+                date.setDate(today.getDate() + i);
+                bookingDates.push(date);
+            }
+            renderBookingDates();
+        }
+
+        function renderBookingDates() {
+            const dateListContainer = document.getElementById('bookingDateList');
+            dateListContainer.innerHTML = '';
+
+            for (let i = 0; i < 7; i++) {
+                const date = bookingDates[currentBookingDateIndex + i];
+                if (!date) break;
+
+                const dayOfWeek = daysOfWeekKorean[date.getDay()];
+                const dayOfMonth = date.getDate();
+
+                const dateItem = document.createElement('div');
+                dateItem.classList.add('date-item');
+                dateItem.dataset.fullDate = date.toISOString().split('T')[0];
+                dateItem.innerHTML = `<div class="day-of-week">${dayOfWeek}</div><div>${dayOfMonth}</div>`;
+
+                if (i === 0 && currentBookingDateIndex === 0) {
+                    dateItem.classList.add('selected');
+                }
+
+                dateItem.addEventListener('click', () => {
+                    document.querySelectorAll('.date-item').forEach(item => item.classList.remove('selected'));
+                    dateItem.classList.add('selected');
+                    updateBookingButtonState();
+                    renderTimeSlots();
+                });
+                dateListContainer.appendChild(dateItem);
+            }
+        }
+
+        function scrollDateList(direction) {
+            const totalAvailableDates = bookingDates.length;
+            let newIndex = currentBookingDateIndex + direction;
+
+            if (newIndex < 0) {
+                newIndex = 0;
+            } else if (newIndex > totalAvailableDates - 7) {
+                newIndex = totalAvailableDates - 7;
+            }
+
+            if (newIndex !== currentBookingDateIndex) {
+                currentBookingDateIndex = newIndex;
+                renderBookingDates();
+            }
+        }
+
+        // 시간 슬롯 렌더링
+        function renderTimeSlots() {
+            const timeGrid = document.getElementById('timeGrid');
+            timeGrid.innerHTML = '';
+
+            const startHour = 9;
+            const endHour = isInspectionIncluded ? 15 : 18;
+            const intervalMinutes = 30;
+
+            let selectedTimeSlot = null;
+
+            for (let h = startHour; h < endHour; h++) {
+                for (let m = 0; m < 60; m += intervalMinutes) {
+                    const time = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+                    const timeSlot = document.createElement('div');
+                    timeSlot.classList.add('time-slot');
+                    timeSlot.textContent = time;
+                    timeSlot.dataset.time = time;
+
+                    // 15:00는 검사 대행 시 비활성화
+                    if (h === 15 && m === 0 && isInspectionIncluded) {
+                        timeSlot.classList.add('disabled');
+                    } else {
+                        timeSlot.addEventListener('click', () => {
+                            if (selectedTimeSlot) {
+                                selectedTimeSlot.classList.remove('selected');
+                            }
+                            timeSlot.classList.add('selected');
+                            selectedTimeSlot = timeSlot;
+                            updateBookingButtonState();
+                        });
+                    }
+                    timeGrid.appendChild(timeSlot);
+                }
+            }
+        }
+
+        // 폼 유효성 검사 및 버튼 상태 업데이트
+        function updateBookingButtonState() {
+            const allRequiredAgreed = Array.from(requiredCheckboxes).every(checkbox => checkbox.checked);
+            const phoneNumberFilled = phoneNumberInput.value.trim() !== '';
+            const carNumberFilled = carNumberInput.value.trim() !== '';
+            const dateSelected = document.querySelector('.date-item.selected') !== null;
+            const timeSelected = document.querySelector('.time-slot.selected') !== null;
+
+            const isFormValid = allRequiredAgreed && phoneNumberFilled && carNumberFilled && dateSelected && timeSelected;
+
+            modalFooter.querySelectorAll('.social-login-button').forEach(button => {
+                button.disabled = !isFormValid;
+            });
+        }
+
+        // '전체 동의' 체크박스 기능
+        allAgreeCheckbox.addEventListener('change', () => {
+            const isChecked = allAgreeCheckbox.checked;
+            requiredCheckboxes.forEach(checkbox => {
+                checkbox.checked = isChecked;
+            });
+            document.getElementById('marketingConsentCheckbox').checked = isChecked;
+            updateBookingButtonState();
+        });
+
+        // 개별 체크박스 변경 시 '전체 동의' 상태 업데이트
+        requiredCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                const allChecked = Array.from(requiredCheckboxes).every(cb => cb.checked);
+                const marketingChecked = document.getElementById('marketingConsentCheckbox').checked;
+                allAgreeCheckbox.checked = allChecked && marketingChecked;
+                updateBookingButtonState();
+            });
+        });
+
+        document.getElementById('marketingConsentCheckbox').addEventListener('change', () => {
+            const allRequiredChecked = Array.from(requiredCheckboxes).every(cb => cb.checked);
+            const marketingChecked = document.getElementById('marketingConsentCheckbox').checked;
+            allAgreeCheckbox.checked = allRequiredChecked && marketingChecked;
+            updateBookingButtonState();
+        });
+
+        // 필수 입력 필드 변경 감지
+        phoneNumberInput.addEventListener('input', updateBookingButtonState);
+        carNumberInput.addEventListener('input', updateBookingButtonState);
+
+        // 다단계 플로우 관련 함수
+        function proceedToSocialLoginStep(socialName) {
+            modalTitle.textContent = '소셜 로그인';
+            bookingFormStep.classList.remove('active');
+            socialLoginStep.classList.add('active');
+            paymentStep.classList.remove('active');
+
+            renderFooterButtons('socialLogin');
+
+            // 소셜 로그인 화면의 버튼들을 초기화
+            socialLoginStep.querySelectorAll('.social-login-button').forEach(button => {
+                button.style.display = 'none';
+                button.onclick = null;
+            });
+            socialLoginStep.querySelector('.social-login-info').style.display = 'none';
+
+            // 선택된 소셜 로그인 버튼만 표시
+            const selectedSocialButton = socialLoginStep.querySelector(`.social-login-button[data-social="${socialName}"]`);
+            if (selectedSocialButton) {
+                selectedSocialButton.style.display = 'flex';
+                selectedSocialButton.querySelector('span').textContent = `로그인 완료 및 결제하기`;
+                selectedSocialButton.onclick = () => {
+                    proceedToPaymentStep();
+                };
+                socialLoginStep.querySelector('.social-login-info').style.display = 'block';
+            }
+        }
+
+        // '결제 화면'으로 이동 (3단계)
+        function proceedToPaymentStep() {
+            modalTitle.textContent = '결제하기';
+            socialLoginStep.classList.remove('active');
+            paymentStep.classList.add('active');
+
+            renderFooterButtons('payment');
+        }
+
+        // 예약 완료 (최종 단계)
+        function completeReservation() {
+            alert('예약이 완료되었습니다!');
+            // 예약 완료 페이지로 이동
+            window.location.href = 'res-01.html';
+        }
+
+        // 소셜 로그인 버튼 클릭 핸들러
+        function handleSocialLoginButtonClick(event) {
+            const button = event.currentTarget;
+            if (button.disabled) return;
+
+            const socialName = button.dataset.social;
+            
+            // 예약 정보 저장
+            saveBookingInfo();
+            
+            // 화면 전환
+            proceedToSocialLoginStep(socialName);
+        }
+
+        // 예약 정보 저장
+        function saveBookingInfo() {
+            const bookingInfo = {
+                products: selectedProducts,
+                date: document.querySelector('.date-item.selected')?.dataset.fullDate,
+                time: document.querySelector('.time-slot.selected')?.dataset.time,
+                carInfo: document.getElementById('carInfoDisplay').textContent,
+                phoneNumber: phoneNumberInput.value,
+                carNumber: carNumberInput.value,
+                requestMessage: document.getElementById('requestMessage').value,
+                marketingConsent: document.getElementById('marketingConsentCheckbox').checked
+            };
+            
+            sessionStorage.setItem('bookingInfo', JSON.stringify(bookingInfo));
+        }
+    </script>
+</body>
+</html>

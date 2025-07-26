@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>검사 가능한 내 주변 카센터 찾기 - 차바</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        
+        .mobile-wrapper {
+            width: 420px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background-color: #4852EA;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            position: relative;
+            justify-content: center;
+        }
+        
+        .header .back-btn {
+            font-size: 20px;
+            cursor: pointer;
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: opacity 0.2s;
+        }
+        
+        .header .back-btn:hover {
+            opacity: 0.7;
+        }
+        
+        .header .title {
+            text-align: center;
+            flex-grow: 1;
+        }
+        
+        .search-condition-area {
+            padding: 20px 15px;
+            border-bottom: 8px solid #f4f4f4;
+        }
+        
+        .search-condition-area .car-info-btn {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .search-condition-area .car-info-btn:hover {
+            background-color: #f0f0f0;
+            border-color: #bbb;
+        }
+        
+        .search-condition-area .car-info-btn .plus-icon {
+            margin-right: 5px;
+            font-weight: bold;
+            color: #4852EA;
+        }
+        
+        .search-condition-area .location-search {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            font-size: 15px;
+            color: #333;
+            text-align: left;
+            margin-bottom: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        
+        .search-condition-area .location-search:hover {
+            background-color: #f0f0f0;
+            border-color: #bbb;
+        }
+        
+        .search-condition-area .location-search .icon {
+            margin-right: 8px;
+            color: #888;
+        }
+        
+        .search-condition-area .current-location {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            background-color: #f9f9f9;
+            font-size: 14px;
+            color: #555;
+            text-align: center;
+            margin: 15px auto 10px auto;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .search-condition-area .current-location:hover {
+            background-color: #f0f0f0;
+            border-color: #bbb;
+        }
+        
+        .search-condition-area .current-location .icon {
+            font-size: 18px;
+            margin-right: 5px;
+            color: #4852EA;
+        }
+        
+        .search-condition-area .date-picker {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px 0;
+            background-color: #f9f9f9;
+        }
+        
+        .date-picker .nav-arrow {
+            font-size: 18px;
+            padding: 0 10px;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .date-picker .nav-arrow:hover {
+            opacity: 0.6;
+        }
+        
+        .date-picker .date-list {
+            display: flex;
+            flex-grow: 1;
+            justify-content: space-around;
+            overflow-x: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+            scroll-snap-type: x mandatory;
+        }
+        
+        .date-picker .date-list::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .date-picker .date-item {
+            text-align: center;
+            padding: 5px 8px;
+            cursor: pointer;
+            flex-shrink: 0;
+            width: calc(100% / 7);
+            box-sizing: border-box;
+            scroll-snap-align: start;
+            transition: all 0.2s;
+            border-radius: 8px;
+        }
+        
+        .date-picker .date-item:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .date-picker .date-item.selected {
+            background-color: #4852EA;
+            color: white;
+        }
+        
+        .date-picker .day {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .provider-list-area {
+            padding: 15px;
+            min-height: 300px;
+            max-height: calc(100vh - 400px);
+            overflow-y: auto;
+        }
+        
+        .provider-list-area .placeholder {
+            text-align: center;
+            color: #888;
+            padding: 50px 0;
+            font-size: 14px;
+        }
+        
+        .provider-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .provider-item:hover {
+            transform: translateX(5px);
+        }
+        
+        .provider-item:last-child {
+            border-bottom: none;
+        }
+        
+        .provider-item .thumbnail {
+            width: 80px;
+            height: 80px;
+            background-color: #e0e0e0;
+            border-radius: 8px;
+            flex-shrink: 0;
+            margin-right: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #666;
+            font-size: 12px;
+            overflow: hidden;
+        }
+        
+        .provider-item .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .provider-item .info {
+            flex-grow: 1;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .provider-item .info .top-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .provider-item .info .top-line .name {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .provider-item .info .top-line .distance {
+            color: #888;
+            font-size: 13px;
+        }
+        
+        .provider-item .info .address,
+        .provider-item .info .phone {
+            color: #666;
+            margin-bottom: 3px;
+            font-size: 14px;
+        }
+        
+        .provider-item .info .tags {
+            margin-top: 8px;
+        }
+
+        .provider-item .info .tags > div {
+            margin-bottom: 4px;
+            font-size: 13px;
+            color: #333;
+        }
+
+        .provider-item .info .tags .tag-label {
+            margin-right: 5px;
+        }
+
+        .provider-item .info .tags span {
+            background-color: #e6e7fb;
+            padding: 2px 6px;
+            border-radius: 4px;
+            white-space: nowrap;
+            color: #4852EA;
+            margin-right: 3px;
+        }
+        
+        .provider-item .info .carpos-mark {
+            background-color: #007bff;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-right: 5px;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background-color: #ffffff;
+            width: 420px;
+            max-width: 100%;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            padding: 20px;
+            box-sizing: border-box;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-out;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-content.active {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-header .close-btn {
+            font-size: 24px;
+            cursor: pointer;
+            color: #888;
+            transition: color 0.2s;
+        }
+        
+        .modal-header .close-btn:hover {
+            color: #333;
+        }
+        
+        .modal-body label {
+            display: block;
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .modal-body select,
+        .modal-body .warning-box {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 15px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            background-color: #f9f9f9;
+        }
+        
+        .modal-body select:focus {
+            outline: none;
+            border-color: #4852EA;
+            box-shadow: 0 0 0 2px rgba(72, 82, 234, 0.1);
+        }
+        
+        .modal-body .option-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .modal-body .option-group button {
+            flex-grow: 1;
+            flex-basis: calc(33.333% - 10px);
+            max-width: calc(33.333% - 10px);
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            box-sizing: border-box;
+            transition: all 0.2s;
+        }
+        
+        .modal-body .option-group button:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .modal-body .option-group button.selected {
+            background-color: #4852EA;
+            color: white;
+            border-color: #4852EA;
+        }
+        
+        .modal-body hr {
+            border: none;
+            border-top: 1px dashed #eee;
+            margin: 20px 0;
+        }
+        
+        .modal-body .submit-btn {
+            background-color: #ccc;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: not-allowed;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.2s;
+        }
+        
+        .modal-body .submit-btn.active {
+            background-color: #4852EA;
+            cursor: pointer;
+        }
+        
+        .modal-body .submit-btn.active:hover {
+            background-color: #3a42d8;
+        }
+        
+        .modal-body .warning-box {
+            background-color: #fff3e0;
+            border-color: #f57c00;
+            color: #f57c00;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            padding: 15px;
+        }
+        
+        .modal-body .warning-box .icon {
+            font-size: 20px;
+            margin-right: 10px;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+
+        /* Address Search Modal Specific Styles */
+        .address-modal-content {
+            background-color: #ffffff;
+            width: 420px;
+            max-width: 100%;
+            height: 80%;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            padding: 20px;
+            box-sizing: border-box;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-out;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .address-modal-content.active {
+            transform: translateY(0);
+        }
+        
+        .address-search-input-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        
+        .address-search-input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.2s;
+        }
+        
+        .address-search-input:focus {
+            outline: none;
+            border-color: #4852EA;
+            box-shadow: 0 0 0 2px rgba(72, 82, 234, 0.1);
+        }
+        
+        .address-search-input-container .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+            cursor: pointer;
+        }
+        
+        .address-search-input-container .clear-icon {
+            position: absolute;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+            cursor: pointer;
+            font-size: 18px;
+            display: none;
+        }
+        
+        .address-modal-body {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        .address-modal-body .search-result-info {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .address-modal-body .address-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .address-modal-body .address-item:hover {
+            background-color: #f8f8f8;
+        }
+        
+        .address-modal-body .address-item:last-child {
+            border-bottom: none;
+        }
+        
+        .address-modal-body .address-item .type {
+            font-size: 12px;
+            color: #4852EA;
+            background-color: #e6e7fb;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 5px;
+            display: inline-block;
+        }
+        
+        .address-modal-body .address-item .main-address {
+            font-weight: bold;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        
+        .address-modal-body .address-item .sub-address {
+            font-size: 13px;
+            color: #888;
+            margin-top: 3px;
+        }
+        
+        .address-modal-body .address-item .more-info {
+            font-size: 12px;
+            color: #4852EA;
+            margin-top: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-wrapper">
+        <div class="header">
+            <span class="back-btn" onclick="goBack()">‹</span>
+            <span class="title">검사 가능한 내 주변 카센터 찾기</span>
+        </div>
+
+        <div class="search-condition-area">
+            <div class="car-info-btn" onclick="openCarInfoModal()">
+                <span class="plus-icon">+</span> <span id="carInfoDisplayText">내 차 정보 등록하기</span>
+            </div>
+            <div class="location-search" onclick="openAddressSearchModal()">
+                <span class="icon">📍</span> <span id="selectedAddressText">주소 및 건물명 검색</span>
+            </div>
+            <div class="current-location" onclick="updateCurrentLocation()">
+                <span class="icon">◎</span> <span id="currentLocationText">현재 위치로 설정</span>
+            </div>
+            <div class="date-picker">
+                <span class="nav-arrow" onclick="scrollDates(-1)">‹</span>
+                <div class="date-list" id="dateList"></div>
+                <span class="nav-arrow" onclick="scrollDates(1)">›</span>
+            </div>
+        </div>
+
+        <div class="provider-list-area" id="providerListArea">
+            <div class="placeholder" id="providerPlaceholder">
+                조건 입력 완료 시, 하단에 목록이 실시간으로 표시됩니다.
+            </div>
+        </div>
+    </div>
+
+    <!-- 내 차 정보 등록 모달 -->
+    <div class="modal-overlay" id="carInfoModal">
+        <div class="modal-content" id="carInfoModalContent">
+            <div class="modal-header">
+                <span>내 차 정보 등록</span>
+                <span class="close-btn" onclick="closeCarInfoModal()">×</span>
+            </div>
+            <div class="modal-body">
+                <label for="car-type">차량 유형을 선택해주세요 (필수)</label>
+                <select id="car-type" onchange="toggleConditionalFields()">
+                    <option value="">선택</option>
+                    <option value="compact">경차</option>
+                    <option value="small">소형차</option>
+                    <option value="medium">중형차</option>
+                    <option value="large-bus">대형 승합</option>
+                    <option value="large-truck-10t">대형 화물(10t 이하)</option>
+                    <option value="large-truck-15t">대형 화물(10~15t 미만)</option>
+                    <option value="super-large-truck">초대형 화물</option>
+                </select>
+
+                <hr>
+
+                <div id="conditional-fields">
+                    <label>차종 (필수)</label>
+                    <div class="option-group" id="car-type-group">
+                        <button onclick="selectOption(this)" data-value="sedan">승용차</button>
+                        <button onclick="selectOption(this)" data-value="suv">SUV</button>
+                        <button onclick="selectOption(this)" data-value="van">승합차</button>
+                        <button onclick="selectOption(this)" data-value="truck">트럭</button>
+                    </div>
+
+                    <label>차량 크기 (필수)</label>
+                    <div class="option-group" id="car-size-group">
+                        <button onclick="selectOption(this)" data-value="micro">경형</button>
+                        <button onclick="selectOption(this)" data-value="small">소형</button>
+                        <button onclick="selectOption(this)" data-value="compact">준중형</button>
+                        <button onclick="selectOption(this)" data-value="midsize">중형</button>
+                        <button onclick="selectOption(this)" data-value="fullsize">대형</button>
+                    </div>
+
+                    <label>연료 (필수)</label>
+                    <div class="option-group" id="fuel-type-group">
+                        <button onclick="selectOption(this)" data-value="gasoline">가솔린(휘발유)</button>
+                        <button onclick="selectOption(this)" data-value="diesel">디젤</button>
+                        <button onclick="selectOption(this)" data-value="lpg">LPG</button>
+                        <button onclick="selectOption(this)" data-value="hybrid">하이브리드</button>
+                        <button onclick="selectOption(this)" data-value="electric">전기</button>
+                    </div>
+                </div>
+
+                <div class="warning-box hidden" id="warningMessage">
+                    <span class="icon">⚠️</span>
+                    <span>중형차 이상은 카센터에서 검사 대행이 어렵습니다.<br>가까운 검사소에서 예약하세요.</span>
+                </div>
+                
+                <button class="submit-btn" id="modalSubmitBtn" onclick="handleSubmitCarInfo()">완료</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 주소 검색 모달 -->
+    <div class="modal-overlay" id="addressSearchModal">
+        <div class="address-modal-content" id="addressModalContent">
+            <div class="modal-header">
+                <span>주소 검색</span>
+                <span class="close-btn" onclick="closeAddressSearchModal()">×</span>
+            </div>
+            <div class="address-search-input-container">
+                <input type="text" class="address-search-input" id="addressSearchInput" 
+                       placeholder="주소 및 건물명 검색" onkeyup="toggleClearIcon(this)">
+                <span class="clear-icon" onclick="clearAddressSearchInput(this)">×</span>
+                <span class="search-icon">🔍</span>
+            </div>
+            <div class="address-modal-body">
+                <div class="search-result-info">
+                    검색결과가 많습니다. 검색어에 아래와 같은 조합을 이용하시면 더욱 정확한 결과가 검색됩니다.<br>
+                    '도로명+건물번호', '지역명+지번', '지역명+건물명(아파트명)', '사서함명+번호'
+                </div>
+                <div class="address-item" onclick="selectAddress('서울시 강남구 테헤란로 123 (역삼동)')">
+                    <span class="type">도로명</span> 서울시 강남구 테헤란로 123 (역삼동)
+                    <div class="main-address">06234</div>
+                    <div class="sub-address">서울시 강남구 테헤란로 123</div>
+                    <div class="more-info">외 지번주소 1건 더보기</div>
+                </div>
+                <div class="address-item" onclick="selectAddress('부산시 해운대구 마린시티2로 33 (우동)')">
+                    <span class="type">도로명</span> 부산시 해운대구 마린시티2로 33 (우동)
+                    <div class="main-address">48120</div>
+                    <div class="sub-address">부산시 해운대구 마린시티2로 33</div>
+                    <div class="more-info">외 지번주소 1건 더보기</div>
+                </div>
+                <div class="address-item" onclick="selectAddress('대구시 수성구 동대구로 386 (범어동)')">
+                    <span class="type">도로명</span> 대구시 수성구 동대구로 386 (범어동)
+                    <div class="main-address">42159</div>
+                    <div class="sub-address">대구시 수성구 동대구로 386</div>
+                    <div class="more-info">외 지번주소 1건 더보기</div>
+                </div>
+                <div class="address-item" onclick="selectAddress('인천시 연수구 송도과학로 32 (송도동)')">
+                    <span class="type">도로명</span> 인천시 연수구 송도과학로 32 (송도동)
+                    <div class="main-address">21984</div>
+                    <div class="sub-address">인천시 연수구 송도과학로 32</div>
+                    <div class="more-info">외 지번주소 1건 더보기</div>
+                </div>
+                <div class="address-item" onclick="selectAddress('광주시 서구 상무대로 773 (치평동)')">
+                    <span class="type">도로명</span> 광주시 서구 상무대로 773 (치평동)
+                    <div class="main-address">61965</div>
+                    <div class="sub-address">광주시 서구 상무대로 773</div>
+                    <div class="more-info">외 지번주소 1건 더보기</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 검색 조건 상태 관리
+        let searchConditions = {
+            carInfo: false,
+            location: false,
+            date: false
+        };
+
+        let loadedItemCount = 0;
+        let currentDateIndex = 0;
+        const totalDatesToShow = 7;
+        let isLoadingMore = false;
+
+        // 뒤로가기 기능
+        function goBack() {
+            window.history.back();
+        }
+
+        // 날짜 선택기 생성
+        function generateDates() {
+            const dateListContainer = document.getElementById('dateList');
+            dateListContainer.innerHTML = '';
+            const today = new Date();
+            const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+
+            const allDates = [];
+            for (let i = 0; i < 30; i++) {
+                const date = new Date(today);
+                date.setDate(today.getDate() + i);
+                allDates.push(date);
+            }
+
+            for (let i = 0; i < totalDatesToShow; i++) {
+                const date = allDates[currentDateIndex + i];
+                if (!date) break;
+
+                const day = daysOfWeek[date.getDay()];
+                const dayNum = date.getDate();
+
+                const dateItem = document.createElement('div');
+                dateItem.classList.add('date-item');
+                dateItem.dataset.date = date.toISOString().split('T')[0];
+                
+                if (i === 0 && currentDateIndex === 0) {
+                    dateItem.classList.add('selected');
+                    searchConditions.date = true;
+                }
+
+                dateItem.innerHTML = `<div class="day">${day}</div><div>${dayNum}</div>`;
+                dateItem.addEventListener('click', () => {
+                    document.querySelectorAll('.date-item').forEach(item => item.classList.remove('selected'));
+                    dateItem.classList.add('selected');
+                    searchConditions.date = true;
+                    checkAndRenderList();
+                    saveSearchState();
+                });
+                dateListContainer.appendChild(dateItem);
+            }
+        }
+
+        // 날짜 좌우 스크롤
+        function scrollDates(direction) {
+            const totalAvailableDates = 30;
+            let newIndex = currentDateIndex + direction;
+
+            if (newIndex < 0) {
+                newIndex = 0;
+            } else if (newIndex > totalAvailableDates - totalDatesToShow) {
+                newIndex = totalAvailableDates - totalDatesToShow;
+            }
+
+            if (newIndex !== currentDateIndex) {
+                currentDateIndex = newIndex;
+                generateDates();
+                saveSearchState();
+            }
+        }
+
+        // 내 차 정보 등록 모달 함수
+        function openCarInfoModal() {
+            const modal = document.getElementById('carInfoModal');
+            const modalContent = document.getElementById('carInfoModalContent');
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modalContent.classList.add('active');
+            }, 10);
+            validateCarInfoForm();
+        }
+
+        function closeCarInfoModal() {
+            const modalContent = document.getElementById('carInfoModalContent');
+            modalContent.classList.remove('active');
+            setTimeout(() => {
+                document.getElementById('carInfoModal').style.display = 'none';
+            }, 300);
+        }
+
+        function toggleConditionalFields() {
+            const carTypeSelect = document.getElementById('car-type');
+            const conditionalFields = document.getElementById('conditional-fields');
+            const warningMessage = document.getElementById('warningMessage');
+            const submitBtn = document.getElementById('modalSubmitBtn');
+            const selectedValue = carTypeSelect.value;
+
+            if (['compact', 'small'].includes(selectedValue)) {
+                conditionalFields.classList.remove('hidden');
+                warningMessage.classList.add('hidden');
+                submitBtn.textContent = '완료';
+            } else if (selectedValue) {
+                conditionalFields.classList.add('hidden');
+                warningMessage.classList.remove('hidden');
+                submitBtn.textContent = '내 근처 검사소 찾기';
+                document.querySelectorAll('#conditional-fields .option-group button.selected').forEach(btn => {
+                    btn.classList.remove('selected');
+                });
+            } else {
+                conditionalFields.classList.remove('hidden');
+                warningMessage.classList.add('hidden');
+                submitBtn.textContent = '완료';
+            }
+            validateCarInfoForm();
+        }
+
+        function selectOption(button) {
+            const parentGroup = button.closest('.option-group');
+            parentGroup.querySelectorAll('button').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            button.classList.add('selected');
+            validateCarInfoForm();
+        }
+
+        function validateCarInfoForm() {
+            const carTypeSelect = document.getElementById('car-type');
+            const carTypeSelected = carTypeSelect.value !== '';
+            const carTypeGroupSelected = document.querySelector('#car-type-group .selected');
+            const carSizeGroupSelected = document.querySelector('#car-size-group .selected');
+            const fuelTypeGroupSelected = document.querySelector('#fuel-type-group .selected');
+            const submitBtn = document.getElementById('modalSubmitBtn');
+
+            if (!['compact', 'small'].includes(carTypeSelect.value) && carTypeSelect.value !== '') {
+                submitBtn.classList.add('active');
+                return;
+            }
+
+            if (carTypeSelected && carTypeGroupSelected && carSizeGroupSelected && fuelTypeGroupSelected) {
+                submitBtn.classList.add('active');
+            } else {
+                submitBtn.classList.remove('active');
+            }
+        }
+
+        function handleSubmitCarInfo() {
+            if (!document.getElementById('modalSubmitBtn').classList.contains('active')) {
+                return;
+            }
+            
+            const carTypeSelect = document.getElementById('car-type');
+            const carInfoDisplayText = document.getElementById('carInfoDisplayText');
+            const selectedValue = carTypeSelect.value;
+
+            if (!['compact', 'small'].includes(selectedValue) && selectedValue) {
+                redirectToInspectionSite();
+                return;
+            }
+
+            const carTypeSelected = selectedValue !== '';
+            const carTypeGroupSelected = document.querySelector('#car-type-group .selected');
+            const carSizeGroupSelected = document.querySelector('#car-size-group .selected');
+            const fuelTypeGroupSelected = document.querySelector('#fuel-type-group .selected');
+
+            if (carTypeSelected && carTypeGroupSelected && carSizeGroupSelected && fuelTypeGroupSelected) {
+                const selectedCarType = carTypeSelect.options[carTypeSelect.selectedIndex].text;
+                const selectedCarModel = carTypeGroupSelected.textContent;
+                const selectedCarSize = carSizeGroupSelected.textContent;
+                const selectedFuelType = fuelTypeGroupSelected.textContent;
+
+                carInfoDisplayText.textContent = `${selectedCarType} | ${selectedCarModel} | ${selectedCarSize} | ${selectedFuelType}`;
+                
+                closeCarInfoModal();
+                searchConditions.carInfo = true;
+                checkAndRenderList();
+                saveSearchState();
+            }
+        }
+
+        function redirectToInspectionSite() {
+            console.log('중형차 이상은 카센터에서 검사 대행이 어렵습니다. 내 근처 검사소 찾기 화면으로 이동합니다.');
+            closeCarInfoModal();
+        }
+
+        function openAddressSearchModal() {
+            const modal = document.getElementById('addressSearchModal');
+            const modalContent = document.getElementById('addressModalContent');
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modalContent.classList.add('active');
+            }, 10);
+        }
+
+        function closeAddressSearchModal() {
+            const modalContent = document.getElementById('addressModalContent');
+            modalContent.classList.remove('active');
+            setTimeout(() => {
+                document.getElementById('addressSearchModal').style.display = 'none';
+            }, 300);
+        }
+
+        function toggleClearIcon(input) {
+            const clearIcon = input.parentElement.querySelector('.clear-icon');
+            if (input.value.length > 0) {
+                clearIcon.style.display = 'block';
+            } else {
+                clearIcon.style.display = 'none';
+            }
+        }
+
+        function clearAddressSearchInput(icon) {
+            const input = icon.parentElement.querySelector('.address-search-input');
+            input.value = '';
+            toggleClearIcon(input);
+        }
+
+        function selectAddress(address) {
+            document.getElementById('selectedAddressText').textContent = address;
+            document.getElementById('currentLocationText').textContent = '현재 위치로 설정';
+            searchConditions.location = true;
+            checkAndRenderList();
+            saveSearchState();
+            closeAddressSearchModal();
+        }
+
+        function updateCurrentLocation() {
+            const dummyCurrentLocation = "서울시 강남구 역삼동 700-1 (현재 위치)";
+            document.getElementById('selectedAddressText').textContent = dummyCurrentLocation;
+            searchConditions.location = true;
+            checkAndRenderList();
+            saveSearchState();
+        }
+
+        // 수정된 더미 데이터: hours 제거, phone 추가
+        const dummyProviders = [
+            { name: "번개손 카센터", distance: "3km", address: "서울시 강남구 테헤란로 123", phone: "02-111-1111", carposMark: true, specialties: ["수입차", "급속충전"], licenses: ["정비기능사"], services: ["워셔액교체", "엔진룸청소"] },
+            { name: "뚝딱이 정비소", distance: "5km", address: "서울시 서초구 강남대로 456", phone: "02-222-2222", carposMark: false, specialties: ["국산차", "뭐든고쳐드림"], licenses: ["자동차정비기사"], services: ["에어컨필터교체", "실내클리닝"] },
+            { name: "차박사 연구소", distance: "7km", address: "서울시 송파구 올림픽로 789", phone: "02-333-3333", carposMark: true, specialties: ["희귀차종", "맞춤진단"], licenses: ["자동차진단평가사"], services: ["EV충전시설", "소모품교체"] },
+            { name: "빵빵이 클리닉", distance: "2km", address: "서울시 영등포구 여의도동 10", phone: "02-444-4444", carposMark: false, specialties: ["소음잡는귀신", "승차감개선"], licenses: [], services: ["세차", "광택"] },
+            { name: "달려라 정비반장", distance: "4km", address: "서울시 강남구 역삼동 200", phone: "02-555-5555", carposMark: true, specialties: ["출장수리", "야간긴급출동"], licenses: ["자동차정비산업기사"], services: ["무상점검", "엔진룸청소"] },
+            { name: "엔진 속삭임", distance: "1km", address: "서울시 강남구 역삼동 1", phone: "02-666-6666", carposMark: false, specialties: ["미세조정", "연비개선"], licenses: [], services: ["워셔액교체"] },
+            { name: "휠발장", distance: "6km", address: "서울시 서초구 서초동 2", phone: "02-777-7777", carposMark: true, specialties: ["휠밸런스", "타이어교체"], licenses: ["정비기능사"], services: ["엔진룸청소"] },
+            { name: "브레이크 달인", distance: "8km", address: "서울시 송파구 잠실동 3", phone: "02-888-8888", carposMark: false, specialties: ["제동력강화", "안전운전"], licenses: [], services: [] },
+            { name: "에어컨 빵빵", distance: "9km", address: "서울시 강동구 천호동 4", phone: "02-999-9999", carposMark: true, specialties: ["여름필수", "시원한바람"], licenses: ["자동차정비기사"], services: ["세차"] },
+            { name: "오일 먹는 하마", distance: "10km", address: "서울시 광진구 구의동 5", phone: "02-101-0101", carposMark: false, specialties: ["엔진오일", "합성유교환"], licenses: [], services: ["무상점검"] },
+            { name: "찌그러진 문짝 전문", distance: "11km", address: "서울시 동대문구 장안동 6", phone: "02-112-1122", carposMark: true, specialties: ["판금도색", "새차처럼"], licenses: ["정비기능사"], services: ["워셔액교체", "실내클리닝"] },
+            { name: "삐걱삐걱 소리박멸", distance: "12km", address: "서울시 성북구 동소문동 7", phone: "02-123-1233", carposMark: false, specialties: ["하체소음", "잡소리해결"], licenses: ["자동차정비산업기사"], services: [] },
+            { name: "전기차 충전소 옆", distance: "13km", address: "서울시 은평구 응암동 8", phone: "02-134-1344", carposMark: true, specialties: ["전기차전문", "배터리진단"], licenses: [], services: ["EV충전시설"] },
+            { name: "수입차 눈감고 수리", distance: "14km", address: "서울시 마포구 공덕동 9", phone: "02-145-1455", carposMark: false, specialties: ["수입차전문", "부품수급"], licenses: ["자동차진단평가사"], services: ["광택"] },
+            { name: "내 차가 달라졌어요", distance: "15km", address: "서울시 용산구 한남동 10", phone: "02-156-1566", carposMark: true, specialties: ["종합검진", "성능업그레이드"], licenses: [], services: ["세차", "무상점검"] },
+            { name: "카센터계의 아이돌", distance: "16km", address: "서울시 종로구 종로1가 11", phone: "02-167-1677", carposMark: false, specialties: ["친절상담", "고객만족1위"], licenses: ["정비기능사"], services: ["워셔액교체"] },
+            { name: "타이어는 내가 왕", distance: "17km", address: "서울시 중구 을지로 12", phone: "02-178-1788", carposMark: true, specialties: ["펑크수리", "위치교환"], licenses: ["타이어전문가"], services: ["엔진룸청소"] },
+            { name: "배터리 살려드림", distance: "18km", address: "서울시 서대문구 신촌동 13", phone: "02-189-1899", carposMark: false, specialties: ["방전긴급출동", "배터리교체"], licenses: ["자동차정비기사"], services: [] },
+            { name: "차량 검사 대행 전문가", distance: "19km", address: "서울시 강서구 화곡동 14", phone: "02-190-1900", carposMark: true, specialties: ["검사대행", "합격보장"], licenses: [], services: ["광택"] },
+            { name: "고객님 지갑 지킴이", distance: "20km", address: "서울시 양천구 목동 15", phone: "02-201-2011", carposMark: false, specialties: ["합리적가격", "불필요수리없음"], licenses: ["자동차정비산업기사"], services: ["무상점검"] }
+        ];
+
+        // 수정된 업체 목록 렌더링 함수
+        function renderProviderList(providers) {
+            const providerListArea = document.getElementById('providerListArea');
+            
+            providers.forEach(provider => {
+                const providerItem = document.createElement('div');
+                providerItem.classList.add('provider-item');
+                
+                providerItem.addEventListener('click', () => {
+                    sessionStorage.setItem('selectedCarInfoForDetail', document.getElementById('carInfoDisplayText').textContent);
+                    const url = `detail-01.html?id=${encodeURIComponent(provider.name)}`;
+                    window.location.assign(url);
+                });
+                
+                // 조건부 태그 HTML 생성
+                const specialtiesHtml = `<div><span class="tag-label">전문분야:</span> ${provider.specialties.map(tag => `<span>#${tag}</span>`).join(' ')}</div>`;
+                const licensesHtml = (provider.licenses && provider.licenses.length > 0) ? `<div><span class="tag-label">자격증:</span> ${provider.licenses.map(tag => `<span>#${tag}</span>`).join(' ')}</div>` : '';
+                const servicesHtml = (provider.services && provider.services.length > 0) ? `<div><span class="tag-label">부가서비스:</span> ${provider.services.map(tag => `<span>#${tag}</span>`).join(' ')}</div>` : '';
+
+                providerItem.innerHTML = `
+                    <div class="thumbnail">업체사진</div>
+                    <div class="info">
+                        <div class="top-line">
+                            <div>
+                                ${provider.carposMark ? '<span class="carpos-mark">카포스 마크</span>' : ''}
+                                <span class="name">${provider.name}</span>
+                            </div>
+                            <span class="distance">${provider.distance}</span>
+                        </div>
+                        <div class="address">${provider.address}</div>
+                        <div class="phone">${provider.phone}</div>
+                        <div class="tags">
+                            ${specialtiesHtml}
+                            ${licensesHtml}
+                            ${servicesHtml}
+                        </div>
+                    </div>
+                `;
+                providerListArea.appendChild(providerItem);
+            });
+        }
+
+        function checkAndRenderList() {
+            const providerListArea = document.getElementById('providerListArea');
+            let placeholder = document.getElementById('providerPlaceholder');
+
+            if (searchConditions.carInfo && searchConditions.location && searchConditions.date) {
+                if (placeholder) {
+                    placeholder.classList.add('hidden');
+                }
+                providerListArea.innerHTML = ''; // 이전 결과 초기화
+                renderProviderList(dummyProviders.slice(0, 10));
+                loadedItemCount = 10;
+            } else {
+                const existingItems = providerListArea.querySelectorAll('.provider-item');
+                existingItems.forEach(item => item.remove());
+                if (placeholder) {
+                    placeholder.classList.remove('hidden');
+                }
+                loadedItemCount = 0;
+            }
+        }
+
+        function saveSearchState() {
+            const state = {
+                carInfoText: document.getElementById('carInfoDisplayText').textContent,
+                selectedAddress: document.getElementById('selectedAddressText').textContent,
+                selectedDate: document.querySelector('.date-item.selected') ? 
+                    document.querySelector('.date-item.selected').dataset.date : null,
+                currentDateIndex: currentDateIndex,
+                searchConditions: searchConditions
+            };
+            sessionStorage.setItem('search01_searchPageState', JSON.stringify(state));
+        }
+
+        function loadSearchState() {
+            const savedState = sessionStorage.getItem('search01_searchPageState');
+            if (savedState) {
+                const state = JSON.parse(savedState);
+                
+                document.getElementById('carInfoDisplayText').textContent = state.carInfoText;
+                document.getElementById('selectedAddressText').textContent = state.selectedAddress;
+                currentDateIndex = state.currentDateIndex;
+                searchConditions = state.searchConditions;
+
+                generateDates();
+                if (state.selectedDate) {
+                    const selectedDateItem = document.querySelector(`.date-item[data-date="${state.selectedDate}"]`);
+                    if (selectedDateItem) {
+                        document.querySelectorAll('.date-item').forEach(item => item.classList.remove('selected'));
+                        selectedDateItem.classList.add('selected');
+                    }
+                }
+                checkAndRenderList();
+            } else {
+                generateDates();
+                checkAndRenderList();
+            }
+        }
+
+        const providerListArea = document.getElementById('providerListArea');
+        providerListArea.addEventListener('scroll', () => {
+            if (isLoadingMore) return;
+            
+            if (providerListArea.scrollTop + providerListArea.clientHeight >= providerListArea.scrollHeight - 100) {
+                if (loadedItemCount < dummyProviders.length && searchConditions.carInfo && searchConditions.location && searchConditions.date) {
+                    isLoadingMore = true;
+                    setTimeout(() => { // Simulate network latency
+                        const nextItems = dummyProviders.slice(loadedItemCount, loadedItemCount + 10);
+                        renderProviderList(nextItems);
+                        loadedItemCount += nextItems.length;
+                        isLoadingMore = false;
+                    }, 300);
+                }
+            }
+        });
+
+        window.addEventListener('load', loadSearchState);
+    </script>
+</body>
+</html>
