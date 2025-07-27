@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>검사 가능한 내 주변 카센터 찾기 - 차바</title>
+    <title>내 주변 카센터 찾기 - 차바</title>
     <style>
         * {
             box-sizing: border-box;
@@ -619,7 +619,7 @@
     <div class="mobile-wrapper">
         <div class="header">
             <span class="back-btn" onclick="goBack()">‹</span>
-            <span class="title">검사 가능한 내 주변 카센터 찾기</span>
+            <span class="title">내 주변 카센터 찾기</span>
         </div>
 
         <div class="search-condition-area">
@@ -698,7 +698,7 @@
 
                 <div class="warning-box hidden" id="warningMessage">
                     <span class="icon">⚠️</span>
-                    <span>중형차 이상은 카센터에서 검사 대행이 어렵습니다.<br>가까운 검사소에서 예약하세요.</span>
+                    <span>중형차 이상 정비는 차바에서 정비가 어렵습니다.<br>빠른 시일내 준비할 수 있도록 하겠습니다.<br>감사합니다.</span>
                 </div>
                 
                 <button class="submit-btn" id="modalSubmitBtn" onclick="handleSubmitCarInfo()">완료</button>
@@ -869,7 +869,7 @@
             } else if (selectedValue) {
                 conditionalFields.classList.add('hidden');
                 warningMessage.classList.remove('hidden');
-                submitBtn.textContent = '내 근처 검사소 찾기';
+                submitBtn.textContent = '닫기';
                 document.querySelectorAll('#conditional-fields .option-group button.selected').forEach(btn => {
                     btn.classList.remove('selected');
                 });
@@ -945,7 +945,7 @@
         }
 
         function redirectToInspectionSite() {
-            console.log('중형차 이상은 카센터에서 검사 대행이 어렵습니다. 내 근처 검사소 찾기 화면으로 이동합니다.');
+            console.log('중형차 이상은 카센터에서 검사 대행이 어렵습니다. 홈 화면으로 이동합니다.');
             closeCarInfoModal();
         }
 

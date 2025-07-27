@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>검사 가능한 내 주변 카센터 찾기 - 차바</title>
+    <title>내 주변 검사소 찾기 - 차바</title>
     <style>
         * {
             box-sizing: border-box;
@@ -395,8 +395,7 @@
             font-weight: 500;
         }
         
-        .modal-body select,
-        .modal-body .warning-box {
+        .modal-body select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
@@ -476,21 +475,6 @@
         
         .modal-body .submit-btn.active:hover {
             background-color: #3a42d8;
-        }
-        
-        .modal-body .warning-box {
-            background-color: #fff3e0;
-            border-color: #f57c00;
-            color: #f57c00;
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-            padding: 15px;
-        }
-        
-        .modal-body .warning-box .icon {
-            font-size: 20px;
-            margin-right: 10px;
         }
         
         .hidden {
@@ -619,7 +603,7 @@
     <div class="mobile-wrapper">
         <div class="header">
             <span class="back-btn" onclick="goBack()">‹</span>
-            <span class="title">검사 가능한 내 주변 카센터 찾기</span>
+            <span class="title">내 주변 검사소 찾기</span>
         </div>
 
         <div class="search-condition-area">
@@ -627,10 +611,10 @@
                 <span class="plus-icon">+</span> <span id="carInfoDisplayText">내 차 정보 등록하기</span>
             </div>
             <div class="location-search" onclick="openAddressSearchModal()">
-                <span class="icon">📍</span> <span id="selectedAddressText">주소 및 건물명 검색</span>
+                <span class="icon">🌏</span> <span id="selectedAddressText">주소 및 건물명 검색</span>
             </div>
             <div class="current-location" onclick="updateCurrentLocation()">
-                <span class="icon">◎</span> <span id="currentLocationText">현재 위치로 설정</span>
+                <span class="icon">📍</span> <span id="currentLocationText">현재 위치로 찾기</span>
             </div>
             <div class="date-picker">
                 <span class="nav-arrow" onclick="scrollDates(-1)">‹</span>
@@ -657,13 +641,13 @@
                 <label for="car-type">차량 유형을 선택해주세요 (필수)</label>
                 <select id="car-type" onchange="toggleConditionalFields()">
                     <option value="">선택</option>
-                    <option value="compact">경차</option>
-                    <option value="small">소형차</option>
-                    <option value="medium">중형차</option>
-                    <option value="large-bus">대형 승합</option>
+                    <option value="compact">경차(경형)</option>
+                    <option value="small">소형차(10인승 이하 / 1t 이하)</option>
+                    <option value="medium">중형차(11인승 이상 / 2.5t 이하)</option>
+                    <option value="large-bus">대형 승합(35인승 이상)</option>
                     <option value="large-truck-10t">대형 화물(10t 이하)</option>
                     <option value="large-truck-15t">대형 화물(10~15t 미만)</option>
-                    <option value="super-large-truck">초대형 화물</option>
+                    <option value="super-large-truck">초대형 화물(15t 이상)</option>
                 </select>
 
                 <hr>
@@ -694,11 +678,6 @@
                         <button onclick="selectOption(this)" data-value="hybrid">하이브리드</button>
                         <button onclick="selectOption(this)" data-value="electric">전기</button>
                     </div>
-                </div>
-
-                <div class="warning-box hidden" id="warningMessage">
-                    <span class="icon">⚠️</span>
-                    <span>중형차 이상은 카센터에서 검사 대행이 어렵습니다.<br>가까운 검사소에서 예약하세요.</span>
                 </div>
                 
                 <button class="submit-btn" id="modalSubmitBtn" onclick="handleSubmitCarInfo()">완료</button>
@@ -858,25 +837,18 @@
         function toggleConditionalFields() {
             const carTypeSelect = document.getElementById('car-type');
             const conditionalFields = document.getElementById('conditional-fields');
-            const warningMessage = document.getElementById('warningMessage');
-            const submitBtn = document.getElementById('modalSubmitBtn');
             const selectedValue = carTypeSelect.value;
 
             if (['compact', 'small'].includes(selectedValue)) {
                 conditionalFields.classList.remove('hidden');
-                warningMessage.classList.add('hidden');
-                submitBtn.textContent = '완료';
             } else if (selectedValue) {
                 conditionalFields.classList.add('hidden');
-                warningMessage.classList.remove('hidden');
-                submitBtn.textContent = '내 근처 검사소 찾기';
+                // 중형차 이상 선택 시 추가 필드 초기화
                 document.querySelectorAll('#conditional-fields .option-group button.selected').forEach(btn => {
                     btn.classList.remove('selected');
                 });
             } else {
                 conditionalFields.classList.remove('hidden');
-                warningMessage.classList.add('hidden');
-                submitBtn.textContent = '완료';
             }
             validateCarInfoForm();
         }
@@ -893,15 +865,18 @@
         function validateCarInfoForm() {
             const carTypeSelect = document.getElementById('car-type');
             const carTypeSelected = carTypeSelect.value !== '';
-            const carTypeGroupSelected = document.querySelector('#car-type-group .selected');
-            const carSizeGroupSelected = document.querySelector('#car-size-group .selected');
-            const fuelTypeGroupSelected = document.querySelector('#fuel-type-group .selected');
             const submitBtn = document.getElementById('modalSubmitBtn');
 
-            if (!['compact', 'small'].includes(carTypeSelect.value) && carTypeSelect.value !== '') {
+            // 중형차 이상은 차량 유형만 선택하면 완료 가능
+            if (!['compact', 'small', ''].includes(carTypeSelect.value) && carTypeSelected) {
                 submitBtn.classList.add('active');
                 return;
             }
+
+            // 경차, 소형차는 모든 필드 입력 필요
+            const carTypeGroupSelected = document.querySelector('#car-type-group .selected');
+            const carSizeGroupSelected = document.querySelector('#car-size-group .selected');
+            const fuelTypeGroupSelected = document.querySelector('#fuel-type-group .selected');
 
             if (carTypeSelected && carTypeGroupSelected && carSizeGroupSelected && fuelTypeGroupSelected) {
                 submitBtn.classList.add('active');
@@ -918,35 +893,30 @@
             const carTypeSelect = document.getElementById('car-type');
             const carInfoDisplayText = document.getElementById('carInfoDisplayText');
             const selectedValue = carTypeSelect.value;
+            const selectedCarType = carTypeSelect.options[carTypeSelect.selectedIndex].text.split('(')[0].trim();
 
+            // 중형차 이상은 차량 유형만 표시
             if (!['compact', 'small'].includes(selectedValue) && selectedValue) {
-                redirectToInspectionSite();
-                return;
+                carInfoDisplayText.textContent = selectedCarType;
+            } else {
+                // 경차, 소형차는 전체 정보 표시
+                const carTypeGroupSelected = document.querySelector('#car-type-group .selected');
+                const carSizeGroupSelected = document.querySelector('#car-size-group .selected');
+                const fuelTypeGroupSelected = document.querySelector('#fuel-type-group .selected');
+
+                if (carTypeGroupSelected && carSizeGroupSelected && fuelTypeGroupSelected) {
+                    const selectedCarModel = carTypeGroupSelected.textContent;
+                    const selectedCarSize = carSizeGroupSelected.textContent;
+                    const selectedFuelType = fuelTypeGroupSelected.textContent;
+
+                    carInfoDisplayText.textContent = `${selectedCarType}>${selectedCarModel}>${selectedCarSize}>${selectedFuelType}`;
+                }
             }
-
-            const carTypeSelected = selectedValue !== '';
-            const carTypeGroupSelected = document.querySelector('#car-type-group .selected');
-            const carSizeGroupSelected = document.querySelector('#car-size-group .selected');
-            const fuelTypeGroupSelected = document.querySelector('#fuel-type-group .selected');
-
-            if (carTypeSelected && carTypeGroupSelected && carSizeGroupSelected && fuelTypeGroupSelected) {
-                const selectedCarType = carTypeSelect.options[carTypeSelect.selectedIndex].text;
-                const selectedCarModel = carTypeGroupSelected.textContent;
-                const selectedCarSize = carSizeGroupSelected.textContent;
-                const selectedFuelType = fuelTypeGroupSelected.textContent;
-
-                carInfoDisplayText.textContent = `${selectedCarType} | ${selectedCarModel} | ${selectedCarSize} | ${selectedFuelType}`;
-                
-                closeCarInfoModal();
-                searchConditions.carInfo = true;
-                checkAndRenderList();
-                saveSearchState();
-            }
-        }
-
-        function redirectToInspectionSite() {
-            console.log('중형차 이상은 카센터에서 검사 대행이 어렵습니다. 내 근처 검사소 찾기 화면으로 이동합니다.');
+            
             closeCarInfoModal();
+            searchConditions.carInfo = true;
+            checkAndRenderList();
+            saveSearchState();
         }
 
         function openAddressSearchModal() {
@@ -983,7 +953,7 @@
 
         function selectAddress(address) {
             document.getElementById('selectedAddressText').textContent = address;
-            document.getElementById('currentLocationText').textContent = '현재 위치로 설정';
+            document.getElementById('currentLocationText').textContent = '현재 위치로 찾기';
             searchConditions.location = true;
             checkAndRenderList();
             saveSearchState();
@@ -998,238 +968,232 @@
             saveSearchState();
         }
 
-        // 홈 화면과 동일한 구조의 더미 데이터
+        // 검사소 더미 데이터 - 영업시간 제거, 다양한 태그 적용
         const dummyProviders = [
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비1",
-                name: "번개손 카센터",
-                distance: "3km",
-                address: "서울시 강남구 테헤란로 123",
-                phone: "02-111-1111",
-                tags: ["#수입차", "#급속충전"],
-                cert: "#정비기능사",
-                extra_services: ["#워셔액교체", "#엔진룸청소"],
-                asso: true
+            // 가입 검사소 (5km 이내)
+            { 
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=검사1",
+                name: "강남자동차검사소", 
+                distance: "1km", 
+                address: "서울시 강남구 개포로 520", 
+                phone: "02-111-1111", 
+                tags: ["#픽업서비스", "#재검비용무료", "#당일검사가능"], 
+                cert: "#검사전문인증",
+                extra_services: ["#무료견적", "#예약우선"],
+                asso: true 
             },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비2",
-                name: "뚝딱이 정비소",
-                distance: "5km",
-                address: "서울시 서초구 강남대로 456",
-                phone: "02-222-2222",
-                tags: ["#국산차", "#뭐든고쳐드림"],
-                cert: "#자동차정비기사",
-                extra_services: ["#에어컨필터교체", "#실내클리닝"],
-                asso: false
+            { 
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=검사2",
+                name: "서초검사소", 
+                distance: "2km", 
+                address: "서울시 서초구 사평대로 335", 
+                phone: "02-222-2222", 
+                tags: ["#대기실완비", "#신속검사"], 
+                cert: "#교통안전공단지정",
+                extra_services: ["#주말운영", "#카드결제"],
+                asso: true 
             },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비3",
-                name: "차박사 연구소",
-                distance: "7km",
-                address: "서울시 송파구 올림픽로 789",
-                phone: "02-333-3333",
-                tags: ["#희귀차종", "#맞춤진단"],
-                cert: "#자동차진단평가사",
-                extra_services: ["#EV충전시설", "#소모품교체"],
-                asso: true
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비4",
-                name: "빵빵이 클리닉",
-                distance: "2km",
-                address: "서울시 영등포구 여의도동 10",
-                phone: "02-444-4444",
-                tags: ["#소음잡는귀신", "#승차감개선"],
+            { 
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=검사3",
+                name: "송파자동차검사소", 
+                distance: "3km", 
+                address: "서울시 송파구 위례성대로 6", 
+                phone: "02-333-3333", 
+                tags: ["#재검비용무료"], 
                 cert: "",
-                extra_services: ["#세차", "#광택"],
-                asso: false
+                extra_services: ["#예약할인", "#무료주차"],
+                asso: true 
             },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비5",
-                name: "달려라 정비반장",
-                distance: "4km",
-                address: "서울시 강남구 역삼동 200",
-                phone: "02-555-5555",
-                tags: ["#출장수리", "#야간긴급출동"],
-                cert: "#자동차정비산업기사",
-                extra_services: ["#무상점검", "#엔진룸청소"],
-                asso: true
+            { 
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=검사4",
+                name: "역삼검사소", 
+                distance: "4km", 
+                address: "서울시 강남구 언주로 508", 
+                phone: "02-444-4444", 
+                tags: ["#당일검사가능", "#예약우선", "#친절상담"], 
+                cert: "#국토교통부인증",
+                extra_services: [],
+                asso: true 
             },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비6",
-                name: "엔진 속삭임",
-                distance: "1km",
-                address: "서울시 강남구 역삼동 1",
-                phone: "02-666-6666",
-                tags: ["#미세조정", "#연비개선"],
+            { 
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=검사5",
+                name: "대치자동차검사소", 
+                distance: "5km", 
+                address: "서울시 강남구 영동대로 333", 
+                phone: "02-555-5555", 
+                tags: ["#픽업서비스"], 
                 cert: "",
-                extra_services: ["#워셔액교체"],
-                asso: false
+                extra_services: ["#정비연계", "#할인쿠폰"],
+                asso: true 
             },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비7",
-                name: "휠발장",
-                distance: "6km",
-                address: "서울시 서초구 서초동 2",
-                phone: "02-777-7777",
-                tags: ["#휠밸런스", "#타이어교체"],
-                cert: "#정비기능사",
-                extra_services: ["#엔진룸청소"],
-                asso: true
+            
+            // 미가입 검사소 (5km 이내)
+            { 
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=검사6",
+                name: "우리검사소", 
+                distance: "2km", 
+                address: "서울시 강남구 도곡로 123", 
+                phone: "02-666-6666", 
+                tags: ["#정기검사", "#종합검사"], 
+                cert: "#검사전문가",
+                extra_services: [],
+                asso: false 
             },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비8",
-                name: "브레이크 달인",
-                distance: "8km",
-                address: "서울시 송파구 잠실동 3",
-                phone: "02-888-8888",
-                tags: ["#제동력강화", "#안전운전"],
+            { 
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=검사7",
+                name: "한국자동차검사소", 
+                distance: "3km", 
+                address: "서울시 서초구 반포대로 222", 
+                phone: "02-777-7777", 
+                tags: ["#대기실완비"], 
+                cert: "",
+                extra_services: ["#무료음료", "#와이파이"],
+                asso: false 
+            },
+            { 
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=검사8",
+                name: "서울검사소", 
+                distance: "4km", 
+                address: "서울시 강남구 봉은사로 333", 
+                phone: "02-888-8888", 
+                tags: ["#빠른검사", "#전문상담"], 
+                cert: "#ISO인증",
+                extra_services: [],
+                asso: false 
+            },
+            { 
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=검사9",
+                name: "남부검사소", 
+                distance: "5km", 
+                address: "서울시 서초구 효령로 444", 
+                phone: "02-999-9999", 
+                tags: ["#당일검사가능"], 
+                cert: "",
+                extra_services: ["#발렛파킹"],
+                asso: false 
+            },
+            
+            // 추가 검사소 (거리 순)
+            { 
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=검사10",
+                name: "양재검사소", 
+                distance: "6km", 
+                address: "서울시 서초구 양재대로 555", 
+                phone: "02-101-0101", 
+                tags: ["#배출가스전문", "#구조변경"], 
+                cert: "#환경부지정",
+                extra_services: [],
+                asso: false 
+            },
+            { 
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=검사11",
+                name: "신사자동차검사소", 
+                distance: "7km", 
+                address: "서울시 강남구 압구정로 666", 
+                phone: "02-121-2121", 
+                tags: ["#픽업서비스", "#재검비용무료"], 
+                cert: "",
+                extra_services: ["#프리미엄서비스"],
+                asso: true 
+            },
+            { 
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=검사12",
+                name: "청담검사소", 
+                distance: "8km", 
+                address: "서울시 강남구 도산대로 777", 
+                phone: "02-131-3131", 
+                tags: ["#수입차전문"], 
+                cert: "#전문검사원",
+                extra_services: ["#영어상담가능"],
+                asso: false 
+            },
+            { 
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=검사13",
+                name: "방배자동차검사소", 
+                distance: "9km", 
+                address: "서울시 서초구 방배로 888", 
+                phone: "02-141-4141", 
+                tags: ["#당일검사가능", "#친절서비스"], 
                 cert: "",
                 extra_services: [],
-                asso: false
+                asso: true 
             },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비9",
-                name: "에어컨 빵빵",
-                distance: "9km",
-                address: "서울시 강동구 천호동 4",
-                phone: "02-999-9999",
-                tags: ["#여름필수", "#시원한바람"],
-                cert: "#자동차정비기사",
-                extra_services: ["#세차"],
-                asso: true
+            { 
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=검사14",
+                name: "잠실검사소", 
+                distance: "10km", 
+                address: "서울시 송파구 올림픽로 999", 
+                phone: "02-151-5151", 
+                tags: ["#대기실완비"], 
+                cert: "#우수검사소",
+                extra_services: ["#키즈존", "#휴게실"],
+                asso: false 
             },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비10",
-                name: "오일 먹는 하마",
-                distance: "10km",
-                address: "서울시 광진구 구의동 5",
-                phone: "02-101-0101",
-                tags: ["#엔진오일", "#합성유교환"],
+            { 
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=검사15",
+                name: "성남자동차검사소", 
+                distance: "11km", 
+                address: "경기도 성남시 분당구 성남대로 111", 
+                phone: "031-111-1111", 
+                tags: ["#픽업서비스", "#재검비용무료", "#당일검사가능"], 
                 cert: "",
-                extra_services: ["#무상점검"],
-                asso: false
+                extra_services: ["#대형차가능"],
+                asso: true 
             },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비11",
-                name: "찌그러진 문짝 전문",
-                distance: "11km",
-                address: "서울시 동대문구 장안동 6",
-                phone: "02-112-1122",
-                tags: ["#판금도색", "#새차처럼"],
-                cert: "#정비기능사",
-                extra_services: ["#워셔액교체", "#실내클리닝"],
-                asso: true
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비12",
-                name: "삐걱삐걱 소리박멸",
-                distance: "12km",
-                address: "서울시 성북구 동소문동 7",
-                phone: "02-123-1233",
-                tags: ["#하체소음", "#잡소리해결"],
-                cert: "#자동차정비산업기사",
+            { 
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=검사16",
+                name: "분당검사소", 
+                distance: "12km", 
+                address: "경기도 성남시 분당구 정자로 222", 
+                phone: "031-222-2222", 
+                tags: ["#신규등록", "#이전등록"], 
+                cert: "#정부공인",
                 extra_services: [],
-                asso: false
+                asso: false 
             },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비13",
-                name: "전기차 충전소 옆",
-                distance: "13km",
-                address: "서울시 은평구 응암동 8",
-                phone: "02-134-1344",
-                tags: ["#전기차전문", "#배터리진단"],
+            { 
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=검사17",
+                name: "판교자동차검사소", 
+                distance: "13km", 
+                address: "경기도 성남시 분당구 판교로 333", 
+                phone: "031-333-3333", 
+                tags: ["#예약우선"], 
                 cert: "",
-                extra_services: ["#EV충전시설"],
-                asso: true
+                extra_services: ["#IT연동서비스", "#모바일결제"],
+                asso: true 
             },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비14",
-                name: "수입차 눈감고 수리",
-                distance: "14km",
-                address: "서울시 마포구 공덕동 9",
-                phone: "02-145-1455",
-                tags: ["#수입차전문", "#부품수급"],
-                cert: "#자동차진단평가사",
-                extra_services: ["#광택"],
-                asso: false
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비15",
-                name: "내 차가 달라졌어요",
-                distance: "15km",
-                address: "서울시 용산구 한남동 10",
-                phone: "02-156-1566",
-                tags: ["#종합검진", "#성능업그레이드"],
-                cert: "",
-                extra_services: ["#세차", "#무상점검"],
-                asso: true
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비16",
-                name: "카센터계의 아이돌",
-                distance: "16km",
-                address: "서울시 종로구 종로1가 11",
-                phone: "02-167-1677",
-                tags: ["#친절상담", "#고객만족1위"],
-                cert: "#정비기능사",
-                extra_services: ["#워셔액교체"],
-                asso: false
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비17",
-                name: "타이어는 내가 왕",
-                distance: "17km",
-                address: "서울시 중구 을지로 12",
-                phone: "02-178-1788",
-                tags: ["#펑크수리", "#위치교환"],
-                cert: "#타이어전문가",
-                extra_services: ["#엔진룸청소"],
-                asso: true
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비18",
-                name: "배터리 살려드림",
-                distance: "18km",
-                address: "서울시 서대문구 신촌동 13",
-                phone: "02-189-1899",
-                tags: ["#방전긴급출동", "#배터리교체"],
-                cert: "#자동차정비기사",
+            { 
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=검사18",
+                name: "수지검사소", 
+                distance: "14km", 
+                address: "경기도 용인시 수지구 수지로 444", 
+                phone: "031-444-4444", 
+                tags: ["#당일검사가능", "#정확한검사"], 
+                cert: "#검사마스터",
                 extra_services: [],
-                asso: false
+                asso: false 
             },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비19",
-                name: "차량 검사 대행 전문가",
-                distance: "19km",
-                address: "서울시 강서구 화곡동 14",
-                phone: "02-190-1900",
-                tags: ["#검사대행", "#합격보장"],
+            { 
+                img: "https://placehold.co/80x80/E0E0E0/333333?text=검사19",
+                name: "광교자동차검사소", 
+                distance: "15km", 
+                address: "경기도 수원시 영통구 광교로 555", 
+                phone: "031-555-5555", 
+                tags: ["#픽업서비스", "#대기실완비"], 
                 cert: "",
-                extra_services: ["#광택"],
-                asso: true
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비20",
-                name: "고객님 지갑 지킴이",
-                distance: "20km",
-                address: "서울시 양천구 목동 15",
-                phone: "02-201-2011",
-                tags: ["#합리적가격", "#불필요수리없음"],
-                cert: "#자동차정비산업기사",
-                extra_services: ["#무상점검"],
-                asso: false
+                extra_services: ["#실시간예약"],
+                asso: true 
             }
         ];
 
-        // 홈 화면과 동일한 렌더링 함수
+        // 업체 목록 렌더링 함수 (홈 화면과 동일한 스타일)
         function renderProviderList(providers) {
             const providerListArea = document.getElementById('providerListArea');
             
             providers.forEach((provider, index) => {
                 const shopItem = document.createElement('div');
                 shopItem.classList.add('shop-item');
-                shopItem.setAttribute('onclick', `location.href='detail-01.html?id=${index+1}'`);
+                shopItem.setAttribute('onclick', `location.href='detail-02.html?id=${index+1}'`);
 
                 let tagsHtml = '';
                 // 일반 태그 (가장 중요)
@@ -1266,6 +1230,20 @@
             });
         }
 
+        // 검사소 목록 정렬 및 필터링
+        function getSortedProviders() {
+            // 가입 검사소와 미가입 검사소 분리
+            const subscribedProviders = dummyProviders.filter(p => p.asso);
+            const unsubscribedProviders = dummyProviders.filter(p => !p.asso);
+            
+            // 각각 거리순 정렬
+            subscribedProviders.sort((a, b) => parseInt(a.distance) - parseInt(b.distance));
+            unsubscribedProviders.sort((a, b) => parseInt(a.distance) - parseInt(b.distance));
+            
+            // 가입 검사소 우선, 그 다음 미가입 검사소
+            return [...subscribedProviders, ...unsubscribedProviders];
+        }
+
         function checkAndRenderList() {
             const providerListArea = document.getElementById('providerListArea');
             let placeholder = document.getElementById('providerPlaceholder');
@@ -1275,7 +1253,8 @@
                     placeholder.classList.add('hidden');
                 }
                 providerListArea.innerHTML = ''; // 이전 결과 초기화
-                renderProviderList(dummyProviders.slice(0, 10));
+                const sortedProviders = getSortedProviders();
+                renderProviderList(sortedProviders.slice(0, 10));
                 loadedItemCount = 10;
             } else {
                 const existingItems = providerListArea.querySelectorAll('.shop-item');
@@ -1296,11 +1275,11 @@
                 currentDateIndex: currentDateIndex,
                 searchConditions: searchConditions
             };
-            sessionStorage.setItem('search01_searchPageState', JSON.stringify(state));
+            sessionStorage.setItem('search02_searchPageState', JSON.stringify(state));
         }
 
         function loadSearchState() {
-            const savedState = sessionStorage.getItem('search01_searchPageState');
+            const savedState = sessionStorage.getItem('search02_searchPageState');
             if (savedState) {
                 const state = JSON.parse(savedState);
                 
@@ -1329,10 +1308,11 @@
             if (isLoadingMore) return;
             
             if (providerListArea.scrollTop + providerListArea.clientHeight >= providerListArea.scrollHeight - 100) {
-                if (loadedItemCount < dummyProviders.length && searchConditions.carInfo && searchConditions.location && searchConditions.date) {
+                const sortedProviders = getSortedProviders();
+                if (loadedItemCount < sortedProviders.length && searchConditions.carInfo && searchConditions.location && searchConditions.date) {
                     isLoadingMore = true;
                     setTimeout(() => { // Simulate network latency
-                        const nextItems = dummyProviders.slice(loadedItemCount, loadedItemCount + 10);
+                        const nextItems = sortedProviders.slice(loadedItemCount, loadedItemCount + 10);
                         renderProviderList(nextItems);
                         loadedItemCount += nextItems.length;
                         isLoadingMore = false;

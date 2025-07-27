@@ -493,8 +493,8 @@
 
         // 뒤로가기
         function goBack() {
-            // 예약 완료 후에는 홈으로 이동
-            window.location.href = 'home.html';
+            // 예약 완료 후에는 마이페이지 이동
+            window.location.href = 'my.html';
         }
 
         // 길찾기
@@ -517,18 +517,18 @@
             if (confirm('정말 예약을 취소하시겠습니까?\n취소 수수료가 발생할 수 있습니다.')) {
                 alert('예약이 취소되었습니다.');
                 // 취소 API 호출 후 홈으로 이동
-                window.location.href = 'home.html';
+                window.location.href = 'my.html';
             }
         }
 
-        // 예약 완료 (홈으로 이동)
+        // 예약 완료 (마이페이지로로 이동)
         function completeReservation() {
             // 예약 정보 정리
             sessionStorage.removeItem('bookingInfo');
             sessionStorage.removeItem('selectedCarInfoForDetail');
             
-            // 홈으로 이동
-            window.location.href = 'home.html';
+            // 마이페이지로 이동
+            window.location.href = 'my.html';
         }
 
         // 고객센터 연결

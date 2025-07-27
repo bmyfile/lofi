@@ -110,12 +110,69 @@
             align-items: baseline;
         }
 
-        .summary-card .carpos-mark {
+        /* FAQ 아코디언 스타일 */
+        .faq-item {
+            display: block;
+            padding: 0;
+            border-bottom: 1px solid #f0f0f0;
+            text-decoration: none;
+            color: #333;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+
+        .faq-question {
+            padding: 16px 40px 16px 0;
+            position: relative;
+            font-weight: 500;
+            font-size: 15px;
+            user-select: none;
+        }
+
+        .faq-question::after {
+            content: '+';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            font-weight: 300;
+            color: #666;
+            transition: transform 0.3s;
+        }
+
+        .faq-item.active .faq-question::after {
+            content: '−';
+            transform: translateY(-50%) rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 40px 0 0;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 300px;
+            padding: 0 40px 16px 0;
+        }
+
+        .faq-answer p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #666;
+            margin: 0;
+        }
+
+        .summary-card .carpos-mark,
+        .recommend-item .carpos-mark {
             font-size: 12px;
             color: #00aaff;
             font-weight: 500;
-            margin-right: 4px;
-        }
+            margin-bottom: 4px;
+            display: block;
+        }       
 
         .summary-card .name {
             font-size: 18px;
@@ -756,7 +813,89 @@
         .hidden {
             display: none !important;
         }
+
+         /* 포스팅 모달 스타일 */
+        .posting-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .posting-modal-overlay.active {
+            display: flex;
+        }
+
+        .posting-modal-content {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 380px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .posting-modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .posting-modal-close:hover {
+            color: #333;
+        }
+
+        .posting-modal-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-right: 30px;
+            line-height: 1.4;
+        }
+
+        .posting-modal-body {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .posting-modal-cta {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #5d5fef;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .posting-modal-cta:hover {
+            background-color: #4a4cdb;
+        }
+
     </style>
+    
 </head>
 <body>
     <div class="container">
@@ -775,10 +914,13 @@
                         <img src="https://placehold.co/60x60/e0e0e0/ffffff?text=로고" alt="업체 로고">
                     </div>
                     <div>
-                        <div class="name-info">
-                            <span class="carpos-mark">[카포스]</span>
+                        <div>
+                          <div class="carpos-mark">[조합마크]</div>
+                          <div class="name-info">
                             <span class="name">우리 정비소</span><span class="distance">3km</span>
                         </div>
+                    </div>
+
                         <div class="address">서울시 강남구 테헤란로 123 <a href="#" onclick="alert('길찾기 앱 연동'); return false;" class="action-link">[길찾기]</a></div>
                         <div class="phone">📞 02-1234-5678 <a href="tel:02-1234-5678" class="action-link">[전화걸기]</a></div>
                     </div>
@@ -948,8 +1090,8 @@
             <!-- 포스팅 섹션 -->
             <section id="posts" class="content-section">
                 <h3>포스팅</h3>
-                <!-- 포스팅에 기본 사진 추가 -->
-                <a href="#" onclick="alert('포스팅 상세 페이지로 이동'); return false;" class="post-item">
+                <!-- onclick 속성 변경 -->
+                <a href="#" onclick="showPostingModal(0); return false;" class="post-item">
                     <div class="thumbnail">
                         <img src="https://placehold.co/60x60/f0f0f0/333333?text=포스팅" alt="포스팅 기본 이미지">
                     </div>
@@ -958,7 +1100,7 @@
                         <div class="desc">2025.07.22</div>
                     </div>
                 </a>
-                <a href="#" onclick="alert('포스팅 상세 페이지로 이동'); return false;" class="post-item">
+                <a href="#" onclick="showPostingModal(1); return false;" class="post-item">
                     <div class="thumbnail">
                         <img src="https://placehold.co/60x60/f0f0f0/333333?text=포스팅" alt="포스팅 기본 이미지">
                     </div>
@@ -972,15 +1114,43 @@
             <!-- FAQ 섹션 -->
             <section id="faq" class="content-section">
                 <h3>FAQ</h3>
-                <a href="#" onclick="alert('FAQ 상세 페이지로 이동'); return false;" class="faq-item">Q. 예약 시간 변경은 어떻게 하나요?</a>
-                <a href="#" onclick="alert('FAQ 상세 페이지로 이동'); return false;" class="faq-item">Q. 수리 비용은 어떻게 결정되나요?</a>
+                <div class="faq-item">
+                    <div class="faq-question">Q. 예약 시간 변경은 어떻게 하나요?</div>
+                    <div class="faq-answer">
+                        <p>예약 시간 변경은 예약일 하루 전까지 가능합니다. 마이페이지 > 예약내역에서 변경하실 수 있으며, 당일 변경이 필요한 경우 업체에 직접 전화 문의 부탁드립니다. 변경 가능한 시간대는 업체 상황에 따라 달라질 수 있습니다.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Q. 수리 비용은 어떻게 결정되나요?</div>
+                    <div class="faq-answer">
+                        <p>수리 비용은 차량 상태와 필요한 부품에 따라 달라집니다. 기본 점검 후 정확한 견적을 안내드리며, 추가 수리가 필요한 경우 고객님께 먼저 연락드려 동의를 구한 후 진행합니다. 모든 비용은 투명하게 공개되며, 부품비와 공임비가 별도로 표시됩니다.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Q. 예약 취소 시 수수료가 있나요?</div>
+                    <div class="faq-answer">
+                        <p>예약일 기준 24시간 전까지는 수수료 없이 취소 가능합니다. 24시간 이내 취소 시에는 예약금의 10%가 수수료로 부과되며, 당일 취소나 노쇼(No-show)의 경우 예약금 전액이 수수료로 부과됩니다.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Q. 정비 후 보증기간은 어떻게 되나요?</div>
+                    <div class="faq-answer">
+                        <p>일반 정비는 3개월 또는 주행거리 5,000km 중 먼저 도래하는 시점까지 보증됩니다. 엔진오일 등 소모품 교환은 제조사 보증 기준을 따르며, 부품 교체의 경우 부품별로 6개월~1년의 보증기간이 적용됩니다. 자세한 내용은 정비 완료 시 안내드립니다.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Q. 대기 시간은 얼마나 걸리나요?</div>
+                    <div class="faq-answer">
+                        <p>예약 고객님은 대기 시간 없이 바로 서비스를 받으실 수 있습니다. 엔진오일 교환은 약 20~30분, 타이어 교체는 30~40분, 일반 점검은 1시간 정도 소요됩니다. 정비 내용에 따라 시간이 달라질 수 있으며, 정확한 소요 시간은 접수 시 안내드립니다.</p>
+                    </div>
+                </div>
             </section>
 
             <!-- 근처 추천 카센터 섹션 -->
             <section id="recommendations" class="content-section">
                 <h3>근처 추천 카센터</h3>
                 <div class="recommend-item-container" id="recommendationsList">
-                    <div class="recommend-item" onclick="location.href='detail-01-01.html?id=1'">
+                    <div class="recommend-item" onclick="location.href='detail-01.html?id=1'">
                         <div class="thumbnail">
                             <img src="https://placehold.co/70x70/e0e0e0/ffffff?text=추천1" alt="추천 카센터 썸네일">
                         </div>
@@ -996,10 +1166,12 @@
                             <img src="https://placehold.co/70x70/e0e0e0/ffffff?text=추천2" alt="추천 카센터 썸네일">
                         </div>
                         <div class="item-details">
-                            <div class="name-info">
-                                <span class="carpos-mark">[카포스]</span>
+                            <div>
+                              <div class="carpos-mark">[조합마크]</div>
+                              <div class="name-info">
                                 <span class="name">친절한 정비소</span><span class="distance">1.5km</span>
                             </div>
+                        </div>        
                             <div class="address">서울시 영등포구 여의도동 789</div>
                         </div>
                     </div>
@@ -1030,10 +1202,12 @@
                             <img src="https://placehold.co/70x70/e0e0e0/ffffff?text=추천5" alt="추천 카센터 썸네일">
                         </div>
                         <div class="item-details">
-                            <div class="name-info">
-                                <span class="carpos-mark">[카포스]</span>
+                            <div>
+                              <div class="carpos-mark">[조합마크]</div>
+                              <div class="name-info">
                                 <span class="name">스마트 정비 센터</span><span class="distance">5.2km</span>
                             </div>
+                        </div>                            
                             <div class="address">서울시 종로구 평창동 789</div>
                         </div>
                     </div>
@@ -1407,25 +1581,12 @@
         // --- '근처 추천 카센터' 더보기 기능 ---
         const loadMoreRecommendationsBtn = document.getElementById('loadMoreRecommendations');
         const hiddenRecommendations = document.querySelectorAll('#recommendationsList .recommend-item.hidden');
-        let isExpanded = false;
 
         loadMoreRecommendationsBtn.addEventListener('click', () => {
-            if (!isExpanded) {
-                hiddenRecommendations.forEach(item => {
-                    item.classList.remove('hidden');
-                });
-                loadMoreRecommendationsBtn.textContent = '접기 <';
-                isExpanded = true;
-            } else {
-                hiddenRecommendations.forEach(item => {
-                    item.classList.add('hidden');
-                });
-                loadMoreRecommendationsBtn.textContent = '더보기 >';
-                isExpanded = false;
-                
-                // 접기 시 스크롤 위치 조정
-                document.getElementById('recommendations').scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+            hiddenRecommendations.forEach(item => {
+                item.classList.remove('hidden');
+            });
+            loadMoreRecommendationsBtn.style.display = 'none';
         });
 
         // 사진 갤러리 스크롤 기능
@@ -1439,6 +1600,79 @@
                 photoGallery.scrollBy({ left: scrollAmount, behavior: 'smooth' });
             }
         }
+
+        // FAQ 아코디언 기능
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.addEventListener('click', () => {
+                // 다른 FAQ 항목들 닫기
+                document.querySelectorAll('.faq-item').forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+                
+                // 현재 항목 토글
+                item.classList.toggle('active');
+            });
+        });
+
+        // 포스팅 모달 관련 코드 - 여기에 추가!
+        // 포스팅 데이터
+        const postings = [
+            {
+                title: "[정보] 여름철 에어컨 관리 꿀팁",
+                content: "여름철 에어컨 관리는 쾌적한 운전 환경과 연비 절감을 위해 매우 중요합니다. 에어컨 필터는 2~3개월마다 교체하고, 에바포레이터 청소는 연 1회 이상 실시하는 것이 좋습니다. 또한 냉매량 체크와 컴프레서 점검도 필수입니다.",
+                date: "2025.07.22"
+            },
+            {
+                title: "[정보] 초보운전자를 위한 타이어 점검법",
+                content: "타이어는 자동차의 안전과 직결되는 중요한 부품입니다. 타이어 공기압은 월 1회 이상 체크하고, 트레드 깊이는 1.6mm 이상 유지해야 합니다. 또한 타이어 측면의 균열이나 손상 여부도 꼼꼼히 확인하세요.",
+                date: "2025.07.10"
+            }
+        ];
+
+        // 포스팅 모달 관련 함수
+        function showPostingModal(postingIndex) {
+            const posting = postings[postingIndex];
+            const modal = document.getElementById('posting-modal');
+            const modalTitle = document.getElementById('posting-modal-title');
+            const modalBody = document.getElementById('posting-modal-body');
+            const modalCta = document.getElementById('posting-modal-cta');
+            
+            modalTitle.textContent = posting.title;
+            modalBody.textContent = posting.content;
+            
+            // 닫기 버튼 클릭 시 모달 닫기
+            modalCta.onclick = function() {
+                modal.classList.remove('active');
+            };
+            
+            modal.classList.add('active');
+        }
+
+        // 포스팅 모달 닫기 이벤트
+        document.getElementById('posting-modal-close').addEventListener('click', function() {
+            document.getElementById('posting-modal').classList.remove('active');
+        });
+
+        // 포스팅 모달 외부 클릭 시 닫기
+        document.getElementById('posting-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('active');
+            }
+        });
+
     </script>
+
+    <!-- 포스팅 모달 -->
+    <div class="posting-modal-overlay" id="posting-modal">
+        <div class="posting-modal-content">
+            <span class="posting-modal-close" id="posting-modal-close">&times;</span>
+            <h2 class="posting-modal-title" id="posting-modal-title"></h2>
+            <div class="posting-modal-body" id="posting-modal-body"></div>
+            <button class="posting-modal-cta" id="posting-modal-cta">닫기</button>
+        </div>
+    </div>
+
 </body>
 </html>

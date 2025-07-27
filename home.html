@@ -333,10 +333,7 @@
             object-fit: cover; 
         }
         
-        .shop-item .kapos-mark { 
-            position: absolute; 
-            top: 5px; 
-            left: 5px; 
+        .shop-item .asso-mark { 
             background-color: rgba(255, 255, 255, 0.9); 
             padding: 2px 5px; 
             border-radius: 4px; 
@@ -362,7 +359,7 @@
         }
         
         .shop-item .shop-address, 
-        .shop-item .shop-hours { 
+        .shop-item .shop-phone { 
             font-size: 13px; 
             color: #555; 
             margin-bottom: 3px; 
@@ -372,10 +369,36 @@
             margin-top: 5px; 
         }
         
-        .shop-item .shop-tags span { 
+        /* 일반 태그 - 가장 눈에 띄는 색상 */
+        .shop-item .shop-tags .tag-primary { 
             display: inline-block; 
-            background-color: #E8E9FC; 
-            color: #3A42B0; 
+            background-color: #4852EA;  /* 차바 브랜드 색상 배경 */
+            color: #FFFFFF;             /* 흰색 글자 */
+            border-radius: 4px; 
+            padding: 2px 6px; 
+            font-size: 12px; 
+            margin-right: 5px; 
+            margin-bottom: 5px; 
+            font-weight: 500;
+        }
+
+        /* 추가 서비스 태그 - 중간 강조 */
+        .shop-item .shop-tags .tag-secondary { 
+            display: inline-block; 
+            background-color: #E3F2FD;  /* 연한 파란색 배경 */
+            color: #1976D2;             /* 진한 파란색 글자 */
+            border-radius: 4px; 
+            padding: 2px 6px; 
+            font-size: 12px; 
+            margin-right: 5px; 
+            margin-bottom: 5px; 
+        }
+
+        /* 자격증 태그 - 낮은 강조 */
+        .shop-item .shop-tags .tag-tertiary { 
+            display: inline-block; 
+            background-color: #F5F5F5;  /* 연한 회색 배경 */
+            color: #616161;             /* 진한 회색 글자 */
             border-radius: 4px; 
             padding: 2px 6px; 
             font-size: 12px; 
@@ -461,72 +484,144 @@
             margin-top: 5px; 
         }
 
-        footer { 
-            background-color: #333; 
-            color: #fff; 
-            padding: 20px 15px 15px; 
-            font-size: 13px; 
-            line-height: 1.6; 
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 20px 15px 15px;
+            font-size: 13px;
+            line-height: 1.6;
         }
-        
-        footer h4 { 
-            color: #4852EA; 
-            margin-top: 0; 
-            margin-bottom: 10px; 
-            font-size: 14px; 
+
+        .footer-header {
+            margin-bottom: 20px;
         }
-        
-        footer ul { 
-            list-style: none; 
-            padding: 0; 
-            margin: 0 0 15px 0; 
+
+        .footer-content {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 15px;
+            align-items: flex-start;
         }
-        
-        footer ul li { 
-            margin-bottom: 5px; 
+
+        .footer-left-column {
+            flex: 1;
         }
-        
-        footer ul li a { 
-            color: #C0C4F0; 
-            text-decoration: none; 
+
+        .footer-right-column {
+            flex: 1;
+        }
+
+        .footer-section {
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #4852EA;
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 5px;
+        }
+
+        .footer-section ul li a {
+            color: #C0C4F0;
+            text-decoration: none;
             transition: color 0.2s;
         }
-        
+
+        .footer-section ul li a:hover {
+            color: #fff;
+        }
+
+        .company-info p {
+            margin: 5px 0;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #444;
+            font-size: 12px;
+            color: #C0C4F0;
+        }
+
+        .footer-section-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .footer-chaba-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        /* 모바일에서는 세로 배치 */
+        @media (max-width: 420px) {
+            .footer-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+
+        footer ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 15px 0;
+        }
+
+        footer ul li {
+            margin-bottom: 5px;
+        }
+
+        footer ul li a {
+            color: #C0C4F0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
         footer ul li a:hover {
             color: #fff;
         }
-        
-        footer .links a { 
-            color: #A0A8F0; 
-            text-decoration: none; 
-            margin-right: 10px; 
+
+        .company-info p {
+            margin: 5px 0;
         }
-        
-        footer .company-info p { 
-            margin: 5px 0; 
+
+        .copyright {
+            text-align: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #444;
+            font-size: 12px;
+            color: #C0C4F0;
         }
-        
-        footer .copyright { 
-            text-align: center; 
-            margin-top: 15px; 
-            font-size: 12px; 
-            color: #C0C4F0; 
+
+        .footer-section-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
         }
-        
-        .footer-section-title { 
-            font-size: 16px; 
-            font-weight: bold; 
-            margin-bottom: 10px; 
+
+        .footer-chaba-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
         }
-        
-        .footer-chaba-name { 
-            font-size: 18px; 
-            font-weight: bold; 
-            margin-bottom: 15px; 
-        }
-        
-        .footer-link-group { 
-            margin-bottom: 20px; 
+
+        .footer-column {
+            margin-bottom: 20px;
         }
 
         .partner-section {
@@ -592,6 +687,91 @@
         .hidden { 
             display: none !important; 
         }
+
+         /* 전문가 콘텐츠 모달 스타일 추가 */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .modal-overlay.active {
+        display: flex;
+    }
+    
+    .modal-content {
+        background-color: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        max-width: 380px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .modal-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 24px;
+        cursor: pointer;
+        color: #666;
+        line-height: 1;
+        transition: color 0.2s;
+    }
+    
+    .modal-close:hover {
+        color: #333;
+    }
+    
+    .modal-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        padding-right: 30px;
+        line-height: 1.4;
+    }
+    
+    .modal-body {
+        font-size: 16px;
+        line-height: 1.6;
+        color: #333;
+        margin-bottom: 20px;
+    }
+    
+    .modal-cta {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        background-color: #4852EA;
+        color: #fff;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        transition: background-color 0.2s;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .modal-cta:hover {
+        background-color: #3a42d8;
+    }
+
+
+
+
+
     </style>
 </head>
 <body>
@@ -638,9 +818,9 @@
         </section>
 
         <section class="nearby-shops">
-            <div class="section-title" style="border-bottom: none; padding-bottom: 5px;">내 주변 추천 업체</div>
+            <div class="section-title" style="border-bottom: none; padding-bottom: 5px;">내 주변 추천 정비소</div>
             <div class="tab-menu">
-                <button class="active" onclick="switchTab('repair')">정비소</button>
+                <button class="active" onclick="switchTab('repair')">카센터</button>
                 <button onclick="switchTab('inspection')">검사소</button>
             </div>
             <div id="shop-list"></div>
@@ -648,7 +828,7 @@
         </section>
 
         <section class="expert-column">
-            <div class="section-title" style="border-bottom: none; padding-bottom: 5px;">카센터 전문가 칼럼</div>
+            <div class="section-title" style="border-bottom: none; padding-bottom: 5px;">정비 전문가 칼럼</div>
             <div class="column-list"></div>
             <div class="load-more" id="load-more-columns" onclick="loadColumns()">+ 더보기</div>
         </section>
@@ -659,36 +839,44 @@
         </section>
         
         <footer>
-            <div class="footer-section-title">내 차 바주세요!</div>
-            <div class="footer-chaba-name">차바(Chaba)</div>
-
-            <div class="footer-link-group">
-                <h4>전국 정비소 목록</h4>
-                <ul>
-                    <li><a href="#">전국 검사소 찾기</a></li>
-                    <li><a href="#">전국 카센터 찾기</a></li>
-                </ul>
+            <div class="footer-header">
+                <div class="footer-section-title">내 차 바주세요!</div>
+                <div class="footer-chaba-name">차바(Chaba)</div>
             </div>
+            
+            <div class="footer-content">
+                <div class="footer-left-column">
+                    <div class="footer-section">
+                        <h4>전국 정비소 목록</h4>
+                        <ul>
+                            <li><a href="#">전국 검사소 찾기</a></li>
+                            <li><a href="#">전국 카센터 찾기</a></li>
+                        </ul>
+                    </div>
 
-            <div class="footer-link-group">
-                <h4>고객지원</h4>
-                <ul>
-                    <li><a href="#">공식 블로그</a></li>
-                    <li><a href="#">자주 묻는 질문 (FAQ)</a></li>
-                    <li><a href="#">공지사항</a></li>
-                    <li><a href="#">1:1 문의</a></li>
-                </ul>
-            </div>
+                    <div class="footer-section">
+                        <h4>고객지원</h4>
+                        <ul>
+                            <li><a href="#">공식 블로그</a></li>
+                            <li><a href="#">자주 묻는 질문 (FAQ)</a></li>
+                            <li><a href="#">공지사항</a></li>
+                            <li><a href="#">1:1 문의</a></li>
+                        </ul>
+                    </div>
+                </div>
 
-            <div class="footer-link-group">
-                <h4>회사정보</h4>
-                <div class="company-info">
-                    <p>차바(주)</p>
-                    <p>대표: 최동남</p>
-                    <p>사업자등록번호: 123-45-67890</p>
-                    <p>주소: 서울특별시 강남구 테헤란로 123 (차바 빌딩)</p>
-                    <p>고객센터: 1588-1234</p>
-                    <p>이메일: cs@chaba.co.kr</p>
+                <div class="footer-right-column">
+                    <div class="footer-section">
+                        <h4>회사정보</h4>
+                        <div class="company-info">
+                            <p>차바(주)</p>
+                            <p>대표: 최동남</p>
+                            <p>사업자등록번호: 123-45-67890</p>
+                            <p>주소: 서울특별시 강남구 테헤란로 123 (차바 빌딩)</p>
+                            <p>고객센터: 1588-1234</p>
+                            <p>이메일: cs@chaba.co.kr</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -700,6 +888,16 @@
             <a href="res-01.html">🗓️ <span>예약내역</span></a>
             <a href="my-01.html">👤 <span>마이페이지</span></a>
         </nav>
+
+    </div>
+
+        <div class="modal-overlay" id="column-modal">
+        <div class="modal-content">
+            <span class="modal-close" id="modal-close">&times;</span>
+            <h2 class="modal-title" id="modal-title"></h2>
+            <div class="modal-body" id="modal-body"></div>
+            <button class="modal-cta" id="modal-cta">해당 정비소 바로 가기</button>
+        </div>
     </div>
 
     <script>
@@ -810,66 +1008,66 @@
                 name: "우리 정비소",
                 distance: "3km",
                 address: "서울시 강남구 테헤란로 123",
-                hours: "평일 09:00~18:00 (토요일 ~13:00)",
+                phone: "02-888-7777",
                 tags: ["#수입차", "#전기/전자장치", "#엔진"],
                 cert: "#정비기능사",
                 extra_services: ["#워셔액교체", "#엔진룸청소"],
-                kapos: true
+                asso: true
             },
             {
                 img: "https://placehold.co/80x80/E0E0E0/333333?text=정비2",
                 name: "차바 베스트 카센터",
                 distance: "5km",
                 address: "서울시 서초구 서초대로 456",
-                hours: "평일 09:00~19:00",
+                phone: "002-700-2848",
                 tags: ["#국산차", "#하이브리드", "#정비"],
                 cert: "",
                 extra_services: ["#무료견적", "#픽업서비스"],
-                kapos: false
+                asso: false
             },
             {
                 img: "https://placehold.co/80x80/E0E0E0/333333?text=정비3",
                 name: "강남 자동차 병원",
                 distance: "2km",
                 address: "서울시 강남구 역삼로 789",
-                hours: "평일 10:00~18:00",
+                phone: "02-235-9988",
                 tags: ["#엔진오일", "#브레이크", "#배터리"],
                 cert: "#자동차정비산업기사",
                 extra_services: [],
-                kapos: true
+                asso: true
             },
             {
                 img: "https://placehold.co/80x80/E0E0E0/333333?text=정비4",
                 name: "굿모닝 타이어",
                 distance: "7km",
                 address: "서울시 송파구 올림픽로 101",
-                hours: "평일 09:00~20:00",
+                phone: "02-280-7942",
                 tags: ["#타이어", "#휠", "#얼라인먼트"],
                 cert: "#타이어전문가",
                 extra_services: ["#펑크수리", "#무료공기압"],
-                kapos: false
+                asso: false
             },
             {
                 img: "https://placehold.co/80x80/E0E0E0/333333?text=정비5",
                 name: "명품 수입차 정비",
                 distance: "4km",
                 address: "서울시 강남구 압구정로 202",
-                hours: "평일 09:30~18:30",
+                phone: "02-1577-1577",
                 tags: ["#수입차전문", "#도장", "#판금"],
                 cert: "#수입차정비사",
                 extra_services: ["#딜리버리서비스"],
-                kapos: true
+                asso: true
             },
             {
                 img: "https://placehold.co/80x80/E0E0E0/333333?text=정비6",
                 name: "빠른 정비 솔루션",
                 distance: "1km",
                 address: "서울시 강남구 봉은사로 303",
-                hours: "매일 08:00~22:00",
+                phone: "02-707-1123",
                 tags: ["#경정비", "#빠른서비스"],
                 cert: "",
                 extra_services: ["#야간정비"],
-                kapos: false
+                asso: false
             }
         ];
 
@@ -879,33 +1077,33 @@
                 name: "강남 자동차 검사소",
                 distance: "1.5km",
                 address: "서울시 강남구 역삼동 111",
-                hours: "평일 09:00~17:00",
+                phone: "02-8877-1004",
                 tags: ["#정기검사", "#종합검사"],
                 cert: "#교통안전공단지정",
                 extra_services: [],
-                kapos: false
+                asso: false
             },
             {
                 img: "https://placehold.co/80x80/E0E0E0/333333?text=검사2",
                 name: "서초 차량 검사센터",
                 distance: "4km",
                 address: "서울시 서초구 반포동 222",
-                hours: "평일 09:30~17:30",
+                phone: "02-6987-9852",
                 tags: ["#배출가스", "#구조변경"],
                 cert: "",
                 extra_services: ["#예약우선"],
-                kapos: false
+                asso: false
             },
             {
                 img: "https://placehold.co/80x80/E0E0E0/333333?text=검사3",
                 name: "송파 종합 검사소",
                 distance: "6km",
                 address: "서울시 송파구 잠실동 333",
-                hours: "평일 08:30~18:00",
+                phone: "02-1588-1577",
                 tags: ["#신규등록", "#재검사"],
                 cert: "#국토교통부지정",
                 extra_services: [],
-                kapos: true
+                asso: true
             }
         ];
 
@@ -929,29 +1127,43 @@
                 const shop = dataSource[i];
                 const shopItem = document.createElement('div');
                 shopItem.classList.add('shop-item');
-                shopItem.setAttribute('onclick', `location.href='DETAIL-01.html?id=${i+1}'`);
+                if (shopType === 'repair') {
+                   shopItem.setAttribute('onclick', `location.href='detail-01.html?id=${i+1}'`);
+                } else {
+                   shopItem.setAttribute('onclick', `location.href='detail-03.html?id=${i+1}'`);
+                }
 
                 let tagsHtml = '';
-                shop.tags.forEach(tag => { tagsHtml += `<span>${tag}</span>`; });
-                if (shop.cert) { tagsHtml += `<span>${shop.cert}</span>`; }
+                // 일반 태그 (가장 중요)
+                shop.tags.forEach(tag => { 
+                    tagsHtml += `<span class="tag-primary">${tag}</span>`; 
+                });
+                // 추가 서비스 태그 (중간 중요도)
                 if (shop.extra_services && shop.extra_services.length > 0) {
-                    shop.extra_services.forEach(service => { tagsHtml += `<span>${service}</span>`; });
+                    shop.extra_services.forEach(service => { 
+                        tagsHtml += `<span class="tag-secondary">${service}</span>`; 
+                    });
+                }
+                // 자격증 태그 (낮은 중요도)
+                if (shop.cert) { 
+                    tagsHtml += `<span class="tag-tertiary">${shop.cert}</span>`; 
                 }
 
                 shopItem.innerHTML = `
-                    <div class="shop-img">
-                        <img src="${shop.img}" alt="${shop.name}" onerror="this.onerror=null;this.src='https://placehold.co/80x80/E0E0E0/333?text=Image';">
-                        ${shop.kapos ? '<span class="kapos-mark">카포스 마크</span>' : ''}
+                  <div class="shop-img">
+                    <img src="${shop.img}" alt="${shop.name}" onerror="this.onerror=null;this.src='https://placehold.co/80x80/E0E0E0/333?text=Image';">
+                  </div>
+                  <div class="shop-info">
+                    ${shop.asso ? '<span class="asso-mark">조합마크</span>' : ''}
+                    <div class="shop-name">${shop.name} <span class="shop-distance">${shop.distance}</span></div>
+                    <div class="shop-address">${shop.address}</div>
+                    <div class="shop-phone">${shop.phone}</div>
+                    <div class="shop-tags">
+                        ${tagsHtml}
                     </div>
-                    <div class="shop-info">
-                        <div class="shop-name">${shop.name} <span class="shop-distance">${shop.distance}</span></div>
-                        <div class="shop-address">${shop.address}</div>
-                        <div class="shop-hours">${shop.hours}</div>
-                        <div class="shop-tags">
-                            ${tagsHtml}
-                        </div>
-                    </div>
+                  </div>
                 `;
+
                 shopListDiv.appendChild(shopItem);
             }
             
@@ -1002,16 +1214,86 @@
 
         // Column List
         const allColumns = [
-            { img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼1", views: 204, title: "여름철 에어컨 관리 꿀팁", date: "2025.07.22" },
-            { img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼2", views: 103, title: "초보운전자를 위한 타이어 점검법", date: "2025.07.10" },
-            { img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼3", views: 432, title: "엔진오일, 언제 갈아야 할까?", date: "2025.06.25" },
-            { img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼4", views: 150, title: "자동차 배터리 수명 연장법", date: "2025.06.01" },
-            { img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼5", views: 88, title: "브레이크 패드 교체 시기", date: "2025.05.15" },
-            { img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼6", views: 300, title: "장마철 차량 관리 요령", date: "2025.05.01" },
-            { img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼7", views: 210, title: "자동차 검사 불합격 피하는 법", date: "2025.04.20" },
-            { img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼8", views: 95, title: "겨울철 부동액 점검의 중요성", date: "2025.04.05" },
-            { img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼9", views: 180, title: "차량 실내 공기 정화 방법", date: "2025.03.25" },
-            { img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼10", views: 250, title: "엔진룸 청소, 해도 될까?", date: "2025.03.10" }
+            { 
+                img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼1", 
+                views: 204, 
+                title: "여름철 에어컨 관리 꿀팁", 
+                date: "2025.07.22",
+                content: "여름철 에어컨 관리는 쾌적한 운전 환경과 연비 절감을 위해 매우 중요합니다. 에어컨 필터는 2~3개월마다 교체하고, 에바포레이터 청소는 연 1회 이상 실시하는 것이 좋습니다. 또한 냉매량 체크와 컴프레서 점검도 필수입니다.",
+                shopId: 1
+            },
+            { 
+                img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼2", 
+                views: 103, 
+                title: "초보운전자를 위한 타이어 점검법", 
+                date: "2025.07.10",
+                content: "타이어는 자동차의 안전과 직결되는 중요한 부품입니다. 타이어 공기압은 월 1회 이상 체크하고, 트레드 깊이는 1.6mm 이상 유지해야 합니다. 또한 타이어 측면의 균열이나 손상 여부도 꼼꼼히 확인하세요.",
+                shopId: 4
+            },
+            { 
+                img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼3", 
+                views: 432, 
+                title: "엔진오일, 언제 갈아야 할까?", 
+                date: "2025.06.25",
+                content: "엔진오일 교환 주기는 차량과 주행 환경에 따라 다릅니다. 일반적으로 5,000~10,000km마다 교환하며, 가혹 조건에서는 더 자주 교환이 필요합니다. 오일 게이지로 오일 상태를 주기적으로 확인하는 습관을 들이세요.",
+                shopId: 1
+            },
+            { 
+                img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼4", 
+                views: 150, 
+                title: "자동차 배터리 수명 연장법", 
+                date: "2025.06.01",
+                content: "자동차 배터리의 평균 수명은 3~5년입니다. 수명을 연장하려면 단자 부분을 깨끗이 유지하고, 장기간 주차 시 주기적으로 시동을 걸어주세요. 또한 불필요한 전기 장치 사용을 줄이는 것도 도움이 됩니다.",
+                shopId: 3
+            },
+            { 
+                img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼5", 
+                views: 88, 
+                title: "브레이크 패드 교체 시기", 
+                date: "2025.05.15",
+                content: "브레이크 패드는 보통 3~5만km마다 교체가 필요합니다. 브레이크 밟을 때 쇳소리가 나거나 제동거리가 길어진다면 즉시 점검이 필요합니다. 안전을 위해 정기적인 점검을 권장합니다.",
+                shopId: 2
+            },
+            { 
+                img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼6", 
+                views: 300, 
+                title: "장마철 차량 관리 요령", 
+                date: "2025.05.01",
+                content: "장마철에는 와이퍼 상태 점검이 필수입니다. 또한 타이어 트레드 깊이를 확인하여 수막현상을 예방하고, 차량 하부 녹 방지를 위해 정기적인 세차와 코팅을 권장합니다.",
+                shopId: 6
+            },
+            { 
+                img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼7", 
+                views: 210, 
+                title: "자동차 검사 불합격 피하는 법", 
+                date: "2025.04.20",
+                content: "자동차 검사 불합격의 주요 원인은 배출가스, 브레이크, 전조등 문제입니다. 검사 전 이러한 부분을 미리 점검하고 정비하면 불합격을 피할 수 있습니다. 특히 배출가스는 엔진 상태와 직결되므로 주의가 필요합니다.",
+                shopId: 1
+            },
+            { 
+                img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼8", 
+                views: 95, 
+                title: "겨울철 부동액 점검의 중요성", 
+                date: "2025.04.05",
+                content: "부동액은 엔진 냉각과 동파 방지에 필수적입니다. 겨울이 오기 전 부동액 농도를 점검하고, 필요시 교환하세요. 적정 농도는 -25도 이하이며, 2년마다 교환을 권장합니다.",
+                shopId: 5
+            },
+            { 
+                img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼9", 
+                views: 180, 
+                title: "차량 실내 공기 정화 방법", 
+                date: "2025.03.25",
+                content: "차량 실내 공기질 개선을 위해 에어컨 필터를 정기적으로 교체하고, 항균 스프레이를 사용하세요. 또한 주기적인 환기와 차량용 공기청정기 사용도 도움이 됩니다.",
+                shopId: 2
+            },
+            { 
+                img: "https://placehold.co/90x70/E0E0E0/333333?text=칼럼10", 
+                views: 250, 
+                title: "엔진룸 청소, 해도 될까?", 
+                date: "2025.03.10",
+                content: "엔진룸 청소는 가능하지만 주의가 필요합니다. 전기 부품을 비닐로 보호하고, 고압 세척기보다는 부드러운 브러시와 전용 클리너를 사용하세요. 청소 후 충분히 건조시키는 것이 중요합니다.",
+                shopId: 3
+            }
         ];
         
         let loadedColumnCount = 0;
@@ -1027,7 +1309,8 @@
                 const column = allColumns[i];
                 const columnItem = document.createElement('div');
                 columnItem.classList.add('column-item');
-                columnItem.setAttribute('onclick', `window.location.href = 'column-detail.html?id=${i+1}'`);
+                // onclick 이벤트를 showColumnModal 함수로 변경
+                columnItem.setAttribute('onclick', `showColumnModal(${i})`);
 
                 columnItem.innerHTML = `
                     <div class="col-img">
@@ -1053,6 +1336,38 @@
 
         // Initial load
         loadColumns();
+
+        // 모달 관련 함수 추가
+        function showColumnModal(columnIndex) {
+            const column = allColumns[columnIndex];
+            const modal = document.getElementById('column-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalBody = document.getElementById('modal-body');
+            const modalCta = document.getElementById('modal-cta');
+            
+            modalTitle.textContent = column.title;
+            modalBody.textContent = column.content;
+            
+            // 해당 정비소로 이동하는 이벤트 설정
+            modalCta.onclick = function() {
+                window.location.href = `detail-01.html?id=${column.shopId}`;
+            };
+            
+            modal.classList.add('active');
+        }
+
+        // 모달 닫기 이벤트
+        document.getElementById('modal-close').addEventListener('click', function() {
+            document.getElementById('column-modal').classList.remove('active');
+        });
+
+        // 모달 외부 클릭 시 닫기
+        document.getElementById('column-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('active');
+            }
+        });
+
     </script>
 </body>
 </html>

@@ -1,0 +1,1800 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>검사소 상세 - 차바</title>
+    <style>
+        /* CSS Reset & 기본 스타일 - detail-01과 동일 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        :root {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding-bottom: 80px;
+        }
+
+        /* 컨테이너 */
+        .container {
+            max-width: 420px;
+            margin: 0 auto;
+            background-color: #fff;
+            min-height: 100vh;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        /* 헤더 - detail-01과 동일 */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 0;
+            background-color: #fff;
+            z-index: 100;
+        }
+
+        .header .title {
+            font-weight: bold;
+            font-size: 17px;
+            flex-grow: 1;
+            text-align: center;
+        }
+        
+        .header .back-btn {
+            font-size: 24px;
+            text-decoration: none;
+            color: #333;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        .header .back-btn:hover {
+            opacity: 0.7;
+        }
+        
+        .header .share-btn {
+            font-size: 20px;
+            text-decoration: none;
+            color: #333;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        .header .share-btn:hover {
+            opacity: 0.7;
+        }
+
+        /* 요약 카드 - detail-01과 동일 */
+        .summary-card {
+            padding: 16px;
+            border-bottom: 8px solid #f8f9fa;
+        }
+
+        .summary-card .profile {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .summary-card .thumbnail {
+            flex-shrink: 0;
+            width: 60px;
+            height: 60px;
+            background-color: #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .summary-card .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .summary-card .name-info {
+            display: flex;
+            align-items: baseline;
+        }
+
+        .summary-card .carpos-mark,
+        .recommend-item .carpos-mark {
+            font-size: 12px;
+            color: #00aaff;
+            font-weight: 500;
+            margin-bottom: 4px;
+            display: block;
+        }       
+
+        .summary-card .name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .summary-card .distance {
+            font-size: 15px;
+            color: #555;
+            margin-left: 6px;
+        }
+
+        .summary-card .address,
+        .summary-card .phone {
+            font-size: 14px;
+            color: #555;
+            margin-top: 4px;
+        }
+
+        .summary-card .action-link {
+            color: #007aff;
+            font-weight: 500;
+            text-decoration: none;
+            margin-left: 6px;
+            transition: opacity 0.2s;
+        }
+        
+        .summary-card .action-link:hover {
+            opacity: 0.8;
+        }
+
+        /* 지도 컨테이너 - detail-01과 동일 */
+        .map-container {
+            height: 150px;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 14px;
+            border-bottom: 8px solid #f8f9fa;
+        }
+
+        /* 인페이지 내비게이션 - detail-01과 동일 */
+        .in-page-nav {
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 53px;
+            background-color: #fff;
+            z-index: 99;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+
+        .in-page-nav a {
+            text-decoration: none;
+            color: #555;
+            font-size: 15px;
+            font-weight: 500;
+            padding: 0 5px;
+            transition: color 0.2s;
+        }
+        
+        .in-page-nav a:hover {
+            color: #333;
+        }
+
+        /* 콘텐츠 섹션 공통 스타일 - detail-01과 동일 */
+        .content-section {
+            padding: 24px 16px;
+            border-bottom: 8px solid #f8f9fa;
+        }
+        
+        .content-section:last-of-type {
+            border-bottom: none;
+        }
+
+        .content-section h3 {
+            font-size: 18px;
+            margin: 0 0 16px 0;
+            font-weight: bold;
+        }
+
+        /* 차량 정보 요약 - detail-01과 동일 */
+        .car-info-summary {
+            background-color: #f0f4ff;
+            border: 1px solid #5d5fef;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            color: #5d5fef;
+            margin-bottom: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .car-info-summary:hover {
+            background-color: #dbe4ff;
+        }
+        
+        .car-info-summary .q-icon {
+            font-size: 16px;
+            color: #5d5fef;
+            margin-left: 8px;
+        }
+
+        /* 검사 비용 테이블 - 검사소 전용 스타일 */
+        .inspection-table {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .inspection-table-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        .inspection-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .inspection-row:last-child {
+            border-bottom: none;
+        }
+
+        .inspection-type {
+            font-size: 15px;
+            color: #555;
+        }
+
+        .inspection-price {
+            font-size: 16px;
+            font-weight: bold;
+            color: #5d5fef;
+        }
+
+        .inspection-notice {
+            background-color: #fff3e0;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 12px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #e65100;
+        }
+
+        .inspection-notice .icon {
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+
+        /* 업체 정보 섹션 - detail-01과 동일 */
+        .intro-text {
+            font-size: 14px;
+            line-height: 1.6;
+            max-height: 63px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 8px;
+            transition: max-height 0.3s;
+        }
+        
+        .intro-text.expanded {
+            max-height: none;
+        }
+
+        .read-more-btn {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            padding: 8px;
+            margin-top: 8px;
+            background-color: #f0f0f0;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: none;
+        }
+        
+        .read-more-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        .photo-gallery-wrapper {
+            position: relative;
+            margin-top: 16px;
+            padding-bottom: 8px;
+        }
+
+        .photo-gallery {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+            scroll-behavior: smooth;
+        }
+        
+        .photo-gallery::-webkit-scrollbar {
+            display: none;
+        }
+
+        .photo-nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 10;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+        
+        .photo-nav-arrow:hover {
+            opacity: 1;
+        }
+        
+        .photo-nav-arrow.left {
+            left: 5px;
+        }
+        
+        .photo-nav-arrow.right {
+            right: 5px;
+        }
+
+        .photo-item {
+            flex-shrink: 0;
+            width: 100px;
+            height: 100px;
+            background-color: #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .info-list {
+            list-style: none;
+            padding: 0;
+            margin: 16px 0 0 0;
+            font-size: 14px;
+        }
+
+        .info-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .info-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* 공지, 포스팅 아이템 스타일 */
+        .notice-item,
+        .post-item {
+            display: block;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            text-decoration: none;
+            color: #333;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+        
+        .notice-item:last-child,
+        .post-item:last-child {
+            border-bottom: none;
+        }
+        
+        .notice-item:hover,
+        .post-item:hover {
+            background-color: #fafafa;
+        }
+
+        /* 공지 아이템 - 검사소용 스타일 */
+        .notice-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notice-content {
+            flex-grow: 1;
+        }
+
+        .notice-date {
+            font-size: 14px;
+            color: #777;
+        }
+
+        .notice-title {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .notice-views {
+            font-size: 13px;
+            color: #999;
+            margin-left: 12px;
+        }
+
+        /* 포스팅 아이템 - detail-01과 동일 */
+        .post-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .post-item .thumbnail {
+            flex-shrink: 0;
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            background-color: #f0f0f0;
+            overflow: hidden;
+        }
+        
+        .post-item .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .post-item .details {
+            flex-grow: 1;
+        }
+
+        .post-views {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 2px;
+        }
+        
+        .post-item .name {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .post-item .desc {
+            font-size: 13px;
+            color: #777;
+        }
+
+        /* FAQ 아코디언 스타일 - detail-01과 동일 */
+        .faq-item {
+            display: block;
+            padding: 0;
+            border-bottom: 1px solid #f0f0f0;
+            text-decoration: none;
+            color: #333;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+
+        .faq-question {
+            padding: 16px 40px 16px 0;
+            position: relative;
+            font-weight: 500;
+            font-size: 15px;
+            user-select: none;
+        }
+
+        .faq-question::after {
+            content: '+';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            font-weight: 300;
+            color: #666;
+            transition: transform 0.3s;
+        }
+
+        .faq-item.active .faq-question::after {
+            content: '−';
+            transform: translateY(-50%) rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 40px 0 0;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 300px;
+            padding: 0 40px 16px 0;
+        }
+
+        .faq-answer p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #666;
+            margin: 0;
+        }
+
+        /* 근처 추천 검사소 아이템 - detail-01과 유사하지만 태그 추가 */
+        .recommend-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .recommend-item:last-child {
+            margin-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .recommend-item:hover {
+            background-color: #fafafa;
+        }
+
+        .recommend-item .thumbnail {
+            flex-shrink: 0;
+            width: 70px;
+            height: 70px;
+            border-radius: 8px;
+            background-color: #f0f0f0;
+            overflow: hidden;
+        }
+        
+        .recommend-item .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .recommend-item .item-details {
+            flex-grow: 1;
+        }
+
+        .recommend-item .name-info {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 4px;
+        }
+
+        .recommend-item .name {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .recommend-item .distance {
+            font-size: 14px;
+            color: #777;
+            margin-left: 6px;
+        }
+
+        .recommend-item .address {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 6px;
+        }
+
+        .recommend-item .hours {
+            font-size: 13px;
+            color: #777;
+            margin-bottom: 6px;
+        }
+
+        /* 태그 스타일 */
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 6px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .tag-specialty {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .tag-service {
+            background-color: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .tag-cert {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+
+        /* 더보기 버튼 - detail-01과 동일 */
+        .more-button {
+            display: block;
+            width: calc(100% - 32px);
+            padding: 12px;
+            margin: 20px auto 0 auto;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 500;
+            color: #555;
+            text-decoration: none;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+        
+        .more-button:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* 하단 고정 CTA 버튼 - detail-01과 동일 */
+        .bottom-cta {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 16px;
+            background-color: #fff;
+            border-top: 1px solid #eee;
+            z-index: 101;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
+        }
+
+        .bottom-cta button {
+            width: 100%;
+            padding: 16px;
+            background-color: #5d5fef;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            outline: none;
+        }
+        
+        .bottom-cta button:hover {
+            opacity: 0.9;
+        }
+
+        /* 내 차 정보 등록 모달 스타일 - detail-01과 동일 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: flex-end;
+        }
+        
+        .bottom-sheet {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 420px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 16px 16px 0 0;
+            padding: 20px 16px;
+            z-index: 1001;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-in-out;
+            box-sizing: border-box;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .bottom-sheet.active {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .modal-close-btn {
+            font-size: 28px;
+            border: none;
+            background: none;
+            color: #777;
+            padding: 0;
+            line-height: 1;
+            cursor: pointer;
+        }
+        
+        .modal-content .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .modal-content .input-group h4 {
+            font-size: 15px;
+            margin: 0 0 10px 0;
+            font-weight: 600;
+        }
+        
+        .modal-content .dropdown-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            appearance: none;
+            -webkit-appearance: none;
+            background-color: #fff;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%23333333" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 24px;
+        }
+        
+        .modal-content .dropdown-select:focus {
+            outline: none;
+            border-color: #5d5fef;
+            box-shadow: 0 0 0 2px rgba(93, 95, 239, 0.2);
+        }
+        
+        /* 토글 버튼 그룹 - detail-01과 동일 */
+        .toggle-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .toggle-button {
+            flex-grow: 0;
+            flex-shrink: 0;
+            flex-basis: auto;
+            display: inline-block;
+            padding: 10px 16px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #fff;
+            color: #555;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-sizing: border-box;
+            text-align: center;
+            min-width: 80px;
+        }
+        
+        .toggle-button.active {
+            background-color: #5d5fef;
+            color: #fff;
+            border-color: #5d5fef;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(93, 95, 239, 0.3);
+        }
+        
+        .toggle-button:not(.active):hover {
+            background-color: #f0f0f0;
+        }
+
+        .modal-footer {
+            margin-top: 30px;
+        }
+        
+        .modal-footer .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background-color: #5d5fef;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+        
+        .modal-footer .submit-btn:hover {
+            background-color: #4a4cdb;
+        }
+        
+        .modal-footer .submit-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+
+        /* 포스팅/공지 모달 스타일 - detail-01과 동일 */
+        .posting-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .posting-modal-overlay.active {
+            display: flex;
+        }
+
+        .posting-modal-content {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 380px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .posting-modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .posting-modal-close:hover {
+            color: #333;
+        }
+
+        .posting-modal-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-right: 30px;
+            line-height: 1.4;
+        }
+
+        .posting-modal-body {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .posting-modal-cta {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #5d5fef;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .posting-modal-cta:hover {
+            background-color: #4a4cdb;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 섹션 -->
+        <header class="header">
+            <a href="#" onclick="window.history.back(); return false;" class="back-btn">&lt;</a>
+            <div class="title">우리 검사소</div>
+            <a href="#" onclick="alert('공유 기능'); return false;" class="share-btn">↑</a>
+        </header>
+
+        <main>
+            <!-- 요약 카드 섹션 -->
+            <div class="summary-card">
+                <div class="profile">
+                    <div class="thumbnail">
+                        <img src="https://placehold.co/60x60/e0e0e0/ffffff?text=로고" alt="업체 로고">
+                    </div>
+                    <div>
+                        <div>
+                          <div class="carpos-mark">[CASCAR]</div>
+                          <div class="name-info">
+                            <span class="name">우리 검사소</span><span class="distance">3km</span>
+                        </div>
+                    </div>
+                        <div class="address">서울시 강남구 테헤란로 123 <a href="#" onclick="alert('길찾기 앱 연동'); return false;" class="action-link">[길찾기]</a></div>
+                        <div class="phone">📞 02-1234-5678 <a href="tel:02-1234-5678" class="action-link">[전화걸기]</a></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 지도 영역 -->
+            <div class="map-container">[ 지도 영역 ]</div>
+
+            <!-- 인페이지 내비게이션 -->
+            <nav class="in-page-nav">
+                <a href="#products">상품</a>
+                <a href="#info">업체정보</a>
+                <a href="#notices">공지</a>
+                <a href="#posts">포스팅</a>
+                <a href="#faq">FAQ</a>
+            </nav>
+
+            <!-- 상품 섹션 - 검사소 전용 -->
+            <section id="products" class="content-section">
+                <h3>상품</h3>
+                
+                <!-- 차량 정보 요약 및 모달 트리거 -->
+                <div id="carInfoSummary" class="car-info-summary">
+                    <span id="displayCarInfo">차량 정보를 선택해주세요.</span> <span class="q-icon">[?]</span>
+                </div>
+
+                <!-- 검사 비용 테이블 -->
+                <div class="inspection-table">
+                    <div class="inspection-table-title">자동차 검사 비용 및 절차 안내</div>
+                    <div id="inspectionCostTable">
+                        <!-- 동적으로 생성될 검사 비용 정보 -->
+                        <div class="inspection-row">
+                            <span class="inspection-type">차량 유형을 선택해주세요</span>
+                            <span class="inspection-price">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 안내 문구 -->
+                <div class="inspection-notice">
+                    <span class="icon">ⓘ</span> 차량 등록지역이 '시' 단위 이상은 종합검사 대상입니다.<br>
+                    배출면제 대상 차량은 현장에서 자동으로 검사비 할인됩니다.
+                </div>
+            </section>
+
+            <!-- 업체정보 섹션 -->
+            <section id="info" class="content-section">
+                <h3>업체정보</h3>
+                <div class="intro-text" id="introText">
+                    <strong>사장님 한마디</strong><br>
+                    "고객 한 분 한 분이 소중해요! 평일 오후는 한산하니 대기 없이 빠른 검사 가능합니다. 20년 경력의 전문 검사원이 꼼꼼하게 검사해드립니다."
+                </div>
+                <button class="read-more-btn" id="readMoreBtn">소개글 더보기 ∨</button>
+                <br>
+                <h4>사진</h4>
+                <div class="photo-gallery-wrapper">
+                    <button class="photo-nav-arrow left" onclick="scrollPhotoGallery(-1)">‹</button>
+                    <div class="photo-gallery" id="photoGallery">
+                        <div class="photo-item"><img src="https://placehold.co/100x100/ccc/ffffff?text=사진1" alt="업체 사진 1"></div>
+                        <div class="photo-item"><img src="https://placehold.co/100x100/ccc/ffffff?text=사진2" alt="업체 사진 2"></div>
+                        <div class="photo-item"><img src="https://placehold.co/100x100/ccc/ffffff?text=사진3" alt="업체 사진 3"></div>
+                        <div class="photo-item"><img src="https://placehold.co/100x100/ccc/ffffff?text=사진4" alt="업체 사진 4"></div>
+                    </div>
+                    <button class="photo-nav-arrow right" onclick="scrollPhotoGallery(1)">›</button>
+                </div>
+                <!-- 검사소 상세 정보 -->
+                <ul class="info-list">
+                    <li><strong>업체명</strong>: 우리 검사소</li>
+                    <li><strong>업체주소</strong>: 서울시 강남구 테헤란로 123</li>
+                    <li><strong>업체전화번호</strong>: 02-1234-5678</li>
+                    <li><strong>영업시간</strong>: 평일 09:00~18:00<br>토요일 09:00~13:00</li>
+                    <li><strong>휴무일</strong>: 매주 일요일, 공휴일 휴무</li>
+                    <li><strong>전문분야</strong>: 정기검사, 종합검사, 배출가스 검사</li>
+                    <li><strong>자격증</strong>: 자동차검사원, 정비기능사</li>
+                    <li><strong>부가서비스</strong>: 픽업 서비스, 재검비용 무료</li>
+                </ul>
+            </section>
+
+            <!-- 공지 섹션 - 검사소용 -->
+            <section id="notices" class="content-section">
+                <h3>공지</h3>
+                <div class="notice-list" id="noticeList">
+                    <div class="notice-item" onclick="showNoticeModal(0)">
+                        <div class="notice-content">
+                            <div class="notice-date">2025.07.24</div>
+                            <div class="notice-title">여름 휴가 일정 안내</div>
+                        </div>
+                        <div class="notice-views">Views 25 ></div>
+                    </div>
+                    <div class="notice-item" onclick="showNoticeModal(1)">
+                        <div class="notice-content">
+                            <div class="notice-date">2025.05.14</div>
+                            <div class="notice-title">신규 서비스 런칭 이벤트</div>
+                        </div>
+                        <div class="notice-views">Views 145 ></div>
+                    </div>
+                    <div class="notice-item" onclick="showNoticeModal(2)">
+                        <div class="notice-content">
+                            <div class="notice-date">2024.04.12</div>
+                            <div class="notice-title">엔진오일 비용 인상 안내</div>
+                        </div>
+                        <div class="notice-views">Views 204 ></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 포스팅 섹션 -->
+            <section id="posts" class="content-section">
+                <h3>포스팅</h3>
+                <div class="posting-list" id="postingList">
+                    <a href="#" onclick="showPostingModal(0); return false;" class="post-item">
+                        <div class="thumbnail">
+                            <img src="https://placehold.co/60x60/f0f0f0/333333?text=포스팅" alt="포스팅 이미지">
+                        </div>
+                        <div class="details">
+                            <div class="post-views">Views 204</div>
+                            <div class="name">여름철 에어컨 관리 꿀팁</div>
+                            <div class="desc">2025.07.22</div>
+                        </div>
+                    </a>
+                    <a href="#" onclick="showPostingModal(1); return false;" class="post-item">
+                        <div class="thumbnail">
+                            <img src="https://placehold.co/60x60/f0f0f0/333333?text=포스팅" alt="포스팅 이미지">
+                        </div>
+                        <div class="details">
+                            <div class="post-views">Views 103</div>
+                            <div class="name">초보운전자를 위한 타이어 점검법</div>
+                            <div class="desc">2025.07.10</div>
+                        </div>
+                    </a>
+                    <a href="#" onclick="showPostingModal(2); return false;" class="post-item">
+                        <div class="thumbnail">
+                            <img src="https://placehold.co/60x60/f0f0f0/333333?text=포스팅" alt="포스팅 이미지">
+                        </div>
+                        <div class="details">
+                            <div class="post-views">Views 432</div>
+                            <div class="name">엔진오일, 언제 갈아야 할까?</div>
+                            <div class="desc">2025.06.25</div>
+                        </div>
+                    </a>
+                </div>
+                <button class="more-button" id="loadMorePostings" style="display: none;">+ 더보기</button>
+            </section>
+
+            <!-- FAQ 섹션 - 검사소 전용 -->
+            <section id="faq" class="content-section">
+                <h3>FAQ</h3>
+                <div class="faq-item">
+                    <div class="faq-question">Q. 예약 시간 변경은 어떻게 하나요?</div>
+                    <div class="faq-answer">
+                        <p>예약 시간 변경은 예약일 하루 전까지 가능합니다. 마이페이지 > 예약내역에서 변경하실 수 있으며, 당일 변경이 필요한 경우 검사소에 직접 전화 문의 부탁드립니다.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Q. 수리 비용은 어떻게 결정되나요?</div>
+                    <div class="faq-answer">
+                        <p>검사 비용은 차량 종류에 따라 법정 수수료가 정해져 있습니다. 정기검사, 종합검사(부하/무부하) 등 검사 종류에 따라 비용이 다르며, 모든 비용은 투명하게 안내드립니다.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Q. 자동차 검사 대행 서비스는 무엇인가요?</div>
+                    <div class="faq-answer">
+                        <p>바쁜 고객님을 위해 차량을 직접 픽업하여 검사를 받고 다시 전달해드리는 서비스입니다. 추가 비용이 발생하며, 서비스 가능 지역은 검사소에 문의해주세요.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Q. 검사 불합격 시 어떻게 되나요?</div>
+                    <div class="faq-answer">
+                        <p>검사 불합격 시 재검사 기간은 불합격일로부터 30일 이내입니다. 재검사 시에는 불합격 항목만 검사하며, 검사 수수료가 감면됩니다. 자세한 내용은 검사소에 문의해주세요.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Q. 결제는 현장에서 하나요?</div>
+                    <div class="faq-answer">
+                        <p>네, 검사소의 경우 모든 결제는 현장에서 진행됩니다. 현금, 카드 결제가 가능하며, 영수증 발급도 가능합니다.</p>
+                    </div>
+                </div>
+                <button class="more-button" id="loadMoreFaq" style="display: none;">+ 더보기</button>
+            </section>
+
+            <!-- 근처 추천 검사소 섹션 -->
+            <section id="recommendations" class="content-section">
+                <h3>근처 추천 검사소</h3>
+                <div class="recommend-item-container" id="recommendationsList">
+                    <div class="recommend-item" onclick="location.href='detail-03.html?id=1'">
+                        <div class="thumbnail">
+                            <img src="https://placehold.co/70x70/e0e0e0/ffffff?text=검사소1" alt="추천 검사소 썸네일">
+                        </div>
+                        <div class="item-details">
+                            <div>
+                                <div class="carpos-mark">[CASCAR]</div>
+                                <div class="name-info">
+                                    <span class="name">강남 자동차 검사소</span><span class="distance">3.5km</span>
+                                </div>
+                            </div>
+                            <div class="hours">평일 09:00~17:30</div>
+                            <div class="tag-container">
+                                <span class="tag tag-specialty">정기검사</span>
+                                <span class="tag tag-specialty">배출가스</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="recommend-item" onclick="location.href='detail-03.html?id=2'">
+                        <div class="thumbnail">
+                            <img src="https://placehold.co/70x70/e0e0e0/ffffff?text=검사소2" alt="추천 검사소 썸네일">
+                        </div>
+                        <div class="item-details">
+                            <div class="name-info">
+                                <span class="name">서초 검사소</span><span class="distance">4.2km</span>
+                            </div>
+                            <div class="hours">평일 08:30~18:00</div>
+                            <div class="tag-container">
+                                <span class="tag tag-specialty">종합검사</span>
+                                <span class="tag tag-service">대행서비스</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="recommend-item" onclick="location.href='detail-03.html?id=3'">
+                        <div class="thumbnail">
+                            <img src="https://placehold.co/70x70/e0e0e0/ffffff?text=검사소3" alt="추천 검사소 썸네일">
+                        </div>
+                        <div class="item-details">
+                            <div class="name-info">
+                                <span class="name">한강 자동차 검사장</span><span class="distance">5.1km</span>
+                            </div>
+                            <div class="hours">평일 09:00~17:00</div>
+                            <div class="tag-container">
+                                <span class="tag tag-specialty">정기검사</span>
+                                <span class="tag tag-cert">검사원자격증</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="recommend-item hidden" onclick="location.href='detail-03.html?id=4'">
+                        <div class="thumbnail">
+                            <img src="https://placehold.co/70x70/e0e0e0/ffffff?text=검사소4" alt="추천 검사소 썸네일">
+                        </div>
+                        <div class="item-details">
+                            <div>
+                                <div class="carpos-mark">[CASCAR]</div>
+                                <div class="name-info">
+                                    <span class="name">송파 검사소</span><span class="distance">6.3km</span>
+                                </div>
+                            </div>
+                            <div class="hours">평일 08:00~17:30</div>
+                            <div class="tag-container">
+                                <span class="tag tag-specialty">종합검사</span>
+                                <span class="tag tag-service">픽업서비스</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="recommend-item hidden" onclick="location.href='detail-03.html?id=5'">
+                        <div class="thumbnail">
+                            <img src="https://placehold.co/70x70/e0e0e0/ffffff?text=검사소5" alt="추천 검사소 썸네일">
+                        </div>
+                        <div class="item-details">
+                            <div class="name-info">
+                                <span class="name">영등포 검사장</span><span class="distance">7.8km</span>
+                            </div>
+                            <div class="hours">평일 09:00~18:00</div>
+                            <div class="tag-container">
+                                <span class="tag tag-specialty">정기검사</span>
+                                <span class="tag tag-specialty">배출가스</span>
+                                <span class="tag tag-service">재검무료</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="more-button" id="loadMoreRecommendations">더보기 ></button>
+            </section>
+        </main>
+
+        <!-- 하단 고정 CTA 버튼 -->
+        <div class="bottom-cta">
+            <button id="openReservationCtaBtn">예약하기</button>
+        </div>
+    </div>
+
+    <!-- 내 차 정보 등록 모달 -->
+    <div id="carInfoModalOverlay" class="modal-overlay"></div>
+    <div id="carInfoBottomSheet" class="bottom-sheet">
+        <div class="modal-header">
+            <h3 class="modal-title">내 차 정보 등록</h3>
+            <button id="closeCarInfoModalBtn" class="modal-close-btn">&times;</button>
+        </div>
+        <div class="modal-content">
+            <div class="input-group">
+                <h4>차량 유형을 선택해주세요 (필수)</h4>
+                <select id="carTypeSelect" class="dropdown-select">
+                    <option value="">-- 선택 --</option>
+                    <option value="경차">경차(경형)</option>
+                    <option value="소형차">소형차(10인승 이하 / 1t 이하)</option>
+                    <option value="중형차">중형차(11인승 이상 / 2.5t 이하)</option>
+                    <option value="대형승합">대형 승합(35인승 이상)</option>
+                    <option value="대형화물10">대형 화물(10t 이하)</option>
+                    <option value="대형화물15">대형 화물(10~15t 미만)</option>
+                    <option value="초대형화물">초대형 화물(15t 이상)</option>
+                </select>
+            </div>
+
+            <!-- 조건부 필드 (경차/소형차만 노출) -->
+            <div id="conditionalFields" style="display: none;">
+                <hr style="border: 0; border-top: 1px dashed #eee; margin: 20px 0;">
+                <div class="input-group">
+                    <h4>차종 (필수)</h4>
+                    <div class="toggle-group" id="carModelToggle">
+                        <div class="toggle-button" data-value="승용차">승용차</div>
+                        <div class="toggle-button" data-value="SUV">SUV</div>
+                        <div class="toggle-button" data-value="승합차">승합차</div>
+                        <div class="toggle-button" data-value="트럭">트럭</div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <h4>차량 크기 (필수)</h4>
+                    <div class="toggle-group" id="carSizeToggle">
+                        <div class="toggle-button" data-value="경형">경형</div>
+                        <div class="toggle-button" data-value="소형">소형</div>
+                        <div class="toggle-button" data-value="준중형">준중형</div>
+                        <div class="toggle-button" data-value="중형">중형</div>
+                        <div class="toggle-button" data-value="대형">대형</div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <h4>연료 (필수)</h4>
+                    <div class="toggle-group" id="fuelTypeToggle">
+                        <div class="toggle-button" data-value="가솔린">가솔린(휘발유)</div>
+                        <div class="toggle-button" data-value="디젤">디젤</div>
+                        <div class="toggle-button" data-value="LPG">LPG</div>
+                        <div class="toggle-button" data-value="하이브리드">하이브리드</div>
+                        <div class="toggle-button" data-value="전기">전기</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="submitCarInfoBtn" class="submit-btn" disabled>완료</button>
+        </div>
+    </div>
+
+    <script>
+        // 검사 비용 데이터
+        const inspectionCosts = {
+            '경차': {
+                '정기검사': '28,000원',
+                '종합검사(부하)': '56,000원',
+                '종합검사(무부하)': '51,000원'
+            },
+            '소형차': {
+                '정기검사': '30,000원',
+                '종합검사(부하)': '61,000원',
+                '종합검사(무부하)': '56,000원'
+            },
+            '중형차': {
+                '정기검사': '35,000원',
+                '종합검사(부하)': '68,000원',
+                '종합검사(무부하)': '63,000원'
+            },
+            '대형승합': {
+                '정기검사': '40,000원',
+                '종합검사(부하)': '75,000원',
+                '종합검사(무부하)': '70,000원'
+            },
+            '대형화물10': {
+                '정기검사': '45,000원',
+                '종합검사(부하)': '82,000원',
+                '종합검사(무부하)': '77,000원'
+            },
+            '대형화물15': {
+                '정기검사': '50,000원',
+                '종합검사(부하)': '89,000원',
+                '종합검사(무부하)': '84,000원'
+            },
+            '초대형화물': {
+                '정기검사': '55,000원',
+                '종합검사(부하)': '96,000원',
+                '종합검사(무부하)': '91,000원'
+            }
+        };
+
+        // 검사 비용 테이블 업데이트 함수
+        function updateInspectionCostTable(carType) {
+            const costTable = document.getElementById('inspectionCostTable');
+            
+            if (!carType || !inspectionCosts[carType]) {
+                costTable.innerHTML = `
+                    <div class="inspection-row">
+                        <span class="inspection-type">차량 유형을 선택해주세요</span>
+                        <span class="inspection-price">-</span>
+                    </div>
+                `;
+                return;
+            }
+
+            const costs = inspectionCosts[carType];
+            let tableHTML = '';
+            
+            // 차량 유형 이름 표시
+            const carTypeName = carType === '경차' ? '경차 (경형)' : 
+                               carType === '소형차' ? '소형차' :
+                               carType === '중형차' ? '중형차' :
+                               carType === '대형승합' ? '대형 승합' :
+                               carType === '대형화물10' ? '대형 화물(10t 이하)' :
+                               carType === '대형화물15' ? '대형 화물(10~15t 미만)' :
+                               '초대형 화물(15t 이상)';
+            
+            document.querySelector('.inspection-table-title').textContent = `${carTypeName}`;
+            
+            for (const [type, price] of Object.entries(costs)) {
+                tableHTML += `
+                    <div class="inspection-row">
+                        <span class="inspection-type">${type}</span>
+                        <span class="inspection-price">${price}</span>
+                    </div>
+                `;
+            }
+            
+            costTable.innerHTML = tableHTML;
+        }
+
+        // "소개글 더보기" 기능
+        const readMoreBtn = document.getElementById('readMoreBtn');
+        const introText = document.getElementById('introText');
+
+        if (readMoreBtn && introText) {
+            readMoreBtn.addEventListener('click', () => {
+                introText.classList.toggle('expanded');
+                if (introText.classList.contains('expanded')) {
+                    readMoreBtn.textContent = '접기 ∧';
+                } else {
+                    readMoreBtn.textContent = '소개글 더보기 ∨';
+                }
+            });
+        }
+
+        // 인페이지 내비게이션 스크롤 기능
+        document.querySelectorAll('.in-page-nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+
+                if (targetElement) {
+                    const headerHeight = document.querySelector('.header').offsetHeight;
+                    const inPageNavHeight = document.querySelector('.in-page-nav').offsetHeight;
+                    const offset = headerHeight + inPageNavHeight + 10;
+
+                    window.scrollTo({
+                        top: targetElement.offsetTop - offset,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // 예약하기 버튼 클릭 이벤트
+        const openReservationCtaBtn = document.getElementById('openReservationCtaBtn');
+        openReservationCtaBtn.addEventListener('click', function() {
+            // 검사소의 경우 단일 상품(자동차 검사)만 있으므로 고정값 전달
+            const selectedProducts = [{
+                name: '자동차 검사',
+                price: 0 // 현장 결제이므로 가격은 0으로 설정
+            }];
+            
+            // sessionStorage에 저장
+            sessionStorage.setItem('selectedProducts', JSON.stringify(selectedProducts));
+            sessionStorage.setItem('isInspectionCenter', 'true'); // 검사소 구분용
+            
+            // booking-03.html로 이동
+            window.location.href = 'booking-03.html';
+        });
+
+        // --- 내 차 정보 등록 모달 관련 스크립트 ---
+        const carInfoSummary = document.getElementById('carInfoSummary');
+        const carInfoModalOverlay = document.getElementById('carInfoModalOverlay');
+        const carInfoBottomSheet = document.getElementById('carInfoBottomSheet');
+        const closeCarInfoModalBtn = document.getElementById('closeCarInfoModalBtn');
+        const carTypeSelect = document.getElementById('carTypeSelect');
+        const conditionalFields = document.getElementById('conditionalFields');
+        const carModelToggle = document.getElementById('carModelToggle');
+        const carSizeToggle = document.getElementById('carSizeToggle');
+        const fuelTypeToggle = document.getElementById('fuelTypeToggle');
+        const submitCarInfoBtn = document.getElementById('submitCarInfoBtn');
+        const displayCarInfo = document.getElementById('displayCarInfo');
+
+        let selectedCarTypeModal = '';
+        let selectedCarModelModal = '';
+        let selectedCarSizeModal = '';
+        let selectedFuelTypeModal = '';
+
+        function openCarInfoModal() {
+            carInfoModalOverlay.style.display = 'block';
+            setTimeout(() => {
+                carInfoBottomSheet.classList.add('active');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+            initializeCarInfoModalState();
+        }
+
+        function closeCarInfoModal() {
+            carInfoBottomSheet.classList.remove('active');
+            setTimeout(() => {
+                carInfoModalOverlay.style.display = 'none';
+            }, 300);
+            document.body.style.overflow = '';
+        }
+
+        function handleToggleSelection(event, targetVariable) {
+            const clickedButton = event.target;
+            if (!clickedButton.classList.contains('toggle-button')) return;
+
+            clickedButton.parentNode.querySelectorAll('.toggle-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            clickedButton.classList.add('active');
+
+            if (targetVariable === 'carModel') {
+                selectedCarModelModal = clickedButton.dataset.value;
+            } else if (targetVariable === 'carSize') {
+                selectedCarSizeModal = clickedButton.dataset.value;
+            } else if (targetVariable === 'fuelType') {
+                selectedFuelTypeModal = clickedButton.dataset.value;
+            }
+            updateSubmitButtonStateModal();
+        }
+
+        function toggleConditionalFieldsModal() {
+            selectedCarTypeModal = carTypeSelect.value;
+            const isSmallOrLight = (selectedCarTypeModal === '경차' || selectedCarTypeModal === '소형차');
+
+            if (isSmallOrLight) {
+                conditionalFields.style.display = 'block';
+                resetToggleSelectionsModal();
+            } else {
+                conditionalFields.style.display = 'none';
+                resetToggleSelectionsModal();
+            }
+            
+            // 검사 비용 테이블 업데이트
+            updateInspectionCostTable(selectedCarTypeModal);
+            updateSubmitButtonStateModal();
+        }
+
+        function resetToggleSelectionsModal() {
+            [carModelToggle, carSizeToggle, fuelTypeToggle].forEach(group => {
+                group.querySelectorAll('.toggle-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+            });
+            selectedCarModelModal = '';
+            selectedCarSizeModal = '';
+            selectedFuelTypeModal = '';
+        }
+
+        function updateSubmitButtonStateModal() {
+            const isSmallOrLight = (selectedCarTypeModal === '경차' || selectedCarTypeModal === '소형차');
+
+            if (selectedCarTypeModal === '') {
+                submitCarInfoBtn.disabled = true;
+            } else if (isSmallOrLight) {
+                const allConditionalFieldsFilled = selectedCarModelModal !== '' &&
+                                                    selectedCarSizeModal !== '' &&
+                                                    selectedFuelTypeModal !== '';
+                submitCarInfoBtn.disabled = !allConditionalFieldsFilled;
+            } else {
+                // 중형차 이상도 완료 가능
+                submitCarInfoBtn.disabled = false;
+            }
+        }
+
+        function initializeCarInfoModalState() {
+            const savedCarInfo = sessionStorage.getItem('selectedCarInfoForDetail');
+            
+            if (savedCarInfo && savedCarInfo !== '내 차 정보 등록하기') {
+                displayCarInfo.textContent = savedCarInfo;
+                
+                // 저장된 정보를 파싱하여 모달 상태 복원
+                const parts = savedCarInfo.split(' · ').map(s => s.trim());
+                
+                if (parts.length >= 1) {
+                    const type = parts[0];
+                    
+                    // 차량 유형 설정
+                    if (type.includes('경차')) {
+                        carTypeSelect.value = '경차';
+                    } else if (type.includes('소형차')) {
+                        carTypeSelect.value = '소형차';
+                    } else if (type.includes('중형차')) {
+                        carTypeSelect.value = '중형차';
+                    } else if (type.includes('대형 승합')) {
+                        carTypeSelect.value = '대형승합';
+                    } else if (type.includes('10t')) {
+                        carTypeSelect.value = '대형화물10';
+                    } else if (type.includes('15t')) {
+                        carTypeSelect.value = '대형화물15';
+                    } else if (type.includes('초대형')) {
+                        carTypeSelect.value = '초대형화물';
+                    }
+                    
+                    toggleConditionalFieldsModal();
+                    
+                    // 경차/소형차인 경우 추가 정보 복원
+                    if (parts.length === 4) {
+                        const [, model, size, fuel] = parts;
+                        
+                        const setToggleActive = (groupElement, value) => {
+                            const button = groupElement.querySelector(`[data-value="${value}"]`);
+                            if (button) {
+                                button.classList.add('active');
+                                return value;
+                            }
+                            return '';
+                        };
+                        
+                        selectedCarModelModal = setToggleActive(carModelToggle, model);
+                        selectedCarSizeModal = setToggleActive(carSizeToggle, size);
+                        selectedFuelTypeModal = setToggleActive(fuelTypeToggle, fuel.split('(')[0]);
+                    }
+                }
+            } else {
+                carTypeSelect.value = '';
+                resetToggleSelectionsModal();
+                toggleConditionalFieldsModal();
+            }
+            
+            updateSubmitButtonStateModal();
+        }
+
+        carInfoSummary.addEventListener('click', openCarInfoModal);
+        closeCarInfoModalBtn.addEventListener('click', closeCarInfoModal);
+        carInfoModalOverlay.addEventListener('click', closeCarInfoModal);
+
+        carTypeSelect.addEventListener('change', toggleConditionalFieldsModal);
+
+        carModelToggle.addEventListener('click', (e) => handleToggleSelection(e, 'carModel'));
+        carSizeToggle.addEventListener('click', (e) => handleToggleSelection(e, 'carSize'));
+        fuelTypeToggle.addEventListener('click', (e) => handleToggleSelection(e, 'fuelType'));
+
+        submitCarInfoBtn.addEventListener('click', () => {
+            const isSmallOrLight = (selectedCarTypeModal === '경차' || selectedCarTypeModal === '소형차');
+            const carTypeName = carTypeSelect.options[carTypeSelect.selectedIndex].text.split('(')[0].trim();
+
+            if (isSmallOrLight) {
+                displayCarInfo.textContent = `${carTypeName} · ${selectedCarModelModal} · ${selectedCarSizeModal} · ${selectedFuelTypeModal}`;
+            } else {
+                // 중형차 이상은 차량 유형만 표시
+                displayCarInfo.textContent = carTypeSelect.options[carTypeSelect.selectedIndex].text;
+            }
+            
+            // sessionStorage에 저장
+            sessionStorage.setItem('selectedCarInfoForDetail', displayCarInfo.textContent);
+            
+            closeCarInfoModal();
+        });
+
+        // 페이지 로드 시 차량 정보 복원
+        window.addEventListener('load', () => {
+            const savedCarInfo = sessionStorage.getItem('selectedCarInfoForDetail');
+            if (savedCarInfo && savedCarInfo !== '내 차 정보 등록하기') {
+                displayCarInfo.textContent = savedCarInfo;
+                
+                // 차량 유형 파싱하여 검사 비용 테이블 업데이트
+                const type = savedCarInfo.split(' ')[0];
+                let carTypeValue = '';
+                
+                if (type.includes('경차')) {
+                    carTypeValue = '경차';
+                } else if (type.includes('소형차')) {
+                    carTypeValue = '소형차';
+                } else if (type.includes('중형차')) {
+                    carTypeValue = '중형차';
+                } else if (type.includes('대형') && type.includes('승합')) {
+                    carTypeValue = '대형승합';
+                } else if (savedCarInfo.includes('10t')) {
+                    carTypeValue = '대형화물10';
+                } else if (savedCarInfo.includes('15t')) {
+                    carTypeValue = '대형화물15';
+                } else if (type.includes('초대형')) {
+                    carTypeValue = '초대형화물';
+                }
+                
+                if (carTypeValue) {
+                    updateInspectionCostTable(carTypeValue);
+                }
+            }
+        });
+
+        // --- '근처 추천 검사소' 더보기 기능 ---
+        const loadMoreRecommendationsBtn = document.getElementById('loadMoreRecommendations');
+        const hiddenRecommendations = document.querySelectorAll('#recommendationsList .recommend-item.hidden');
+
+        loadMoreRecommendationsBtn.addEventListener('click', () => {
+            let shownCount = 0;
+            hiddenRecommendations.forEach(item => {
+                if (shownCount < 5 && item.classList.contains('hidden')) {
+                    item.classList.remove('hidden');
+                    shownCount++;
+                }
+            });
+            
+            // 모든 항목이 표시되면 더보기 버튼 숨김
+            const remainingHidden = document.querySelectorAll('#recommendationsList .recommend-item.hidden').length;
+            if (remainingHidden === 0) {
+                loadMoreRecommendationsBtn.style.display = 'none';
+            }
+        });
+
+        // 사진 갤러리 스크롤 기능
+        function scrollPhotoGallery(direction) {
+            const photoGallery = document.getElementById('photoGallery');
+            const scrollAmount = photoGallery.clientWidth * 0.8;
+
+            if (direction === -1) {
+                photoGallery.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            } else {
+                photoGallery.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            }
+        }
+
+        // FAQ 아코디언 기능
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.addEventListener('click', () => {
+                // 다른 FAQ 항목들 닫기
+                document.querySelectorAll('.faq-item').forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+                
+                // 현재 항목 토글
+                item.classList.toggle('active');
+            });
+        });
+
+        // 공지사항 데이터
+        const notices = [
+            {
+                title: "여름 휴가 일정 안내",
+                content: "안녕하세요. 우리 검사소입니다. 7월 31일부터 8월 4일까지 여름 휴가로 인해 휴무입니다. 8월 5일부터 정상 영업하오니 예약에 참고 부탁드립니다.",
+                date: "2025.07.24"
+            },
+            {
+                title: "신규 서비스 런칭 이벤트",
+                content: "차바 앱을 통해 예약하신 고객님께 검사 수수료 10% 할인 혜택을 드립니다. 이벤트 기간: 2025년 5월 14일 ~ 6월 30일",
+                date: "2025.05.14"
+            },
+            {
+                title: "엔진오일 비용 인상 안내",
+                content: "원자재 가격 상승으로 인해 6월 1일부터 엔진오일 교환 비용이 5,000원 인상됩니다. 양해 부탁드립니다.",
+                date: "2024.04.12"
+            }
+        ];
+
+        // 포스팅 데이터
+        const postings = [
+            {
+                title: "여름철 에어컨 관리 꿀팁",
+                content: "여름철 에어컨 관리는 쾌적한 운전 환경과 연비 절감을 위해 매우 중요합니다. 에어컨 필터는 2~3개월마다 교체하고, 에바포레이터 청소는 연 1회 이상 실시하는 것이 좋습니다.",
+                date: "2025.07.22"
+            },
+            {
+                title: "초보운전자를 위한 타이어 점검법",
+                content: "타이어는 자동차의 안전과 직결되는 중요한 부품입니다. 타이어 공기압은 월 1회 이상 체크하고, 트레드 깊이는 1.6mm 이상 유지해야 합니다.",
+                date: "2025.07.10"
+            },
+            {
+                title: "엔진오일, 언제 갈아야 할까?",
+                content: "엔진오일 교환 주기는 차량과 주행 환경에 따라 다릅니다. 일반적으로 1만km 또는 6개월마다 교환을 권장하며, 가혹 조건에서는 더 자주 교환이 필요합니다.",
+                date: "2025.06.25"
+            }
+        ];
+
+        // 공지사항 모달 표시 함수
+        function showNoticeModal(noticeIndex) {
+            const notice = notices[noticeIndex];
+            const modal = document.getElementById('posting-modal');
+            const modalTitle = document.getElementById('posting-modal-title');
+            const modalBody = document.getElementById('posting-modal-body');
+            const modalCta = document.getElementById('posting-modal-cta');
+            
+            modalTitle.textContent = notice.title;
+            modalBody.textContent = notice.content;
+            
+            modalCta.onclick = function() {
+                modal.classList.remove('active');
+            };
+            
+            modal.classList.add('active');
+        }
+
+        // 포스팅 모달 표시 함수
+        function showPostingModal(postingIndex) {
+            const posting = postings[postingIndex];
+            const modal = document.getElementById('posting-modal');
+            const modalTitle = document.getElementById('posting-modal-title');
+            const modalBody = document.getElementById('posting-modal-body');
+            const modalCta = document.getElementById('posting-modal-cta');
+            
+            modalTitle.textContent = posting.title;
+            modalBody.textContent = posting.content;
+            
+            modalCta.onclick = function() {
+                modal.classList.remove('active');
+            };
+            
+            modal.classList.add('active');
+        }
+
+        // 모달 닫기 이벤트
+        document.getElementById('posting-modal-close').addEventListener('click', function() {
+            document.getElementById('posting-modal').classList.remove('active');
+        });
+
+        // 모달 외부 클릭 시 닫기
+        document.getElementById('posting-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('active');
+            }
+        });
+
+    </script>
+
+    <!-- 포스팅/공지 모달 -->
+    <div class="posting-modal-overlay" id="posting-modal">
+        <div class="posting-modal-content">
+            <span class="posting-modal-close" id="posting-modal-close">&times;</span>
+            <h2 class="posting-modal-title" id="posting-modal-title"></h2>
+            <div class="posting-modal-body" id="posting-modal-body"></div>
+            <button class="posting-modal-cta" id="posting-modal-cta">닫기</button>
+        </div>
+    </div>
+
+</body>
+</html>
