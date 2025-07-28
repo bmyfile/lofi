@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>예약하기 - 차바</title>
     <style>
-        /* 모든 요소에 box-sizing 적용 */
+        /* 기존 스타일 유지 */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -18,7 +18,7 @@
             background-color: rgba(0, 0, 0, 0.6);
             display: flex;
             justify-content: center;
-            align-items: center;  /* flex-end에서 center로 변경 */
+            align-items: center;
             min-height: 100vh;
             overflow: hidden;
         }
@@ -28,12 +28,12 @@
             width: 420px;
             max-width: 100%;
             background-color: #fff;
-            border-radius: 16px;  /* 모든 모서리 둥글게 변경 */
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);  /* 그림자 방향 변경 */
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             display: flex;
             flex-direction: column;
             max-height: 90vh;
-            overflow: hidden;  /* overflow-y: auto에서 hidden으로 변경 */
+            overflow: hidden;
             transform: translateY(0);
             transition: transform 0.3s ease-out;
         }
@@ -75,7 +75,7 @@
 
         /* 모달 본문 */
         .modal-body {
-            padding: 20px 16px 80px;  /* 하단 패딩 추가 */
+            padding: 20px 16px 80px;
             flex-grow: 1;
             overflow-y: auto;
         }
@@ -102,17 +102,36 @@
             border: 1px solid #eee;
             border-radius: 8px;
             padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .selected-product-card .product-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 15px;
             color: #333;
-            margin-bottom: 20px;
+            margin-bottom: 8px;
+        }
+
+        .selected-product-card .product-row:last-child {
+            margin-bottom: 0;
         }
         
         .selected-product-card .price {
             font-weight: bold;
             color: #4852EA;
+        }
+
+        .selected-product-card .total-row {
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .selected-product-card .total-row .price {
+            font-size: 17px;
         }
 
         /* 날짜 선택 */
@@ -306,15 +325,7 @@
             border-bottom: 1px solid #eee;
         }
 
-        /* 하단 CTA 버튼 그룹 */
-        .modal-footer {
-            padding: 16px;
-            background-color: #fff;
-            border-top: 1px solid #eee;
-            flex-shrink: 0;
-            box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
-        }
-        
+        /* 소셜 로그인 버튼 */
         .social-login-button {
             width: 100%;
             padding: 15px;
@@ -421,12 +432,14 @@
             background-color: #ccc;
             cursor: not-allowed;
         }
-        
-        /* 로고 이미지 스타일 */
-        .social-login-button img {
-            width: 20px;
-            height: 20px;
-            object-fit: contain;
+
+        /* 검사소 예약 시 가격 숨김 */
+        .inspection-center-booking .price {
+            display: none !important;
+        }
+
+        .inspection-center-booking .total-row {
+            display: none !important;
         }
     </style>
 </head>
@@ -441,9 +454,8 @@
             <!-- 1단계: 예약 정보 입력 폼 -->
             <div id="bookingFormStep" class="modal-step-content active">
                 <div class="section-title">선택 상품</div>
-                <div class="selected-product-card">
-                    <span id="selectedProductName">자동차 검사 대행</span>
-                    <span class="price" id="selectedProductPrice">35,000원</span>
+                <div class="selected-product-card" id="selectedProductsContainer">
+                    <!-- 동적으로 생성될 상품 목록 -->
                 </div>
 
                 <div class="section-title">날짜 선택</div>
@@ -455,13 +467,13 @@
 
                 <div class="section-title">시간 선택</div>
                 <div class="time-grid" id="timeGrid"></div>
-                <div class="time-slot-info">
+                <div class="time-slot-info" id="timeSlotInfo" style="display: none;">
                     (검사 대행 포함 시 15:00 마감)
                 </div>
 
                 <div class="section-title">차량 정보</div>
                 <div class="car-info-display" id="carInfoDisplay">
-                    소형 · 승용차 · 준중형 · 가솔린
+                    소형차 · 승용차 · 준중형 · 가솔린
                 </div>
 
                 <div class="section-title">예약자 정보</div>
@@ -505,38 +517,29 @@
                 <!-- 소셜 로그인 버튼들 추가 -->
                 <div class="booking-actions" style="margin-top: 30px;">
                     <button class="social-login-button google" data-social="Google">
-                        <span>35,000원 결제하고 예약 확정하기 (Google)</span>
+                        <span id="googleButtonText">35,000원 결제하고 예약 확정하기 (Google)</span>
                     </button>
                     <button class="social-login-button naver" data-social="Naver">
-                        <span>35,000원 결제하고 예약 확정하기 (Naver)</span>
+                        <span id="naverButtonText">35,000원 결제하고 예약 확정하기 (Naver)</span>
                     </button>
                     <button class="social-login-button kakao" data-social="Kakao">
-                        <span>35,000원 결제하고 예약 확정하기 (Kakao)</span>
+                        <span id="kakaoButtonText">35,000원 결제하고 예약 확정하기 (Kakao)</span>
                     </button>
                     <div class="social-login-info">
-                        (버튼 클릭 시 소셜 로그인으로 연결됩니다)
+                        버튼 클릭 시 소셜 로그인으로 연결됩니다.
                     </div>
                 </div>
-
             </div>
 
             <!-- 2단계: 소셜 로그인/회원가입 화면 -->
             <div id="socialLoginStep" class="modal-step-content">
                 <h2>소셜 로그인/회원가입 화면</h2>
                 <p>소셜 계정으로 간편하게 로그인하고 예약하세요.</p>
-                <div class="social-login-buttons-container">
-                    <button class="social-login-button google" data-social="Google" style="display: none;">
-                        <span>Google 계정으로 로그인/회원가입</span>
-                    </button>
-                    <button class="social-login-button naver" data-social="Naver" style="display: none;">
-                        <span>Naver 계정으로 로그인/회원가입</span>
-                    </button>
-                    <button class="social-login-button kakao" data-social="Kakao" style="display: none;">
-                        <span>Kakao 계정으로 로그인/회원가입</span>
-                    </button>
-                    <div class="social-login-info" style="margin-top: 5px; display: none;">
-                        (클릭시 결제하기로 연결됩니다.)
-                    </div>
+                <button class="action-button" id="socialLoginCompleteBtn">
+                    로그인 완료 및 결제하기
+                </button>
+                <div class="social-login-info" id="socialLoginInfo" style="margin-top: 10px;">
+                    클릭시 결제하기로 연결됩니다.
                 </div>
             </div>
 
@@ -550,17 +553,21 @@
     </div>
 
     <script>
-        // 현재 예약 상품이 '자동차 검사 대행'을 포함하는지 여부
-        const isInspectionIncluded = true;
-        let totalSelectedPrice = 35000;
+        // 전역 변수
+        let isInspectionIncluded = false;
+        let totalSelectedPrice = 0;
         let selectedProducts = [];
+        let isInspectionCenter = false;
+        let selectedDate = null;
+        let currentBookingDateIndex = 0;
+        const bookingDates = [];
+        const daysOfWeekKorean = ['일', '월', '화', '수', '목', '금', '토'];
 
         // DOM 요소 참조
         const modalTitle = document.getElementById('modalTitle');
         const bookingFormStep = document.getElementById('bookingFormStep');
         const socialLoginStep = document.getElementById('socialLoginStep');
         const paymentStep = document.getElementById('paymentStep');
-        const modalFooter = document.getElementById('modalFooter');
         const allAgreeCheckbox = document.getElementById('allAgreeCheckbox');
         const requiredCheckboxes = document.querySelectorAll('.required-checkbox');
         const phoneNumberInput = document.getElementById('phoneNumber');
@@ -570,46 +577,169 @@
         window.addEventListener('load', () => {
             loadSelectedProducts();
             initializeBookingDates();
-            renderTimeSlots();
             resetBookingFlowState();
             loadCarInfo();
         });
 
-        // 수정 후
+        // 선택된 상품 로드
         function loadSelectedProducts() {
-            // sessionStorage에서 상품 정보 가져오기
             const savedProducts = sessionStorage.getItem('selectedProducts');
-    
+            isInspectionCenter = sessionStorage.getItem('isInspectionCenter') === 'true';
+            
             if (savedProducts) {
                 selectedProducts = JSON.parse(savedProducts);
                 updateSelectedProductDisplay();
-        
-                // 사용 후 삭제 (선택사항)
-                // sessionStorage.removeItem('selectedProducts');
+                
+                // 카센터의 검사 대행 포함 여부 체크
+                if (!isInspectionCenter) {
+                    isInspectionIncluded = selectedProducts.some(product => 
+                        product.name.includes('검사') || 
+                        product.name.includes('올인원')
+                    );
+                } else {
+                    // 검사소는 검사 대행이 아니므로 false
+                    isInspectionIncluded = false;
+                }
+                
+                // 검사소 예약인 경우 클래스 추가
+                if (isInspectionCenter) {
+                    document.querySelector('.modal-container').classList.add('inspection-center-booking');
+                }
+                
+                renderTimeSlots();
             } else {
                 // 기본값 설정 (테스트용)
                 selectedProducts = [{name: '자동차 검사 대행', price: 35000}];
+                isInspectionIncluded = true;
                 updateSelectedProductDisplay();
-    }
-}
-
-        // 선택된 상품 표시 업데이트
-        function updateSelectedProductDisplay() {
-            if (selectedProducts.length > 0) {
-                const productNames = selectedProducts.map(p => p.name).join(', ');
-                const totalPrice = selectedProducts.reduce((sum, p) => sum + p.price, 0);
-                
-                document.getElementById('selectedProductName').textContent = productNames;
-                document.getElementById('selectedProductPrice').textContent = `${totalPrice.toLocaleString('ko-KR')}원`;
-                totalSelectedPrice = totalPrice;
+                renderTimeSlots();
             }
         }
 
-        // 차량 정보 로드
+        // 선택된 상품 표시 업데이트
+        function updateSelectedProductDisplay() {
+            const container = document.getElementById('selectedProductsContainer');
+            container.innerHTML = '';
+            
+            let html = '';
+            totalSelectedPrice = 0;
+            
+            // 각 상품 표시
+            selectedProducts.forEach(product => {
+                html += `
+                    <div class="product-row">
+                        <span>${product.name}</span>
+                        ${!isInspectionCenter ? `<span class="price">${product.price.toLocaleString('ko-KR')} 원</span>` : ''}
+                    </div>
+                `;
+                totalSelectedPrice += product.price;
+            });
+            
+            // 여러 상품인 경우 총액 표시 (검사소가 아닌 경우에만)
+            if (selectedProducts.length > 1 && !isInspectionCenter) {
+                html += `
+                    <div class="product-row total-row">
+                        <span>총액</span>
+                        <span class="price">${totalSelectedPrice.toLocaleString('ko-KR')} 원</span>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+            
+            // 버튼 텍스트 업데이트
+            updateButtonTexts();
+        }
+
+        // 버튼 텍스트 업데이트
+        function updateButtonTexts() {
+            const buttonTexts = {
+                google: document.getElementById('googleButtonText'),
+                naver: document.getElementById('naverButtonText'),
+                kakao: document.getElementById('kakaoButtonText')
+            };
+            
+            if (isInspectionCenter) {
+                // 검사소인 경우
+                buttonTexts.google.textContent = 'Google 계정으로 예약 확정하기';
+                buttonTexts.naver.textContent = 'Naver 계정으로 예약 확정하기';
+                buttonTexts.kakao.textContent = 'Kakao 계정으로 예약 확정하기';
+            } else {
+                // 카센터인 경우
+                const formattedPrice = totalSelectedPrice.toLocaleString('ko-KR');
+                buttonTexts.google.textContent = `${formattedPrice}원 결제하고 예약 확정하기 (Google)`;
+                buttonTexts.naver.textContent = `${formattedPrice}원 결제하고 예약 확정하기 (Naver)`;
+                buttonTexts.kakao.textContent = `${formattedPrice}원 결제하고 예약 확정하기 (Kakao)`;
+            }
+        }
+
+        // 차량 정보 로드 - 수정된 버전
         function loadCarInfo() {
-            const savedCarInfo = sessionStorage.getItem('selectedCarInfoForDetail');
-            if (savedCarInfo && savedCarInfo !== '내 차 정보 등록하기') {
-                document.getElementById('carInfoDisplay').textContent = savedCarInfo;
+            // 모든 search 페이지의 상태 확인
+            const searchStates = [
+                'search01_searchPageState',
+                'search02_searchPageState',
+                'search03_searchPageState'
+            ];
+            
+            let carInfoFound = false;
+            
+            for (const stateKey of searchStates) {
+                const searchState = sessionStorage.getItem(stateKey);
+                
+                if (searchState) {
+                    try {
+                        const state = JSON.parse(searchState);
+                        const carInfoText = state.carInfoText;
+                        
+                        if (carInfoText && carInfoText !== '내 차 정보 등록하기' && carInfoText !== '+ 내 차 정보 등록하기') {
+                            // 다양한 구분자 처리
+                            let parts = [];
+                            if (carInfoText.includes(' | ')) {
+                                parts = carInfoText.split(' | ').map(s => s.trim());
+                            } else if (carInfoText.includes('>')) {
+                                parts = carInfoText.split('>').map(s => s.trim());
+                            } else if (carInfoText.includes(',')) {
+                                parts = carInfoText.split(',').map(s => s.trim());
+                            } else {
+                                // 중형차 이상 (단일 텍스트)
+                                document.getElementById('carInfoDisplay').textContent = carInfoText;
+                                carInfoFound = true;
+                                break;
+                            }
+                            
+                            if (parts.length >= 4) {
+                                // 연료 타입에서 괄호 제거
+                                const fuelTypeClean = parts[3].split('(')[0].trim();
+                                document.getElementById('carInfoDisplay').textContent = 
+                                    `${parts[0]} · ${parts[1]} · ${parts[2]} · ${fuelTypeClean}`;
+                                carInfoFound = true;
+                                break;
+                            }
+                        }
+                    } catch (e) {
+                        console.error('차량 정보 파싱 오류:', e);
+                    }
+                }
+            }
+            
+            // selectedCarInfo에서도 확인 (fallback)
+            if (!carInfoFound) {
+                const savedCarInfo = sessionStorage.getItem('selectedCarInfo');
+                if (savedCarInfo) {
+                    try {
+                        const carData = JSON.parse(savedCarInfo);
+                        if (carData.type && carData.model && carData.size && carData.fuel) {
+                            document.getElementById('carInfoDisplay').textContent = 
+                                `${carData.type} · ${carData.model} · ${carData.size} · ${carData.fuel}`;
+                        } else if (carData.type) {
+                            // 중형차 이상
+                            document.getElementById('carInfoDisplay').textContent = carData.type;
+                        }
+                    } catch (e) {
+                        console.error('차량 정보 로드 오류:', e);
+                    }
+                }
             }
         }
 
@@ -628,8 +758,6 @@
             socialLoginStep.classList.remove('active');
             paymentStep.classList.remove('active');
 
-            renderFooterButtons('initial');
-
             phoneNumberInput.value = '';
             carNumberInput.value = '';
             document.getElementById('requestMessage').value = '';
@@ -638,43 +766,92 @@
             document.getElementById('marketingConsentCheckbox').checked = false;
 
             document.querySelectorAll('.date-item').forEach(item => item.classList.remove('selected'));
-            if (document.querySelector('.date-item')) {
-                document.querySelector('.date-item').classList.add('selected');
-            }
             document.querySelectorAll('.time-slot').forEach(item => item.classList.remove('selected'));
             
             updateBookingButtonState();
         }
 
-        // 푸터 버튼 렌더링 함수
-        function renderFooterButtons(step) {
-            const bookingActions = document.querySelector('.booking-actions');
-            if (!bookingActions) return;
-            
-            const formattedPrice = totalSelectedPrice.toLocaleString('ko-KR');
-            
-            if (step === 'initial') {
-                bookingActions.querySelectorAll('.social-login-button').forEach(button => {
-                    button.querySelector('span').textContent = 
-                        `${formattedPrice}원 결제하고 예약 확정하기 (${button.dataset.social})`;
-                    button.addEventListener('click', handleSocialLoginButtonClick);
-                });
-            }
-        }
-        }
-
-        // 날짜 선택 관련 변수 및 함수
-        let currentBookingDateIndex = 0;
-        const bookingDates = [];
-        const daysOfWeekKorean = ['일', '월', '화', '수', '목', '금', '토'];
-
+        // 날짜 초기화 - 수정된 버전
         function initializeBookingDates() {
+            console.log('=== 날짜 초기화 시작 ===');
+            
+            // search 페이지들에서 선택된 날짜 가져오기
+            let savedDateStr = null;
+            let savedDateIndex = 0;
+            
+            const searchStates = [
+                'search01_searchPageState',
+                'search02_searchPageState',
+                'search03_searchPageState'
+            ];
+            
+            for (const stateKey of searchStates) {
+                const searchState = sessionStorage.getItem(stateKey);
+                console.log(`Checking ${stateKey}:`, searchState);
+                
+                if (searchState) {
+                    try {
+                        const state = JSON.parse(searchState);
+                        console.log(`Parsed state:`, state);
+                        
+                        if (state.selectedDate) {
+                            savedDateStr = state.selectedDate;
+                            savedDateIndex = state.currentDateIndex || 0;
+                            console.log(`✅ Found selected date: ${savedDateStr}, index: ${savedDateIndex}`);
+                            break;
+                        }
+                    } catch (e) {
+                        console.error('검색 상태 파싱 오류:', e);
+                    }
+                }
+            }
+            
             const today = new Date();
+            today.setHours(0, 0, 0, 0); // 시간을 00:00:00으로 설정
+            
+            // 30일간의 날짜 생성
             for (let i = 0; i < 30; i++) {
                 const date = new Date(today);
                 date.setDate(today.getDate() + i);
+                date.setHours(0, 0, 0, 0); // 시간을 00:00:00으로 설정
                 bookingDates.push(date);
             }
+            
+            // 저장된 날짜가 있으면 해당 날짜를 중심으로 표시
+            if (savedDateStr) {
+                console.log('저장된 날짜로 설정 시도:', savedDateStr);
+                
+                // 저장된 날짜 문자열을 Date 객체로 변환 (시간대 문제 해결)
+                const [year, month, day] = savedDateStr.split('-').map(num => parseInt(num));
+                const savedDateObj = new Date(year, month - 1, day);
+                savedDateObj.setHours(0, 0, 0, 0);
+                
+                // bookingDates 배열에서 해당 날짜 찾기
+                const foundIndex = bookingDates.findIndex(date => {
+                    return date.getFullYear() === savedDateObj.getFullYear() &&
+                        date.getMonth() === savedDateObj.getMonth() &&
+                        date.getDate() === savedDateObj.getDate();
+                });
+                
+                console.log('찾은 인덱스:', foundIndex);
+                
+                if (foundIndex !== -1) {
+                    // 선택된 날짜가 가운데 오도록 인덱스 조정
+                    currentBookingDateIndex = Math.max(0, foundIndex - 3);
+                    selectedDate = bookingDates[foundIndex]; // bookingDates 배열의 실제 Date 객체 사용
+                    console.log('✅ 날짜 설정 완료:', selectedDate);
+                } else {
+                    console.log('❌ 날짜를 찾을 수 없음');
+                    // 오늘 날짜를 기본으로 선택
+                    selectedDate = bookingDates[0];
+                }
+            } else {
+                console.log('❌ 저장된 날짜 없음');
+                // 오늘 날짜를 기본으로 선택
+                selectedDate = bookingDates[0];
+            }
+            
+            console.log('=== 날짜 초기화 완료 ===');
             renderBookingDates();
         }
 
@@ -691,19 +868,29 @@
 
                 const dateItem = document.createElement('div');
                 dateItem.classList.add('date-item');
-                dateItem.dataset.fullDate = date.toISOString().split('T')[0];
+                
+                // ISO 문자열 대신 년-월-일 형식으로 저장
+                const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                dateItem.dataset.date = dateStr;
+                
                 dateItem.innerHTML = `<div class="day-of-week">${dayOfWeek}</div><div>${dayOfMonth}</div>`;
 
-                if (i === 0 && currentBookingDateIndex === 0) {
+                // 선택된 날짜 표시 (날짜 비교 로직 개선)
+                if (selectedDate && 
+                    date.getFullYear() === selectedDate.getFullYear() &&
+                    date.getMonth() === selectedDate.getMonth() &&
+                    date.getDate() === selectedDate.getDate()) {
                     dateItem.classList.add('selected');
                 }
 
                 dateItem.addEventListener('click', () => {
                     document.querySelectorAll('.date-item').forEach(item => item.classList.remove('selected'));
                     dateItem.classList.add('selected');
+                    selectedDate = bookingDates[currentBookingDateIndex + i];
                     updateBookingButtonState();
                     renderTimeSlots();
                 });
+                
                 dateListContainer.appendChild(dateItem);
             }
         }
@@ -727,13 +914,22 @@
         // 시간 슬롯 렌더링
         function renderTimeSlots() {
             const timeGrid = document.getElementById('timeGrid');
+            const timeSlotInfo = document.getElementById('timeSlotInfo');
             timeGrid.innerHTML = '';
 
             const startHour = 9;
-            const endHour = isInspectionIncluded ? 15 : 18;
+            let endHour = 18; // 기본 영업시간
+            
+            // 카센터의 검사 대행이 포함된 경우만 15시까지
+            if (!isInspectionCenter && isInspectionIncluded) {
+                endHour = 15;
+                timeSlotInfo.style.display = 'block';
+            } else {
+                // 검사소 또는 검사 대행이 없는 경우는 일반 영업시간
+                timeSlotInfo.style.display = 'none';
+            }
+            
             const intervalMinutes = 30;
-
-            let selectedTimeSlot = null;
 
             for (let h = startHour; h < endHour; h++) {
                 for (let m = 0; m < 60; m += intervalMinutes) {
@@ -743,21 +939,24 @@
                     timeSlot.textContent = time;
                     timeSlot.dataset.time = time;
 
-                    // 15:00는 검사 대행 시 비활성화
-                    if (h === 15 && m === 0 && isInspectionIncluded) {
-                        timeSlot.classList.add('disabled');
-                    } else {
-                        timeSlot.addEventListener('click', () => {
-                            if (selectedTimeSlot) {
-                                selectedTimeSlot.classList.remove('selected');
-                            }
-                            timeSlot.classList.add('selected');
-                            selectedTimeSlot = timeSlot;
-                            updateBookingButtonState();
+                    timeSlot.addEventListener('click', () => {
+                        document.querySelectorAll('.time-slot').forEach(slot => {
+                            slot.classList.remove('selected');
                         });
-                    }
+                        timeSlot.classList.add('selected');
+                        updateBookingButtonState();
+                    });
+                    
                     timeGrid.appendChild(timeSlot);
                 }
+            }
+            
+            // 카센터의 검사 대행 포함 시 15:00 비활성화 표시
+            if (!isInspectionCenter && isInspectionIncluded && endHour === 15) {
+                const disabledSlot = document.createElement('div');
+                disabledSlot.classList.add('time-slot', 'disabled');
+                disabledSlot.textContent = '15:00';
+                timeGrid.appendChild(disabledSlot);
             }
         }
 
@@ -771,7 +970,7 @@
 
             const isFormValid = allRequiredAgreed && phoneNumberFilled && carNumberFilled && dateSelected && timeSelected;
 
-            modalFooter.querySelectorAll('.social-login-button').forEach(button => {
+            document.querySelectorAll('.booking-actions .social-login-button').forEach(button => {
                 button.disabled = !isFormValid;
             });
         }
@@ -807,49 +1006,10 @@
         phoneNumberInput.addEventListener('input', updateBookingButtonState);
         carNumberInput.addEventListener('input', updateBookingButtonState);
 
-        // 다단계 플로우 관련 함수
-        function proceedToSocialLoginStep(socialName) {
-            modalTitle.textContent = '소셜 로그인';
-            bookingFormStep.classList.remove('active');
-            socialLoginStep.classList.add('active');
-            paymentStep.classList.remove('active');
-
-            renderFooterButtons('socialLogin');
-
-            // 소셜 로그인 화면의 버튼들을 초기화
-            socialLoginStep.querySelectorAll('.social-login-button').forEach(button => {
-                button.style.display = 'none';
-                button.onclick = null;
-            });
-            socialLoginStep.querySelector('.social-login-info').style.display = 'none';
-
-            // 선택된 소셜 로그인 버튼만 표시
-            const selectedSocialButton = socialLoginStep.querySelector(`.social-login-button[data-social="${socialName}"]`);
-            if (selectedSocialButton) {
-                selectedSocialButton.style.display = 'flex';
-                selectedSocialButton.querySelector('span').textContent = `로그인 완료 및 결제하기`;
-                selectedSocialButton.onclick = () => {
-                    proceedToPaymentStep();
-                };
-                socialLoginStep.querySelector('.social-login-info').style.display = 'block';
-            }
-        }
-
-        // '결제 화면'으로 이동 (3단계)
-        function proceedToPaymentStep() {
-            modalTitle.textContent = '결제하기';
-            socialLoginStep.classList.remove('active');
-            paymentStep.classList.add('active');
-
-            renderFooterButtons('payment');
-        }
-
-        // 예약 완료 (최종 단계)
-        function completeReservation() {
-            alert('예약이 완료되었습니다!');
-            // 예약 완료 페이지로 이동
-            window.location.href = 'res-01.html';
-        }
+        // 소셜 로그인 버튼 이벤트 리스너 추가
+        document.querySelectorAll('.booking-actions .social-login-button').forEach(button => {
+            button.addEventListener('click', handleSocialLoginButtonClick);
+        });
 
         // 소셜 로그인 버튼 클릭 핸들러
         function handleSocialLoginButtonClick(event) {
@@ -865,17 +1025,60 @@
             proceedToSocialLoginStep(socialName);
         }
 
+        // 다단계 플로우 관련 함수
+        function proceedToSocialLoginStep(socialName) {
+            modalTitle.textContent = '소셜 로그인';
+            bookingFormStep.classList.remove('active');
+            socialLoginStep.classList.add('active');
+            paymentStep.classList.remove('active');
+
+            const socialLoginCompleteBtn = document.getElementById('socialLoginCompleteBtn');
+            const socialLoginInfo = document.getElementById('socialLoginInfo');
+            
+            if (isInspectionCenter) {
+                // 검사소인 경우
+                socialLoginCompleteBtn.textContent = '로그인/회원가입 완료 및 예약완료';
+                socialLoginInfo.style.display = 'none';
+                socialLoginCompleteBtn.onclick = () => {
+                    completeReservation();
+                };
+            } else {
+                // 카센터인 경우
+                socialLoginCompleteBtn.textContent = '로그인 완료 및 결제하기';
+                socialLoginInfo.style.display = 'block';
+                socialLoginCompleteBtn.onclick = () => {
+                    proceedToPaymentStep();
+                };
+            }
+        }
+
+        // '결제 화면'으로 이동 (3단계)
+        function proceedToPaymentStep() {
+            modalTitle.textContent = '결제하기';
+            socialLoginStep.classList.remove('active');
+            paymentStep.classList.add('active');
+        }
+
+        // 예약 완료 (최종 단계)
+        function completeReservation() {
+            alert('예약이 완료되었습니다!');
+            // 예약 완료 페이지로 이동
+            window.location.href = 'res-01.html';
+        }
+
         // 예약 정보 저장
         function saveBookingInfo() {
             const bookingInfo = {
                 products: selectedProducts,
-                date: document.querySelector('.date-item.selected')?.dataset.fullDate,
+                date: document.querySelector('.date-item.selected')?.dataset.date,
                 time: document.querySelector('.time-slot.selected')?.dataset.time,
                 carInfo: document.getElementById('carInfoDisplay').textContent,
                 phoneNumber: phoneNumberInput.value,
                 carNumber: carNumberInput.value,
                 requestMessage: document.getElementById('requestMessage').value,
-                marketingConsent: document.getElementById('marketingConsentCheckbox').checked
+                marketingConsent: document.getElementById('marketingConsentCheckbox').checked,
+                isInspectionCenter: isInspectionCenter,
+                totalPrice: totalSelectedPrice
             };
             
             sessionStorage.setItem('bookingInfo', JSON.stringify(bookingInfo));

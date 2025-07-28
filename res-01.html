@@ -13,7 +13,7 @@
         }
         
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: #f8f9fa;
             color: #333;
             line-height: 1.6;
@@ -132,15 +132,8 @@
             margin-top: 4px;
         }
 
-        /* 카센터 액션 버튼 */
-        .provider-actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 16px;
-        }
-        
-        .provider-actions .btn {
+        /* 버튼 공통 스타일 */
+        .btn {
             padding: 12px;
             border: 1px solid #ccc;
             border-radius: 8px;
@@ -153,11 +146,20 @@
             outline: none;
             background-color: #fff;
             cursor: pointer;
+            display: inline-block;
         }
         
-        .provider-actions .btn:hover {
+        .btn:hover {
             background-color: #f0f0f0;
             border-color: #aaa;
+        }
+
+        /* 카센터 액션 버튼 */
+        .provider-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 16px;
         }
 
         /* 상세 정보 목록 */
@@ -209,26 +211,6 @@
             padding: 24px 16px;
             border-top: 1px solid #f0f0f0;
             border-bottom: 8px solid #f8f9fa;
-        }
-        
-        .reservation-actions .btn {
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            text-align: center;
-            text-decoration: none;
-            color: #333;
-            font-size: 15px;
-            font-weight: 500;
-            transition: all 0.2s;
-            outline: none;
-            background-color: #fff;
-            cursor: pointer;
-        }
-        
-        .reservation-actions .btn:hover {
-            background-color: #f0f0f0;
-            border-color: #aaa;
         }
         
         .reservation-actions .btn.complete {
@@ -299,7 +281,7 @@
     <div class="container">
         <!-- 헤더 -->
         <header class="header">
-            <a href="#" class="back-btn" onclick="goBack(); return false;">&lt;</a>
+            <a href="javascript:void(0)" class="back-btn" onclick="goBack()">&lt;</a>
             <div class="title">예약 완료</div>
         </header>
 
@@ -323,15 +305,15 @@
                 </div>
             </section>
 
-            <!-- 방문 카센터 정보 섹션 -->
+            <!-- 방문 정비소 정보 섹션 -->
             <section class="section" id="providerSection">
-                <h3>방문하실 카센터</h3>
+                <h3>방문하실 정비소</h3>
                 <div class="provider-info">
                     <div class="name" id="providerName">우리 정비소</div>
                     <div class="address" id="providerAddress">서울시 강남구 테헤란로 123</div>
                 </div>
                 <div class="provider-actions">
-                    <a href="#" class="btn" onclick="openNavigation(); return false;">🗺️ 길찾기</a>
+                    <a href="javascript:void(0)" class="btn" onclick="openNavigation()">🗺️ 길찾기</a>
                     <a href="#" class="btn" id="phoneCallBtn">📞 전화걸기</a>
                 </div>
             </section>
@@ -359,15 +341,15 @@
             
             <!-- 예약 변경/취소/완료 버튼 섹션 -->
             <section class="reservation-actions">
-                <a href="#" class="btn" onclick="changeReservation(); return false;">예약 변경</a>
-                <a href="#" class="btn" onclick="cancelReservation(); return false;">예약 취소</a>
-                <a href="#" class="btn complete" onclick="completeReservation(); return false;">예약 완료</a>
+                <a href="javascript:void(0)" class="btn" onclick="changeReservation()">예약 변경</a>
+                <a href="javascript:void(0)" class="btn" onclick="cancelReservation()">예약 취소</a>
+                <a href="javascript:void(0)" class="btn complete" onclick="completeReservation()">예약 완료</a>
             </section>
 
             <!-- 하단 안내 정보 -->
             <div class="footer-info">
                 <p>예약 내용은 마이페이지 > 예약내역에서<br>언제든지 다시 확인할 수 있습니다.</p>
-                <p>예약 취소/변경 문의: <a href="#" onclick="contactCustomerService(); return false;">차바 고객센터</a></p>
+                <p>1:1 문의: <a href="javascript:void(0)" onclick="contactCustomerService()">차바 고객센터</a></p>
             </div>
         </main>
     </div>
@@ -383,29 +365,27 @@
             const loadingState = document.getElementById('loadingState');
             const errorMessage = document.getElementById('errorMessage');
             
-            // 로딩 상태 표시
             loadingState.classList.add('active');
             
             try {
-                // sessionStorage에서 예약 정보 가져오기
                 const bookingInfo = JSON.parse(sessionStorage.getItem('bookingInfo') || '{}');
                 
-                if (Object.keys(bookingInfo).length === 0) {
-                    // 예약 정보가 없는 경우 더미 데이터 사용
-                    bookingInfo.products = [{name: '자동차 검사 대행', price: 35000}];
-                    bookingInfo.date = '2025-07-24';
-                    bookingInfo.time = '09:00';
-                    bookingInfo.carInfo = '소형 · 승용차 · 준중형 · 가솔린';
-                    bookingInfo.phoneNumber = '010-1234-5678';
-                    bookingInfo.carNumber = '12가 3456';
-                    bookingInfo.requestMessage = '엔진오일 교체도 함께 문의 예정';
-                    bookingInfo.paymentMethod = '카카오페이';
-                }
+                // 기본값 설정
+                const defaultBookingInfo = {
+                    products: [{name: '자동차 검사 대행', price: 35000}],
+                    date: '2025-07-24',
+                    time: '09:00',
+                    carInfo: '소형 · 승용차 · 준중형 · 가솔린',
+                    phoneNumber: '010-1234-5678',
+                    carNumber: '12가 3456',
+                    requestMessage: '엔진오일 교체도 함께 문의 예정',
+                    paymentMethod: '카카오페이'
+                };
                 
-                // 예약 정보 표시
-                displayReservationInfo(bookingInfo);
+                // 빈 객체인 경우 기본값 사용
+                const finalBookingInfo = Object.keys(bookingInfo).length === 0 ? defaultBookingInfo : bookingInfo;
                 
-                // 로딩 상태 숨기기
+                displayReservationInfo(finalBookingInfo);
                 loadingState.classList.remove('active');
                 
             } catch (error) {
@@ -417,17 +397,16 @@
 
         // 예약 정보 표시
         function displayReservationInfo(bookingInfo) {
-            // 예약 번호 생성
-            const reservationNumber = generateReservationNumber();
-            document.getElementById('reservationNumber').textContent = reservationNumber;
+            // 예약 번호
+            document.getElementById('reservationNumber').textContent = generateReservationNumber();
             
-            // 날짜 및 시간 포맷팅
+            // 날짜 및 시간
             const formattedDateTime = formatDateTime(bookingInfo.date, bookingInfo.time);
             document.getElementById('reservationDateTime').textContent = formattedDateTime;
             document.getElementById('reservationDateTimeFull').textContent = formattedDateTime;
             
-            // 상품 정보
-            if (bookingInfo.products && bookingInfo.products.length > 0) {
+            // 상품 및 가격
+            if (bookingInfo.products?.length > 0) {
                 const productNames = bookingInfo.products.map(p => p.name).join(', ');
                 const totalPrice = bookingInfo.products.reduce((sum, p) => sum + p.price, 0);
                 document.getElementById('reservationProducts').textContent = productNames;
@@ -435,23 +414,15 @@
             }
             
             // 차량 정보
-            if (bookingInfo.carNumber) {
-                document.getElementById('carInfo').textContent = bookingInfo.carNumber;
-            }
+            document.getElementById('carInfo').textContent = bookingInfo.carNumber || '12가 3456';
             
             // 요청사항
-            if (bookingInfo.requestMessage) {
-                document.getElementById('requestMessage').textContent = bookingInfo.requestMessage;
-            } else {
-                document.getElementById('requestMessage').textContent = '없음';
-            }
+            document.getElementById('requestMessage').textContent = bookingInfo.requestMessage || '없음';
             
             // 결제 수단
-            if (bookingInfo.paymentMethod) {
-                document.getElementById('paymentMethod').textContent = bookingInfo.paymentMethod;
-            }
+            document.getElementById('paymentMethod').textContent = bookingInfo.paymentMethod || '카카오페이';
             
-            // 카센터 정보 (더미 데이터 - 실제로는 예약 시 저장된 정보 사용)
+            // 카센터 정보
             const providerInfo = {
                 name: '우리 정비소',
                 address: '서울시 강남구 테헤란로 123',
@@ -460,10 +431,7 @@
             
             document.getElementById('providerName').textContent = providerInfo.name;
             document.getElementById('providerAddress').textContent = providerInfo.address;
-            
-            // 전화번호 설정
-            const phoneCallBtn = document.getElementById('phoneCallBtn');
-            phoneCallBtn.href = `tel:${providerInfo.phone}`;
+            document.getElementById('phoneCallBtn').href = `tel:${providerInfo.phone}`;
         }
 
         // 예약 번호 생성
@@ -493,14 +461,12 @@
 
         // 뒤로가기
         function goBack() {
-            // 예약 완료 후에는 마이페이지 이동
-            window.location.href = 'my.html';
+            window.location.href = 'my-01.html';
         }
 
         // 길찾기
         function openNavigation() {
             const address = document.getElementById('providerAddress').textContent;
-            // 실제로는 네이티브 지도 앱 연동
             alert(`길찾기 앱이 열립니다.\n목적지: ${address}`);
         }
 
@@ -508,7 +474,6 @@
         function changeReservation() {
             if (confirm('예약을 변경하시겠습니까?')) {
                 alert('예약 변경 페이지로 이동합니다.');
-                // window.location.href = 'reservation-change.html';
             }
         }
 
@@ -516,26 +481,20 @@
         function cancelReservation() {
             if (confirm('정말 예약을 취소하시겠습니까?\n취소 수수료가 발생할 수 있습니다.')) {
                 alert('예약이 취소되었습니다.');
-                // 취소 API 호출 후 홈으로 이동
-                window.location.href = 'my.html';
+                window.location.href = 'home.html';
             }
         }
 
-        // 예약 완료 (마이페이지로로 이동)
+        // 예약 완료
         function completeReservation() {
-            // 예약 정보 정리
             sessionStorage.removeItem('bookingInfo');
             sessionStorage.removeItem('selectedCarInfoForDetail');
-            
-            // 마이페이지로 이동
-            window.location.href = 'my.html';
+            window.location.href = 'my-01.html';
         }
 
-        // 고객센터 연결
+        // 고객센터 연결 - my-04 페이지로 이동
         function contactCustomerService() {
-            if (confirm('차바 고객센터(1588-1234)로 전화하시겠습니까?')) {
-                window.location.href = 'tel:1588-1234';
-            }
+            window.location.href = 'my-04.html';
         }
     </script>
 </body>

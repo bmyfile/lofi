@@ -807,13 +807,18 @@
                 }
 
                 dateItem.innerHTML = `<div class="day">${day}</div><div>${dayNum}</div>`;
-                dateItem.addEventListener('click', () => {
-                    document.querySelectorAll('.date-item').forEach(item => item.classList.remove('selected'));
-                    dateItem.classList.add('selected');
-                    searchConditions.date = true;
-                    checkAndRenderList();
-                    saveSearchState();
-                });
+                // 날짜 선택기 생성 함수 내의 이벤트 리스너 부분을 수정
+                    dateItem.addEventListener('click', () => {
+                        document.querySelectorAll('.date-item').forEach(item => item.classList.remove('selected'));
+                        dateItem.classList.add('selected');
+                        searchConditions.date = true;
+                        
+                        // 선택된 날짜를 sessionStorage에 저장하기 위해 saveSearchState 호출
+                        saveSearchState();
+                        
+                        checkAndRenderList();
+                    });
+                    
                 dateListContainer.appendChild(dateItem);
             }
         }
@@ -1292,11 +1297,13 @@
                 carInfoText: document.getElementById('carInfoDisplayText').textContent,
                 selectedAddress: document.getElementById('selectedAddressText').textContent,
                 selectedDate: document.querySelector('.date-item.selected') ? 
-                    document.querySelector('.date-item.selected').dataset.date : null,
+                    document.querySelector('.date-item.selected').dataset.date : null,  // 이 부분이 중요
                 currentDateIndex: currentDateIndex,
                 searchConditions: searchConditions
             };
-            sessionStorage.setItem('search01_searchPageState', JSON.stringify(state));
+            
+            // 각 search 페이지에 맞는 키로 저장
+            sessionStorage.setItem('search02_searchPageState', JSON.stringify(state));  // search-01은 01, search-02는 02, search-03은 03
         }
 
         function loadSearchState() {

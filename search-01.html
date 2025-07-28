@@ -759,589 +759,603 @@
     </div>
 
     <script>
-        // 검색 조건 상태 관리
-        let searchConditions = {
-            carInfo: false,
-            location: false,
-            date: false
-        };
+    // 검색 조건 상태 관리
+    let searchConditions = {
+        carInfo: false,
+        location: false,
+        date: false
+    };
 
-        let loadedItemCount = 0;
-        let currentDateIndex = 0;
-        const totalDatesToShow = 7;
-        let isLoadingMore = false;
+    let loadedItemCount = 0;
+    let currentDateIndex = 0;
+    const totalDatesToShow = 7;
+    let isLoadingMore = false;
 
-        // 뒤로가기 기능
-        function goBack() {
-            window.history.back();
+    // 뒤로가기 기능
+    function goBack() {
+        window.history.back();
+    }
+
+    // 날짜 선택기 생성
+    function generateDates() {
+        const dateListContainer = document.getElementById('dateList');
+        dateListContainer.innerHTML = '';
+        const today = new Date();
+        const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+
+        const allDates = [];
+        for (let i = 0; i < 30; i++) {
+            const date = new Date(today);
+            date.setDate(today.getDate() + i);
+            allDates.push(date);
         }
 
-        // 날짜 선택기 생성
-        function generateDates() {
-            const dateListContainer = document.getElementById('dateList');
-            dateListContainer.innerHTML = '';
-            const today = new Date();
-            const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+        for (let i = 0; i < totalDatesToShow; i++) {
+            const date = allDates[currentDateIndex + i];
+            if (!date) break;
 
-            const allDates = [];
-            for (let i = 0; i < 30; i++) {
-                const date = new Date(today);
-                date.setDate(today.getDate() + i);
-                allDates.push(date);
+            const day = daysOfWeek[date.getDay()];
+            const dayNum = date.getDate();
+
+            const dateItem = document.createElement('div');
+            dateItem.classList.add('date-item');
+            dateItem.dataset.date = date.toISOString().split('T')[0];
+            
+            // 날짜 표시 HTML 추가
+            dateItem.innerHTML = `<div class="day">${day}</div><div>${dayNum}</div>`;
+            
+            // 첫 번째 날짜를 기본 선택
+            if (i === 0 && currentDateIndex === 0) {
+                dateItem.classList.add('selected');
+                searchConditions.date = true;
             }
 
-            for (let i = 0; i < totalDatesToShow; i++) {
-                const date = allDates[currentDateIndex + i];
-                if (!date) break;
-
-                const day = daysOfWeek[date.getDay()];
-                const dayNum = date.getDate();
-
-                const dateItem = document.createElement('div');
-                dateItem.classList.add('date-item');
-                dateItem.dataset.date = date.toISOString().split('T')[0];
-                
-                if (i === 0 && currentDateIndex === 0) {
-                    dateItem.classList.add('selected');
-                    searchConditions.date = true;
-                }
-
-                dateItem.innerHTML = `<div class="day">${day}</div><div>${dayNum}</div>`;
-                dateItem.addEventListener('click', () => {
-                    document.querySelectorAll('.date-item').forEach(item => item.classList.remove('selected'));
-                    dateItem.classList.add('selected');
-                    searchConditions.date = true;
-                    checkAndRenderList();
-                    saveSearchState();
-                });
-                dateListContainer.appendChild(dateItem);
-            }
-        }
-
-        // 날짜 좌우 스크롤
-        function scrollDates(direction) {
-            const totalAvailableDates = 30;
-            let newIndex = currentDateIndex + direction;
-
-            if (newIndex < 0) {
-                newIndex = 0;
-            } else if (newIndex > totalAvailableDates - totalDatesToShow) {
-                newIndex = totalAvailableDates - totalDatesToShow;
-            }
-
-            if (newIndex !== currentDateIndex) {
-                currentDateIndex = newIndex;
-                generateDates();
+            // 클릭 이벤트 추가
+            dateItem.addEventListener('click', () => {
+                document.querySelectorAll('.date-item').forEach(item => item.classList.remove('selected'));
+                dateItem.classList.add('selected');
+                searchConditions.date = true;
                 saveSearchState();
-            }
+                checkAndRenderList();
+            });
+
+            dateListContainer.appendChild(dateItem);
+        }
+    }
+
+    // 날짜 좌우 스크롤
+    function scrollDates(direction) {
+        const totalAvailableDates = 30;
+        let newIndex = currentDateIndex + direction;
+
+        if (newIndex < 0) {
+            newIndex = 0;
+        } else if (newIndex > totalAvailableDates - totalDatesToShow) {
+            newIndex = totalAvailableDates - totalDatesToShow;
         }
 
-        // 내 차 정보 등록 모달 함수
-        function openCarInfoModal() {
-            const modal = document.getElementById('carInfoModal');
-            const modalContent = document.getElementById('carInfoModalContent');
-            modal.style.display = 'flex';
-            setTimeout(() => {
-                modalContent.classList.add('active');
-            }, 10);
-            validateCarInfoForm();
+        if (newIndex !== currentDateIndex) {
+            currentDateIndex = newIndex;
+            generateDates();
+            saveSearchState();
         }
+    }
 
-        function closeCarInfoModal() {
-            const modalContent = document.getElementById('carInfoModalContent');
-            modalContent.classList.remove('active');
-            setTimeout(() => {
-                document.getElementById('carInfoModal').style.display = 'none';
-            }, 300);
-        }
+    // 내 차 정보 등록 모달 함수
+    function openCarInfoModal() {
+        const modal = document.getElementById('carInfoModal');
+        const modalContent = document.getElementById('carInfoModalContent');
+        modal.style.display = 'flex';
+        setTimeout(() => {
+            modalContent.classList.add('active');
+        }, 10);
+        validateCarInfoForm();
+    }
 
-        function toggleConditionalFields() {
-            const carTypeSelect = document.getElementById('car-type');
-            const conditionalFields = document.getElementById('conditional-fields');
-            const warningMessage = document.getElementById('warningMessage');
-            const submitBtn = document.getElementById('modalSubmitBtn');
-            const selectedValue = carTypeSelect.value;
+    function closeCarInfoModal() {
+        const modalContent = document.getElementById('carInfoModalContent');
+        modalContent.classList.remove('active');
+        setTimeout(() => {
+            document.getElementById('carInfoModal').style.display = 'none';
+        }, 300);
+    }
 
-            if (['compact', 'small'].includes(selectedValue)) {
-                conditionalFields.classList.remove('hidden');
-                warningMessage.classList.add('hidden');
-                submitBtn.textContent = '완료';
-            } else if (selectedValue) {
-                conditionalFields.classList.add('hidden');
-                warningMessage.classList.remove('hidden');
-                submitBtn.textContent = '내 근처 검사소 찾기';
-                document.querySelectorAll('#conditional-fields .option-group button.selected').forEach(btn => {
-                    btn.classList.remove('selected');
-                });
-            } else {
-                conditionalFields.classList.remove('hidden');
-                warningMessage.classList.add('hidden');
-                submitBtn.textContent = '완료';
-            }
-            validateCarInfoForm();
-        }
+    function toggleConditionalFields() {
+        const carTypeSelect = document.getElementById('car-type');
+        const conditionalFields = document.getElementById('conditional-fields');
+        const warningMessage = document.getElementById('warningMessage');
+        const submitBtn = document.getElementById('modalSubmitBtn');
+        const selectedValue = carTypeSelect.value;
 
-        function selectOption(button) {
-            const parentGroup = button.closest('.option-group');
-            parentGroup.querySelectorAll('button').forEach(btn => {
+        if (['compact', 'small'].includes(selectedValue)) {
+            conditionalFields.classList.remove('hidden');
+            warningMessage.classList.add('hidden');
+            submitBtn.textContent = '완료';
+        } else if (selectedValue) {
+            conditionalFields.classList.add('hidden');
+            warningMessage.classList.remove('hidden');
+            submitBtn.textContent = '내 근처 검사소 찾기';
+            document.querySelectorAll('#conditional-fields .option-group button.selected').forEach(btn => {
                 btn.classList.remove('selected');
             });
-            button.classList.add('selected');
-            validateCarInfoForm();
+        } else {
+            conditionalFields.classList.remove('hidden');
+            warningMessage.classList.add('hidden');
+            submitBtn.textContent = '완료';
         }
+        validateCarInfoForm();
+    }
 
-        function validateCarInfoForm() {
-            const carTypeSelect = document.getElementById('car-type');
-            const carTypeSelected = carTypeSelect.value !== '';
-            const carTypeGroupSelected = document.querySelector('#car-type-group .selected');
-            const carSizeGroupSelected = document.querySelector('#car-size-group .selected');
-            const fuelTypeGroupSelected = document.querySelector('#fuel-type-group .selected');
-            const submitBtn = document.getElementById('modalSubmitBtn');
-
-            if (!['compact', 'small'].includes(carTypeSelect.value) && carTypeSelect.value !== '') {
-                submitBtn.classList.add('active');
-                return;
-            }
-
-            if (carTypeSelected && carTypeGroupSelected && carSizeGroupSelected && fuelTypeGroupSelected) {
-                submitBtn.classList.add('active');
-            } else {
-                submitBtn.classList.remove('active');
-            }
-        }
-
-        function handleSubmitCarInfo() {
-            if (!document.getElementById('modalSubmitBtn').classList.contains('active')) {
-                return;
-            }
-            
-            const carTypeSelect = document.getElementById('car-type');
-            const carInfoDisplayText = document.getElementById('carInfoDisplayText');
-            const selectedValue = carTypeSelect.value;
-
-            if (!['compact', 'small'].includes(selectedValue) && selectedValue) {
-                redirectToInspectionSite();
-                return;
-            }
-
-            const carTypeSelected = selectedValue !== '';
-            const carTypeGroupSelected = document.querySelector('#car-type-group .selected');
-            const carSizeGroupSelected = document.querySelector('#car-size-group .selected');
-            const fuelTypeGroupSelected = document.querySelector('#fuel-type-group .selected');
-
-            if (carTypeSelected && carTypeGroupSelected && carSizeGroupSelected && fuelTypeGroupSelected) {
-                const selectedCarType = carTypeSelect.options[carTypeSelect.selectedIndex].text;
-                const selectedCarModel = carTypeGroupSelected.textContent;
-                const selectedCarSize = carSizeGroupSelected.textContent;
-                const selectedFuelType = fuelTypeGroupSelected.textContent;
-
-                carInfoDisplayText.textContent = `${selectedCarType} | ${selectedCarModel} | ${selectedCarSize} | ${selectedFuelType}`;
-                
-                closeCarInfoModal();
-                searchConditions.carInfo = true;
-                checkAndRenderList();
-                saveSearchState();
-            }
-        }
-
-        function redirectToInspectionSite() {
-            console.log('중형차 이상은 카센터에서 검사 대행이 어렵습니다. 내 근처 검사소 찾기 화면으로 이동합니다.');
-            closeCarInfoModal();
-        }
-
-        function openAddressSearchModal() {
-            const modal = document.getElementById('addressSearchModal');
-            const modalContent = document.getElementById('addressModalContent');
-            modal.style.display = 'flex';
-            setTimeout(() => {
-                modalContent.classList.add('active');
-            }, 10);
-        }
-
-        function closeAddressSearchModal() {
-            const modalContent = document.getElementById('addressModalContent');
-            modalContent.classList.remove('active');
-            setTimeout(() => {
-                document.getElementById('addressSearchModal').style.display = 'none';
-            }, 300);
-        }
-
-        function toggleClearIcon(input) {
-            const clearIcon = input.parentElement.querySelector('.clear-icon');
-            if (input.value.length > 0) {
-                clearIcon.style.display = 'block';
-            } else {
-                clearIcon.style.display = 'none';
-            }
-        }
-
-        function clearAddressSearchInput(icon) {
-            const input = icon.parentElement.querySelector('.address-search-input');
-            input.value = '';
-            toggleClearIcon(input);
-        }
-
-        function selectAddress(address) {
-            document.getElementById('selectedAddressText').textContent = address;
-            document.getElementById('currentLocationText').textContent = '현재 위치로 설정';
-            searchConditions.location = true;
-            checkAndRenderList();
-            saveSearchState();
-            closeAddressSearchModal();
-        }
-
-        function updateCurrentLocation() {
-            const dummyCurrentLocation = "서울시 강남구 역삼동 700-1 (현재 위치)";
-            document.getElementById('selectedAddressText').textContent = dummyCurrentLocation;
-            searchConditions.location = true;
-            checkAndRenderList();
-            saveSearchState();
-        }
-
-        // 홈 화면과 동일한 구조의 더미 데이터
-        const dummyProviders = [
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비1",
-                name: "번개손 카센터",
-                distance: "3km",
-                address: "서울시 강남구 테헤란로 123",
-                phone: "02-111-1111",
-                tags: ["#수입차", "#급속충전"],
-                cert: "#정비기능사",
-                extra_services: ["#워셔액교체", "#엔진룸청소"],
-                asso: true
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비2",
-                name: "뚝딱이 정비소",
-                distance: "5km",
-                address: "서울시 서초구 강남대로 456",
-                phone: "02-222-2222",
-                tags: ["#국산차", "#뭐든고쳐드림"],
-                cert: "#자동차정비기사",
-                extra_services: ["#에어컨필터교체", "#실내클리닝"],
-                asso: false
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비3",
-                name: "차박사 연구소",
-                distance: "7km",
-                address: "서울시 송파구 올림픽로 789",
-                phone: "02-333-3333",
-                tags: ["#희귀차종", "#맞춤진단"],
-                cert: "#자동차진단평가사",
-                extra_services: ["#EV충전시설", "#소모품교체"],
-                asso: true
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비4",
-                name: "빵빵이 클리닉",
-                distance: "2km",
-                address: "서울시 영등포구 여의도동 10",
-                phone: "02-444-4444",
-                tags: ["#소음잡는귀신", "#승차감개선"],
-                cert: "",
-                extra_services: ["#세차", "#광택"],
-                asso: false
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비5",
-                name: "달려라 정비반장",
-                distance: "4km",
-                address: "서울시 강남구 역삼동 200",
-                phone: "02-555-5555",
-                tags: ["#출장수리", "#야간긴급출동"],
-                cert: "#자동차정비산업기사",
-                extra_services: ["#무상점검", "#엔진룸청소"],
-                asso: true
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비6",
-                name: "엔진 속삭임",
-                distance: "1km",
-                address: "서울시 강남구 역삼동 1",
-                phone: "02-666-6666",
-                tags: ["#미세조정", "#연비개선"],
-                cert: "",
-                extra_services: ["#워셔액교체"],
-                asso: false
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비7",
-                name: "휠발장",
-                distance: "6km",
-                address: "서울시 서초구 서초동 2",
-                phone: "02-777-7777",
-                tags: ["#휠밸런스", "#타이어교체"],
-                cert: "#정비기능사",
-                extra_services: ["#엔진룸청소"],
-                asso: true
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비8",
-                name: "브레이크 달인",
-                distance: "8km",
-                address: "서울시 송파구 잠실동 3",
-                phone: "02-888-8888",
-                tags: ["#제동력강화", "#안전운전"],
-                cert: "",
-                extra_services: [],
-                asso: false
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비9",
-                name: "에어컨 빵빵",
-                distance: "9km",
-                address: "서울시 강동구 천호동 4",
-                phone: "02-999-9999",
-                tags: ["#여름필수", "#시원한바람"],
-                cert: "#자동차정비기사",
-                extra_services: ["#세차"],
-                asso: true
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비10",
-                name: "오일 먹는 하마",
-                distance: "10km",
-                address: "서울시 광진구 구의동 5",
-                phone: "02-101-0101",
-                tags: ["#엔진오일", "#합성유교환"],
-                cert: "",
-                extra_services: ["#무상점검"],
-                asso: false
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비11",
-                name: "찌그러진 문짝 전문",
-                distance: "11km",
-                address: "서울시 동대문구 장안동 6",
-                phone: "02-112-1122",
-                tags: ["#판금도색", "#새차처럼"],
-                cert: "#정비기능사",
-                extra_services: ["#워셔액교체", "#실내클리닝"],
-                asso: true
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비12",
-                name: "삐걱삐걱 소리박멸",
-                distance: "12km",
-                address: "서울시 성북구 동소문동 7",
-                phone: "02-123-1233",
-                tags: ["#하체소음", "#잡소리해결"],
-                cert: "#자동차정비산업기사",
-                extra_services: [],
-                asso: false
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비13",
-                name: "전기차 충전소 옆",
-                distance: "13km",
-                address: "서울시 은평구 응암동 8",
-                phone: "02-134-1344",
-                tags: ["#전기차전문", "#배터리진단"],
-                cert: "",
-                extra_services: ["#EV충전시설"],
-                asso: true
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비14",
-                name: "수입차 눈감고 수리",
-                distance: "14km",
-                address: "서울시 마포구 공덕동 9",
-                phone: "02-145-1455",
-                tags: ["#수입차전문", "#부품수급"],
-                cert: "#자동차진단평가사",
-                extra_services: ["#광택"],
-                asso: false
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비15",
-                name: "내 차가 달라졌어요",
-                distance: "15km",
-                address: "서울시 용산구 한남동 10",
-                phone: "02-156-1566",
-                tags: ["#종합검진", "#성능업그레이드"],
-                cert: "",
-                extra_services: ["#세차", "#무상점검"],
-                asso: true
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비16",
-                name: "카센터계의 아이돌",
-                distance: "16km",
-                address: "서울시 종로구 종로1가 11",
-                phone: "02-167-1677",
-                tags: ["#친절상담", "#고객만족1위"],
-                cert: "#정비기능사",
-                extra_services: ["#워셔액교체"],
-                asso: false
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비17",
-                name: "타이어는 내가 왕",
-                distance: "17km",
-                address: "서울시 중구 을지로 12",
-                phone: "02-178-1788",
-                tags: ["#펑크수리", "#위치교환"],
-                cert: "#타이어전문가",
-                extra_services: ["#엔진룸청소"],
-                asso: true
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비18",
-                name: "배터리 살려드림",
-                distance: "18km",
-                address: "서울시 서대문구 신촌동 13",
-                phone: "02-189-1899",
-                tags: ["#방전긴급출동", "#배터리교체"],
-                cert: "#자동차정비기사",
-                extra_services: [],
-                asso: false
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비19",
-                name: "차량 검사 대행 전문가",
-                distance: "19km",
-                address: "서울시 강서구 화곡동 14",
-                phone: "02-190-1900",
-                tags: ["#검사대행", "#합격보장"],
-                cert: "",
-                extra_services: ["#광택"],
-                asso: true
-            },
-            {
-                img: "https://placehold.co/80x80/E0E0E0/333333?text=정비20",
-                name: "고객님 지갑 지킴이",
-                distance: "20km",
-                address: "서울시 양천구 목동 15",
-                phone: "02-201-2011",
-                tags: ["#합리적가격", "#불필요수리없음"],
-                cert: "#자동차정비산업기사",
-                extra_services: ["#무상점검"],
-                asso: false
-            }
-        ];
-
-        // 홈 화면과 동일한 렌더링 함수
-        function renderProviderList(providers) {
-            const providerListArea = document.getElementById('providerListArea');
-            
-            providers.forEach((provider, index) => {
-                const shopItem = document.createElement('div');
-                shopItem.classList.add('shop-item');
-                shopItem.setAttribute('onclick', `location.href='detail-01.html?id=${index+1}'`);
-
-                let tagsHtml = '';
-                // 일반 태그 (가장 중요)
-                provider.tags.forEach(tag => { 
-                    tagsHtml += `<span class="tag-primary">${tag}</span>`; 
-                });
-                // 추가 서비스 태그 (중간 중요도)
-                if (provider.extra_services && provider.extra_services.length > 0) {
-                    provider.extra_services.forEach(service => { 
-                        tagsHtml += `<span class="tag-secondary">${service}</span>`; 
-                    });
-                }
-                // 자격증 태그 (낮은 중요도)
-                if (provider.cert) { 
-                    tagsHtml += `<span class="tag-tertiary">${provider.cert}</span>`; 
-                }
-
-                shopItem.innerHTML = `
-                    <div class="shop-img">
-                        <img src="${provider.img}" alt="${provider.name}" onerror="this.onerror=null;this.src='https://placehold.co/80x80/E0E0E0/333?text=Image';">
-                    </div>
-                    <div class="shop-info">
-                        ${provider.asso ? '<span class="asso-mark">조합마크</span>' : ''}
-                        <div class="shop-name">${provider.name} <span class="shop-distance">${provider.distance}</span></div>
-                        <div class="shop-address">${provider.address}</div>
-                        <div class="shop-phone">${provider.phone}</div>
-                        <div class="shop-tags">
-                            ${tagsHtml}
-                        </div>
-                    </div>
-                `;
-
-                providerListArea.appendChild(shopItem);
-            });
-        }
-
-        function checkAndRenderList() {
-            const providerListArea = document.getElementById('providerListArea');
-            let placeholder = document.getElementById('providerPlaceholder');
-
-            if (searchConditions.carInfo && searchConditions.location && searchConditions.date) {
-                if (placeholder) {
-                    placeholder.classList.add('hidden');
-                }
-                providerListArea.innerHTML = ''; // 이전 결과 초기화
-                renderProviderList(dummyProviders.slice(0, 10));
-                loadedItemCount = 10;
-            } else {
-                const existingItems = providerListArea.querySelectorAll('.shop-item');
-                existingItems.forEach(item => item.remove());
-                if (placeholder) {
-                    placeholder.classList.remove('hidden');
-                }
-                loadedItemCount = 0;
-            }
-        }
-
-        function saveSearchState() {
-            const state = {
-                carInfoText: document.getElementById('carInfoDisplayText').textContent,
-                selectedAddress: document.getElementById('selectedAddressText').textContent,
-                selectedDate: document.querySelector('.date-item.selected') ? 
-                    document.querySelector('.date-item.selected').dataset.date : null,
-                currentDateIndex: currentDateIndex,
-                searchConditions: searchConditions
-            };
-            sessionStorage.setItem('search01_searchPageState', JSON.stringify(state));
-        }
-
-        function loadSearchState() {
-            const savedState = sessionStorage.getItem('search01_searchPageState');
-            if (savedState) {
-                const state = JSON.parse(savedState);
-                
-                document.getElementById('carInfoDisplayText').textContent = state.carInfoText;
-                document.getElementById('selectedAddressText').textContent = state.selectedAddress;
-                currentDateIndex = state.currentDateIndex;
-                searchConditions = state.searchConditions;
-
-                generateDates();
-                if (state.selectedDate) {
-                    const selectedDateItem = document.querySelector(`.date-item[data-date="${state.selectedDate}"]`);
-                    if (selectedDateItem) {
-                        document.querySelectorAll('.date-item').forEach(item => item.classList.remove('selected'));
-                        selectedDateItem.classList.add('selected');
-                    }
-                }
-                checkAndRenderList();
-            } else {
-                generateDates();
-                checkAndRenderList();
-            }
-        }
-
-        const providerListArea = document.getElementById('providerListArea');
-        providerListArea.addEventListener('scroll', () => {
-            if (isLoadingMore) return;
-            
-            if (providerListArea.scrollTop + providerListArea.clientHeight >= providerListArea.scrollHeight - 100) {
-                if (loadedItemCount < dummyProviders.length && searchConditions.carInfo && searchConditions.location && searchConditions.date) {
-                    isLoadingMore = true;
-                    setTimeout(() => { // Simulate network latency
-                        const nextItems = dummyProviders.slice(loadedItemCount, loadedItemCount + 10);
-                        renderProviderList(nextItems);
-                        loadedItemCount += nextItems.length;
-                        isLoadingMore = false;
-                    }, 300);
-                }
-            }
+    function selectOption(button) {
+        const parentGroup = button.closest('.option-group');
+        parentGroup.querySelectorAll('button').forEach(btn => {
+            btn.classList.remove('selected');
         });
+        button.classList.add('selected');
+        validateCarInfoForm();
+    }
 
-        window.addEventListener('load', loadSearchState);
-    </script>
+    function validateCarInfoForm() {
+        const carTypeSelect = document.getElementById('car-type');
+        const carTypeSelected = carTypeSelect.value !== '';
+        const carTypeGroupSelected = document.querySelector('#car-type-group .selected');
+        const carSizeGroupSelected = document.querySelector('#car-size-group .selected');
+        const fuelTypeGroupSelected = document.querySelector('#fuel-type-group .selected');
+        const submitBtn = document.getElementById('modalSubmitBtn');
+
+        if (!['compact', 'small'].includes(carTypeSelect.value) && carTypeSelect.value !== '') {
+            submitBtn.classList.add('active');
+            return;
+        }
+
+        if (carTypeSelected && carTypeGroupSelected && carSizeGroupSelected && fuelTypeGroupSelected) {
+            submitBtn.classList.add('active');
+        } else {
+            submitBtn.classList.remove('active');
+        }
+    }
+
+    function handleSubmitCarInfo() {
+        if (!document.getElementById('modalSubmitBtn').classList.contains('active')) {
+            return;
+        }
+        
+        const carTypeSelect = document.getElementById('car-type');
+        const carInfoDisplayText = document.getElementById('carInfoDisplayText');
+        const selectedValue = carTypeSelect.value;
+
+        if (!['compact', 'small'].includes(selectedValue) && selectedValue) {
+            redirectToInspectionSite();
+            return;
+        }
+
+        const carTypeSelected = selectedValue !== '';
+        const carTypeGroupSelected = document.querySelector('#car-type-group .selected');
+        const carSizeGroupSelected = document.querySelector('#car-size-group .selected');
+        const fuelTypeGroupSelected = document.querySelector('#fuel-type-group .selected');
+
+        if (carTypeSelected && carTypeGroupSelected && carSizeGroupSelected && fuelTypeGroupSelected) {
+            const selectedCarType = carTypeSelect.options[carTypeSelect.selectedIndex].text;
+            const selectedCarModel = carTypeGroupSelected.textContent;
+            const selectedCarSize = carSizeGroupSelected.textContent;
+            const selectedFuelType = fuelTypeGroupSelected.textContent;
+
+            carInfoDisplayText.textContent = `${selectedCarType} | ${selectedCarModel} | ${selectedCarSize} | ${selectedFuelType}`;
+            
+            closeCarInfoModal();
+            searchConditions.carInfo = true;
+            checkAndRenderList();
+            saveSearchState();
+        }
+    }
+
+    function redirectToInspectionSite() {
+        console.log('중형차 이상은 카센터에서 검사 대행이 어렵습니다. 내 근처 검사소 찾기 화면으로 이동합니다.');
+        closeCarInfoModal();
+    }
+
+    function openAddressSearchModal() {
+        const modal = document.getElementById('addressSearchModal');
+        const modalContent = document.getElementById('addressModalContent');
+        modal.style.display = 'flex';
+        setTimeout(() => {
+            modalContent.classList.add('active');
+        }, 10);
+    }
+
+    function closeAddressSearchModal() {
+        const modalContent = document.getElementById('addressModalContent');
+        modalContent.classList.remove('active');
+        setTimeout(() => {
+            document.getElementById('addressSearchModal').style.display = 'none';
+        }, 300);
+    }
+
+    function toggleClearIcon(input) {
+        const clearIcon = input.parentElement.querySelector('.clear-icon');
+        if (input.value.length > 0) {
+            clearIcon.style.display = 'block';
+        } else {
+            clearIcon.style.display = 'none';
+        }
+    }
+
+    function clearAddressSearchInput(icon) {
+        const input = icon.parentElement.querySelector('.address-search-input');
+        input.value = '';
+        toggleClearIcon(input);
+    }
+
+    function selectAddress(address) {
+        document.getElementById('selectedAddressText').textContent = address;
+        document.getElementById('currentLocationText').textContent = '현재 위치로 설정';
+        searchConditions.location = true;
+        checkAndRenderList();
+        saveSearchState();
+        closeAddressSearchModal();
+    }
+
+    function updateCurrentLocation() {
+        const dummyCurrentLocation = "서울시 강남구 역삼동 700-1 (현재 위치)";
+        document.getElementById('selectedAddressText').textContent = dummyCurrentLocation;
+        searchConditions.location = true;
+        checkAndRenderList();
+        saveSearchState();
+    }
+
+    // 홈 화면과 동일한 구조의 더미 데이터
+    const dummyProviders = [
+        {
+            img: "https://placehold.co/80x80/E0E0E0/333333?text=정비1",
+            name: "번개손 카센터",
+            distance: "3km",
+            address: "서울시 강남구 테헤란로 123",
+            phone: "02-111-1111",
+            tags: ["#수입차", "#급속충전"],
+            cert: "#정비기능사",
+            extra_services: ["#워셔액교체", "#엔진룸청소"],
+            asso: true
+        },
+        {
+            img: "https://placehold.co/80x80/E0E0E0/333333?text=정비2",
+            name: "뚝딱이 정비소",
+            distance: "5km",
+            address: "서울시 서초구 강남대로 456",
+            phone: "02-222-2222",
+            tags: ["#국산차", "#뭐든고쳐드림"],
+            cert: "#자동차정비기사",
+            extra_services: ["#에어컨필터교체", "#실내클리닝"],
+            asso: false
+        },
+        {
+            img: "https://placehold.co/80x80/E0E0E0/333333?text=정비3",
+            name: "차박사 연구소",
+            distance: "7km",
+            address: "서울시 송파구 올림픽로 789",
+            phone: "02-333-3333",
+            tags: ["#희귀차종", "#맞춤진단"],
+            cert: "#자동차진단평가사",
+            extra_services: ["#EV충전시설", "#소모품교체"],
+            asso: true
+        },
+        {
+            img: "https://placehold.co/80x80/E0E0E0/333333?text=정비4",
+            name: "빵빵이 클리닉",
+            distance: "2km",
+            address: "서울시 영등포구 여의도동 10",
+            phone: "02-444-4444",
+            tags: ["#소음잡는귀신", "#승차감개선"],
+            cert: "",
+            extra_services: ["#세차", "#광택"],
+            asso: false
+        },
+        {
+            img: "https://placehold.co/80x80/E0E0E0/333333?text=정비5",
+            name: "달려라 정비반장",
+            distance: "4km",
+            address: "서울시 강남구 역삼동 200",
+            phone: "02-555-5555",
+            tags: ["#출장수리", "#야간긴급출동"],
+            cert: "#자동차정비산업기사",
+            extra_services: ["#무상점검", "#엔진룸청소"],
+            asso: true
+        },
+        {
+            img: "https://placehold.co/80x80/E0E0E0/333333?text=정비6",
+            name: "엔진 속삭임",
+            distance: "1km",
+            address: "서울시 강남구 역삼동 1",
+            phone: "02-666-6666",
+            tags: ["#미세조정", "#연비개선"],
+            cert: "",
+            extra_services: ["#워셔액교체"],
+            asso: false
+        },
+        {
+            img: "https://placehold.co/80x80/E0E0E0/333333?text=정비7",
+            name: "휠발장",
+            distance: "6km",
+            address: "서울시 서초구 서초동 2",
+            phone: "02-777-7777",
+            tags: ["#휠밸런스", "#타이어교체"],
+            cert: "#정비기능사",
+            extra_services: ["#엔진룸청소"],
+            asso: true
+        },
+        {
+            img: "https://placehold.co/80x80/E0E0E0/333333?text=정비8",
+            name: "브레이크 달인",
+            distance: "8km",
+            address: "서울시 송파구 잠실동 3",
+            phone: "02-888-8888",
+            tags: ["#제동력강화", "#안전운전"],
+            cert: "",
+            extra_services: [],
+            asso: false
+        },
+        {
+            img: "https://placehold.co/80x80/E0E0E0/333333?text=정비9",
+            name: "에어컨 빵빵",
+            distance: "9km",
+            address: "서울시 강동구 천호동 4",
+            phone: "02-999-9999",
+            tags: ["#여름필수", "#시원한바람"],
+            cert: "#자동차정비기사",
+            extra_services: ["#세차"],
+            asso: true
+        },
+        {
+            img: "https://placehold.co/80x80/E0E0E0/333333?text=정비10",
+            name: "오일 먹는 하마",
+            distance: "10km",
+            address: "서울시 광진구 구의동 5",
+            phone: "02-101-0101",
+            tags: ["#엔진오일", "#합성유교환"],
+            cert: "",
+            extra_services: ["#무상점검"],
+            asso: false
+        },
+        {
+            img: "https://placehold.co/80x80/E0E0E0/333333?text=정비11",
+            name: "찌그러진 문짝 전문",
+            distance: "11km",
+            address: "서울시 동대문구 장안동 6",
+            phone: "02-112-1122",
+            tags: ["#판금도색", "#새차처럼"],
+            cert: "#정비기능사",
+            extra_services: ["#워셔액교체", "#실내클리닝"],
+            asso: true
+        },
+        {
+            img: "https://placehold.co/80x80/E0E0E0/333333?text=정비12",
+            name: "삐걱삐걱 소리박멸",
+            distance: "12km",
+            address: "서울시 성북구 동소문동 7",
+            phone: "02-123-1233",
+            tags: ["#하체소음", "#잡소리해결"],
+            cert: "#자동차정비산업기사",
+            extra_services: [],
+            asso: false
+        },
+        {
+            img: "https://placehold.co/80x80/E0E0E0/333333?text=정비13",
+            name: "전기차 충전소 옆",
+            distance: "13km",
+            address: "서울시 은평구 응암동 8",
+            phone: "02-134-1344",
+            tags: ["#전기차전문", "#배터리진단"],
+            cert: "",
+            extra_services: ["#EV충전시설"],
+            asso: true
+        },
+        {
+            img: "https://placehold.co/80x80/E0E0E0/333333?text=정비14",
+            name: "수입차 눈감고 수리",
+            distance: "14km",
+            address: "서울시 마포구 공덕동 9",
+            phone: "02-145-1455",
+            tags: ["#수입차전문", "#부품수급"],
+            cert: "#자동차진단평가사",
+            extra_services: ["#광택"],
+            asso: false
+        },
+        {
+            img: "https://placehold.co/80x80/E0E0E0/333333?text=정비15",
+            name: "내 차가 달라졌어요",
+            distance: "15km",
+            address: "서울시 용산구 한남동 10",
+            phone: "02-156-1566",
+            tags: ["#종합검진", "#성능업그레이드"],
+            cert: "",
+            extra_services: ["#세차", "#무상점검"],
+            asso: true
+        },
+        {
+            img: "https://placehold.co/80x80/E0E0E0/333333?text=정비16",
+            name: "카센터계의 아이돌",
+            distance: "16km",
+            address: "서울시 종로구 종로1가 11",
+            phone: "02-167-1677",
+            tags: ["#친절상담", "#고객만족1위"],
+            cert: "#정비기능사",
+            extra_services: ["#워셔액교체"],
+            asso: false
+        },
+        {
+            img: "https://placehold.co/80x80/E0E0E0/333333?text=정비17",
+            name: "타이어는 내가 왕",
+            distance: "17km",
+            address: "서울시 중구 을지로 12",
+            phone: "02-178-1788",
+            tags: ["#펑크수리", "#위치교환"],
+            cert: "#타이어전문가",
+            extra_services: ["#엔진룸청소"],
+            asso: true
+        },
+        {
+            img: "https://placehold.co/80x80/E0E0E0/333333?text=정비18",
+            name: "배터리 살려드림",
+            distance: "18km",
+            address: "서울시 서대문구 신촌동 13",
+            phone: "02-189-1899",
+            tags: ["#방전긴급출동", "#배터리교체"],
+            cert: "#자동차정비기사",
+            extra_services: [],
+            asso: false
+        },
+        {
+            img: "https://placehold.co/80x80/E0E0E0/333333?text=정비19",
+            name: "차량 검사 대행 전문가",
+            distance: "19km",
+            address: "서울시 강서구 화곡동 14",
+            phone: "02-190-1900",
+            tags: ["#검사대행", "#합격보장"],
+            cert: "",
+            extra_services: ["#광택"],
+            asso: true
+        },
+        {
+            img: "https://placehold.co/80x80/E0E0E0/333333?text=정비20",
+            name: "고객님 지갑 지킴이",
+            distance: "20km",
+            address: "서울시 양천구 목동 15",
+            phone: "02-201-2011",
+            tags: ["#합리적가격", "#불필요수리없음"],
+            cert: "#자동차정비산업기사",
+            extra_services: ["#무상점검"],
+            asso: false
+        }
+    ];
+
+    // 홈 화면과 동일한 렌더링 함수
+    function renderProviderList(providers) {
+        const providerListArea = document.getElementById('providerListArea');
+        
+        providers.forEach((provider, index) => {
+            const shopItem = document.createElement('div');
+            shopItem.classList.add('shop-item');
+            shopItem.setAttribute('onclick', `location.href='detail-01.html?id=${index+1}'`);
+
+            let tagsHtml = '';
+            // 일반 태그 (가장 중요)
+            provider.tags.forEach(tag => { 
+                tagsHtml += `<span class="tag-primary">${tag}</span>`; 
+            });
+            // 추가 서비스 태그 (중간 중요도)
+            if (provider.extra_services && provider.extra_services.length > 0) {
+                provider.extra_services.forEach(service => { 
+                    tagsHtml += `<span class="tag-secondary">${service}</span>`; 
+                });
+            }
+            // 자격증 태그 (낮은 중요도)
+            if (provider.cert) { 
+                tagsHtml += `<span class="tag-tertiary">${provider.cert}</span>`; 
+            }
+
+            shopItem.innerHTML = `
+                <div class="shop-img">
+                    <img src="${provider.img}" alt="${provider.name}" onerror="this.onerror=null;this.src='https://placehold.co/80x80/E0E0E0/333?text=Image';">
+                </div>
+                <div class="shop-info">
+                    ${provider.asso ? '<span class="asso-mark">조합마크</span>' : ''}
+                    <div class="shop-name">${provider.name} <span class="shop-distance">${provider.distance}</span></div>
+                    <div class="shop-address">${provider.address}</div>
+                    <div class="shop-phone">${provider.phone}</div>
+                    <div class="shop-tags">
+                        ${tagsHtml}
+                    </div>
+                </div>
+            `;
+
+            providerListArea.appendChild(shopItem);
+        });
+    }
+
+    function checkAndRenderList() {
+        const providerListArea = document.getElementById('providerListArea');
+        let placeholder = document.getElementById('providerPlaceholder');
+
+        if (searchConditions.carInfo && searchConditions.location && searchConditions.date) {
+            if (placeholder) {
+                placeholder.classList.add('hidden');
+            }
+            providerListArea.innerHTML = ''; // 이전 결과 초기화
+            renderProviderList(dummyProviders.slice(0, 10));
+            loadedItemCount = 10;
+        } else {
+            const existingItems = providerListArea.querySelectorAll('.shop-item');
+            existingItems.forEach(item => item.remove());
+            if (placeholder) {
+                placeholder.classList.remove('hidden');
+            }
+            loadedItemCount = 0;
+        }
+    }
+
+    function saveSearchState() {
+        const state = {
+            carInfoText: document.getElementById('carInfoDisplayText').textContent,
+            selectedAddress: document.getElementById('selectedAddressText').textContent,
+            selectedDate: document.querySelector('.date-item.selected') ? 
+                document.querySelector('.date-item.selected').dataset.date : null,
+            currentDateIndex: currentDateIndex,
+            searchConditions: searchConditions
+        };
+        
+        sessionStorage.setItem('search01_searchPageState', JSON.stringify(state));
+    }
+
+    function loadSearchState() {
+        const savedState = sessionStorage.getItem('search01_searchPageState');
+        if (savedState) {
+            const state = JSON.parse(savedState);
+            
+            document.getElementById('carInfoDisplayText').textContent = state.carInfoText;
+            document.getElementById('selectedAddressText').textContent = state.selectedAddress;
+            currentDateIndex = state.currentDateIndex || 0;
+            searchConditions = state.searchConditions || {
+                carInfo: false,
+                location: false,
+                date: false
+            };
+
+            generateDates();
+            if (state.selectedDate) {
+                const selectedDateItem = document.querySelector(`.date-item[data-date="${state.selectedDate}"]`);
+                if (selectedDateItem) {
+                    document.querySelectorAll('.date-item').forEach(item => item.classList.remove('selected'));
+                    selectedDateItem.classList.add('selected');
+                }
+            }
+            checkAndRenderList();
+        } else {
+            generateDates();
+            checkAndRenderList();
+        }
+    }
+
+    const providerListArea = document.getElementById('providerListArea');
+    providerListArea.addEventListener('scroll', () => {
+        if (isLoadingMore) return;
+        
+        if (providerListArea.scrollTop + providerListArea.clientHeight >= providerListArea.scrollHeight - 100) {
+            if (loadedItemCount < dummyProviders.length && searchConditions.carInfo && searchConditions.location && searchConditions.date) {
+                isLoadingMore = true;
+                setTimeout(() => {
+                    const nextItems = dummyProviders.slice(loadedItemCount, loadedItemCount + 10);
+                    renderProviderList(nextItems);
+                    loadedItemCount += nextItems.length;
+                    isLoadingMore = false;
+                }, 300);
+            }
+        }
+    });
+
+    // 페이지 로드 시 상태 복원
+    window.addEventListener('load', () => {
+        loadSearchState();
+    });
+</script>
+
 </body>
 </html>

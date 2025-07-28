@@ -143,7 +143,7 @@
 
         .faq-item.active .faq-question::after {
             content: '−';
-            transform: translateY(-50%) rotate(180deg);
+            transform: translateY(-50%);
         }
 
         .faq-answer {
@@ -154,7 +154,7 @@
         }
 
         .faq-item.active .faq-answer {
-            max-height: 300px;
+            max-height: 500px;
             padding: 0 40px 16px 0;
         }
 
@@ -271,16 +271,19 @@
             text-align: center;
             cursor: pointer;
             transition: background-color 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
         }
         
         .car-info-summary:hover {
             background-color: #dbe4ff;
         }
         
-        .car-info-summary .q-icon {
+        .car-info-summary .arrow-icon {
             font-size: 16px;
             color: #5d5fef;
-            margin-left: 8px;
         }
 
         /* 상품 아이템 */
@@ -487,10 +490,40 @@
             border-bottom: none;
         }
 
+        /* 태그 스타일 추가 */
+        .info-list .tag-container {
+            display: inline-flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-left: 8px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .tag.specialty {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .tag.service {
+            background-color: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .tag.certification {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+
         /* 공지, 포스팅, FAQ 아이템 */
         .notice-item,
-        .post-item,
-        .faq-item {
+        .post-item {
             display: block;
             padding: 12px 0;
             border-bottom: 1px solid #f0f0f0;
@@ -500,15 +533,54 @@
         }
         
         .notice-item:last-child,
-        .post-item:last-child,
-        .faq-item:last-child {
+        .post-item:last-child {
             border-bottom: none;
         }
         
         .notice-item:hover,
-        .post-item:hover,
-        .faq-item:hover {
+        .post-item:hover {
             background-color: #fafafa;
+        }
+
+        /* 공지사항 아이템 스타일 */
+        .notice-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+        }
+
+        .notice-item .notice-info {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex: 1;
+        }
+
+        .notice-item .notice-date {
+            font-size: 13px;
+            color: #999;
+            min-width: 80px;
+        }
+
+        .notice-item .notice-title {
+            font-size: 15px;
+            color: #333;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .notice-item .notice-views {
+            font-size: 13px;
+            color: #666;
+            margin-left: 8px;
+        }
+
+        .notice-item .arrow {
+            color: #999;
+            margin-left: 8px;
         }
 
         /* 포스팅 아이템 */
@@ -536,11 +608,20 @@
         .post-item .details {
             flex-grow: 1;
         }
+
+        .post-item .post-views {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 4px;
+        }
         
         .post-item .name {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 500;
             margin-bottom: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         
         .post-item .desc {
@@ -566,6 +647,68 @@
         
         .recommend-item:hover {
             background-color: #fafafa;
+        }
+
+        .recommend-item .thumbnail {
+            flex-shrink: 0;
+            width: 70px;
+            height: 70px;
+            background-color: #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .recommend-item .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .recommend-item .item-details {
+            flex-grow: 1;
+        }
+
+        .recommend-item .name-info {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 4px;
+        }
+
+        .recommend-item .name {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .recommend-item .distance {
+            font-size: 14px;
+            color: #666;
+            margin-left: 8px;
+        }
+
+        .recommend-item .address {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .recommend-item .stats {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 6px;
+        }
+
+        .recommend-item .tags {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .recommend-item .tag {
+            font-size: 12px;
+            color: #666;
+            background-color: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 3px;
         }
 
         /* 더보기 버튼 */
@@ -903,7 +1046,7 @@
         <header class="header">
             <a href="#" onclick="window.history.back(); return false;" class="back-btn">&lt;</a>
             <div class="title">우리 정비소</div>
-            <a href="#" onclick="alert('공유 기능'); return false;" class="share-btn">↑</a>
+            <a href="#" onclick="shareContent(); return false;" class="share-btn">↑</a>
         </header>
 
         <main>
@@ -915,13 +1058,13 @@
                     </div>
                     <div>
                         <div>
-                          <div class="carpos-mark">[조합마크]</div>
+                          <div class="carpos-mark">[카포스]</div>
                           <div class="name-info">
                             <span class="name">우리 정비소</span><span class="distance">3km</span>
                         </div>
                     </div>
 
-                        <div class="address">서울시 강남구 테헤란로 123 <a href="#" onclick="alert('길찾기 앱 연동'); return false;" class="action-link">[길찾기]</a></div>
+                        <div class="address">서울시 강남구 테헤란로 123 <a href="#" onclick="openNavigation(); return false;" class="action-link">[길찾기]</a></div>
                         <div class="phone">📞 02-1234-5678 <a href="tel:02-1234-5678" class="action-link">[전화걸기]</a></div>
                     </div>
                 </div>
@@ -939,48 +1082,49 @@
                 <a href="#faq">FAQ</a>
             </nav>
 
-            <!-- 상품소개 섹션 -->
+            <!-- 상품 섹션 -->
             <section id="products" class="content-section">
-                <h3>상품소개</h3>
+                <h3>상품</h3>
                 <!-- 차량 정보 요약 및 모달 트리거 -->
                 <div id="carInfoSummary" class="car-info-summary">
-                    <span id="displayCarInfo">차량 정보를 선택해주세요.</span> <span class="q-icon">></span>
+                    <span id="displayCarInfo">검사 받을 차량 정보를 선택해주세요.</span>
+                    <span class="arrow-icon">></span>
                 </div>
 
                 <!-- 각 상품에 체크박스 추가 -->
-                <div class="product-item" data-product-name="자동차 검사 대행" data-product-price="35000">
+                <div class="product-item" data-product-name="자동차 검사" data-product-price="35000">
                     <input type="checkbox" class="product-checkbox">
                     <div class="thumbnail">
                         <img src="https://placehold.co/60x60/f0f0f0/333333?text=검사" alt="자동차 검사 이미지">
                     </div>
                     <div class="details">
-                        <span class="q-icon" onclick="alert('자동차 검사 대행 상세 정보')">?</span>
-                        <div class="name">자동차 검사 대행</div>
-                        <div class="desc">"카센터에서 미리 점검받고 안심하고 통과하세요!"</div>
+                        <span class="q-icon" onclick="showProductDetail('자동차 검사')">?</span>
+                        <div class="name">자동차 검사</div>
+                        <div class="desc">"카센터에서 미리 점검받고..."</div>
                         <div class="price">35,000원</div>
                     </div>
                 </div>
-                <div class="product-item" data-product-name="엔진오일(에코)" data-product-price="65000">
+                <div class="product-item" data-product-name="엔진오일 에코" data-product-price="65000">
                     <input type="checkbox" class="product-checkbox">
                     <div class="thumbnail">
                         <img src="https://placehold.co/60x60/f0f0f0/333333?text=오일" alt="엔진오일 에코 이미지">
                     </div>
                     <div class="details">
-                        <span class="q-icon" onclick="alert('엔진오일(에코) 상세 정보')">?</span>
-                        <div class="name">엔진오일(에코)</div>
-                        <div class="desc">"연간 1만km 이내 주행 시 가장 경제적인 선택."</div>
+                        <span class="q-icon" onclick="showProductDetail('엔진오일 에코')">?</span>
+                        <div class="name">엔진오일 에코</div>
+                        <div class="desc">"연간 1만km 이내 주행 시 경제적 선택."</div>
                         <div class="price">65,000원</div>
                     </div>
                 </div>
-                <div class="product-item" data-product-name="엔진오일(스탠다드)" data-product-price="85000">
+                <div class="product-item" data-product-name="엔진오일 스탠다드" data-product-price="85000">
                     <input type="checkbox" class="product-checkbox">
                     <div class="thumbnail">
                         <img src="https://placehold.co/60x60/f0f0f0/333333?text=오일" alt="엔진오일 스탠다드 이미지">
                     </div>
                     <div class="details">
-                        <span class="q-icon" onclick="alert('엔진오일(스탠다드) 상세 정보')">?</span>
-                        <div class="name">엔진오일(스탠다드)</div>
-                        <div class="desc">"고속 주행이 많거나 장거리 운행 시 추천."</div>
+                        <span class="q-icon" onclick="showProductDetail('엔진오일 스탠다드')">?</span>
+                        <div class="name">엔진오일 스탠다드</div>
+                        <div class="desc">"최적의 성능을 위한 합성유..."</div>
                         <div class="price">85,000원</div>
                     </div>
                 </div>
@@ -990,9 +1134,9 @@
                         <img src="https://placehold.co/60x60/f0f0f0/333333?text=필터" alt="에어컨 필터 이미지">
                     </div>
                     <div class="details">
-                        <span class="q-icon" onclick="alert('에어컨 필터 상세 정보')">?</span>
+                        <span class="q-icon" onclick="showProductDetail('에어컨 필터')">?</span>
                         <div class="name">에어컨 필터</div>
-                        <div class="desc">"최소 1년에 한 번, 엔진오일 교체할 때라도..."</div>
+                        <div class="desc">"최소 1년에 한 번..."</div>
                         <div class="price">25,000원</div>
                     </div>
                 </div>
@@ -1002,9 +1146,9 @@
                         <img src="https://placehold.co/60x60/f0f0f0/333333?text=패키지" alt="에코 실속 패키지 이미지">
                     </div>
                     <div class="details">
-                        <span class="q-icon" onclick="alert('에코 실속 패키지 상세 정보')">?</span>
+                        <span class="q-icon" onclick="showProductDetail('에코 실속 패키지')">?</span>
                         <div class="name">에코 실속 패키지</div>
-                        <div class="desc">"엔진오일(에코) + 에어컨 필터 동시 교체 할인!"</div>
+                        <div class="desc">"에코 + 에어컨 필터 묶음 할인!"</div>
                         <div class="price">80,000원</div>
                     </div>
                 </div>
@@ -1014,9 +1158,9 @@
                         <img src="https://placehold.co/60x60/f0f0f0/333333?text=패키지" alt="스탠다드 실속 패키지 이미지">
                     </div>
                     <div class="details">
-                        <span class="q-icon" onclick="alert('스탠다드 실속 패키지 상세 정보')">?</span>
+                        <span class="q-icon" onclick="showProductDetail('스탠다드 실속 패키지')">?</span>
                         <div class="name">스탠다드 실속 패키지</div>
-                        <div class="desc">"엔진오일(스탠다드) + 에어컨 필터 동시 교체 할인!"</div>
+                        <div class="desc">"스탠다드 + 에어컨 필터 묶음 할인!"</div>
                         <div class="price">100,000원</div>
                     </div>
                 </div>
@@ -1026,9 +1170,9 @@
                         <img src="https://placehold.co/60x60/f0f0f0/333333?text=올인원" alt="올인원 에코 패키지 이미지">
                     </div>
                     <div class="details">
-                        <span class="q-icon" onclick="alert('올인원 에코 패키지 상세 정보')">?</span>
+                        <span class="q-icon" onclick="showProductDetail('올인원 에코 패키지')">?</span>
                         <div class="name">올인원 에코 패키지</div>
-                        <div class="desc">"검사 대행 + 엔진오일(에코) + 에어컨 필터, 한 번에!"</div>
+                        <div class="desc">"검사 + 에코 + 에어컨 필터!"</div>
                         <div class="price">110,000원</div>
                     </div>
                 </div>
@@ -1038,9 +1182,9 @@
                         <img src="https://placehold.co/60x60/f0f0f0/333333?text=올인원" alt="올인원 스탠다드 패키지 이미지">
                     </div>
                     <div class="details">
-                        <span class="q-icon" onclick="alert('올인원 스탠다드 패키지 상세 정보')">?</span>
+                        <span class="q-icon" onclick="showProductDetail('올인원 스탠다드 패키지')">?</span>
                         <div class="name">올인원 스탠다드 패키지</div>
-                        <div class="desc">"검사 대행 + 엔진오일(스탠다드) + 에어컨 필터, 한 번에!"</div>
+                        <div class="desc">"검사 + 스탠다드 + 에어컨 필터!"</div>
                         <div class="price">130,000원</div>
                     </div>
                 </div>
@@ -1053,7 +1197,7 @@
                     <strong>사장님 한마디</strong><br>
                     안녕하세요 12년 정비 경력의 전문 업체 우리 정비소 입니다. 내 차를 정비하는 마음으로 정성을 다하겠습니다. 오랜 경력과 기술을 갖춘 저희 전문가들이 차량을 정성껏 점검하고 수리해드립니다. 고객님의 안전과 만족을 최우선으로 생각하며, 항상 투명하고 정직한 서비스를 제공할 것을 약속드립니다. 궁금한 점이 있으시면 언제든지 편하게 문의해주세요.
                 </div>
-                <button class="read-more-btn" id="readMoreBtn">소개글 더보기 ∨</button>
+                <button class="read-more-btn" id="readMoreBtn">+ 더보기</button>
                 <br>
                 <h4>사진</h4>
                 <div class="photo-gallery-wrapper">
@@ -1068,47 +1212,150 @@
                     <button class="photo-nav-arrow right" onclick="scrollPhotoGallery(1)">›</button>
                 </div>
                 <!-- 사진 아래 업체 상세 정보 추가 -->
+                <h4>상세 정보</h4>
                 <ul class="info-list">
                     <li><strong>업체명</strong>: 우리 정비소</li>
-                    <li><strong>업체 주소</strong>: 서울시 강남구 테헤란로 123</li>
-                    <li><strong>업체 전화번호</strong>: 02-1234-5678</li>
-                    <li><strong>영업시간</strong>: 평일 09:00 ~ 18:00 (토요일 09:00 ~ 13:00)</li>
+                    <li><strong>업체주소</strong>: 서울시 강남구 테헤란로 123</li>
+                    <li><strong>업체전화번호</strong>: 02-1234-5678</li>
+                    <li><strong>영업시간</strong>: 평일 09:00~18:00<br>토요일 09:00~13:00</li>
                     <li><strong>휴무일</strong>: 매주 일요일, 공휴일 휴무</li>
-                    <li><strong>전문분야</strong>: #수입차, #전기/전자장치, #엔진</li>
-                    <li><strong>자격증</strong>: #정비기능사</li>
-                    <li><strong>부가서비스</strong>: #워셔액 교체, #엔진룸 청소</li>
+                    <li><strong>전문분야</strong>: 
+                        <span class="tag-container">
+                            <span class="tag specialty">#수입차</span>
+                            <span class="tag specialty">#전기/전자장치</span>
+                            <span class="tag specialty">#엔진</span>
+                        </span>
+                    </li>
+                    <li><strong>자격증</strong>: 
+                        <span class="tag-container">
+                            <span class="tag certification">#정비기능사</span>
+                        </span>
+                    </li>
+                    <li><strong>부가서비스</strong>: 
+                        <span class="tag-container">
+                            <span class="tag service">#워셔액 교체</span>
+                            <span class="tag service">#엔진룸 청소</span>
+                        </span>
+                    </li>
                 </ul>
             </section>
 
             <!-- 공지 섹션 -->
             <section id="notices" class="content-section">
                 <h3>공지</h3>
-                <a href="#" onclick="alert('공지 상세 페이지로 이동'); return false;" class="notice-item">[공지] 여름 휴가 일정 안내 (07.24)</a>
-                <a href="#" onclick="alert('공지 상세 페이지로 이동'); return false;" class="notice-item">[공지] 신규 서비스 런칭 기념 할인 이벤트 (07.15)</a>
+                <div class="notice-list" id="noticeList">
+                    <a href="#" onclick="showNoticeModal(0); return false;" class="notice-item">
+                        <div class="notice-info">
+                            <span class="notice-date">2025.07.24</span>
+                            <span class="notice-title">여름 휴가 일정 안내</span>
+                        </div>
+                        <div>
+                            <span class="notice-views">Views 25</span>
+                            <span class="arrow">></span>
+                        </div>
+                    </a>
+                    <a href="#" onclick="showNoticeModal(1); return false;" class="notice-item">
+                        <div class="notice-info">
+                            <span class="notice-date">2025.05.14</span>
+                            <span class="notice-title">신규 서비스 런칭 이벤트</span>
+                        </div>
+                        <div>
+                            <span class="notice-views">Views 145</span>
+                            <span class="arrow">></span>
+                        </div>
+                    </a>
+                    <a href="#" onclick="showNoticeModal(2); return false;" class="notice-item">
+                        <div class="notice-info">
+                            <span class="notice-date">2024.04.12</span>
+                            <span class="notice-title">엔진오일 비용 인상 안내</span>
+                        </div>
+                        <div>
+                            <span class="notice-views">Views 204</span>
+                            <span class="arrow">></span>
+                        </div>
+                    </a>
+                    <!-- 숨겨진 공지사항들 -->
+                    <a href="#" onclick="showNoticeModal(3); return false;" class="notice-item hidden">
+                        <div class="notice-info">
+                            <span class="notice-date">2024.03.20</span>
+                            <span class="notice-title">봄맞이 차량 점검 이벤트</span>
+                        </div>
+                        <div>
+                            <span class="notice-views">Views 178</span>
+                            <span class="arrow">></span>
+                        </div>
+                    </a>
+                    <a href="#" onclick="showNoticeModal(4); return false;" class="notice-item hidden">
+                        <div class="notice-info">
+                            <span class="notice-date">2024.02.15</span>
+                            <span class="notice-title">설 연휴 영업 안내</span>
+                        </div>
+                        <div>
+                            <span class="notice-views">Views 256</span>
+                            <span class="arrow">></span>
+                        </div>
+                    </a>
+                </div>
+                <button class="more-button" id="loadMoreNotices" onclick="loadMoreNotices()">+ 더보기</button>
             </section>
 
             <!-- 포스팅 섹션 -->
             <section id="posts" class="content-section">
                 <h3>포스팅</h3>
-                <!-- onclick 속성 변경 -->
-                <a href="#" onclick="showPostingModal(0); return false;" class="post-item">
-                    <div class="thumbnail">
-                        <img src="https://placehold.co/60x60/f0f0f0/333333?text=포스팅" alt="포스팅 기본 이미지">
-                    </div>
-                    <div class="details">
-                        <div class="name">[정보] 여름철 에어컨 관리 꿀팁</div>
-                        <div class="desc">2025.07.22</div>
-                    </div>
-                </a>
-                <a href="#" onclick="showPostingModal(1); return false;" class="post-item">
-                    <div class="thumbnail">
-                        <img src="https://placehold.co/60x60/f0f0f0/333333?text=포스팅" alt="포스팅 기본 이미지">
-                    </div>
-                    <div class="details">
-                        <div class="name">[정보] 초보운전자를 위한 타이어 점검법</div>
-                        <div class="desc">2025.07.10</div>
-                    </div>
-                </a>
+                <div class="post-list" id="postList">
+                    <a href="#" onclick="showPostingModal(0); return false;" class="post-item">
+                        <div class="thumbnail">
+                            <img src="https://placehold.co/60x60/f0f0f0/333333?text=포스팅" alt="포스팅 기본 이미지">
+                        </div>
+                        <div class="details">
+                            <div class="post-views">Views 204</div>
+                            <div class="name">여름철 에어컨 관리 꿀팁</div>
+                            <div class="desc">2025.07.22</div>
+                        </div>
+                    </a>
+                    <a href="#" onclick="showPostingModal(1); return false;" class="post-item">
+                        <div class="thumbnail">
+                            <img src="https://placehold.co/60x60/f0f0f0/333333?text=포스팅" alt="포스팅 기본 이미지">
+                        </div>
+                        <div class="details">
+                            <div class="post-views">Views 103</div>
+                            <div class="name">초보운전자를 위한 타이어 점검법</div>
+                            <div class="desc">2025.07.10</div>
+                        </div>
+                    </a>
+                    <a href="#" onclick="showPostingModal(2); return false;" class="post-item">
+                        <div class="thumbnail">
+                            <img src="https://placehold.co/60x60/f0f0f0/333333?text=포스팅" alt="포스팅 기본 이미지">
+                        </div>
+                        <div class="details">
+                            <div class="post-views">Views 432</div>
+                            <div class="name">엔진오일, 언제 갈아야 할까?</div>
+                            <div class="desc">2025.06.25</div>
+                        </div>
+                    </a>
+                    <!-- 숨겨진 포스팅들 -->
+                    <a href="#" onclick="showPostingModal(3); return false;" class="post-item hidden">
+                        <div class="thumbnail">
+                            <img src="https://placehold.co/60x60/f0f0f0/333333?text=포스팅" alt="포스팅 기본 이미지">
+                        </div>
+                        <div class="details">
+                            <div class="post-views">Views 215</div>
+                            <div class="name">브레이크 패드 교체 시기 알아보기</div>
+                            <div class="desc">2025.06.10</div>
+                        </div>
+                    </a>
+                    <a href="#" onclick="showPostingModal(4); return false;" class="post-item hidden">
+                        <div class="thumbnail">
+                            <img src="https://placehold.co/60x60/f0f0f0/333333?text=포스팅" alt="포스팅 기본 이미지">
+                        </div>
+                        <div class="details">
+                            <div class="post-views">Views 189</div>
+                            <div class="name">겨울철 배터리 관리 방법</div>
+                            <div class="desc">2025.05.28</div>
+                        </div>
+                    </a>
+                </div>
+                <button class="more-button" id="loadMorePosts" onclick="loadMorePosts()">+ 더보기</button>
             </section>
 
             <!-- FAQ 섹션 -->
@@ -1127,23 +1374,31 @@
                     </div>
                 </div>
                 <div class="faq-item">
-                    <div class="faq-question">Q. 예약 취소 시 수수료가 있나요?</div>
+                    <div class="faq-question">Q. 자동차 검사 대행 서비스는 무엇인가요?</div>
                     <div class="faq-answer">
-                        <p>예약일 기준 24시간 전까지는 수수료 없이 취소 가능합니다. 24시간 이내 취소 시에는 예약금의 10%가 수수료로 부과되며, 당일 취소나 노쇼(No-show)의 경우 예약금 전액이 수수료로 부과됩니다.</p>
+                        <p>자동차 검사 대행 서비스는 고객님 대신 저희가 차량을 검사소에 가져가 검사를 받고 다시 가져다드리는 서비스입니다. 바쁜 일상으로 검사소 방문이 어려운 분들을 위한 편의 서비스로, 검사 전 무료 점검도 함께 제공됩니다.</p>
                     </div>
                 </div>
                 <div class="faq-item">
-                    <div class="faq-question">Q. 정비 후 보증기간은 어떻게 되나요?</div>
+                    <div class="faq-question">Q. 검사 불합격 시 어떻게 되나요?</div>
                     <div class="faq-answer">
-                        <p>일반 정비는 3개월 또는 주행거리 5,000km 중 먼저 도래하는 시점까지 보증됩니다. 엔진오일 등 소모품 교환은 제조사 보증 기준을 따르며, 부품 교체의 경우 부품별로 6개월~1년의 보증기간이 적용됩니다. 자세한 내용은 정비 완료 시 안내드립니다.</p>
+                        <p>검사 불합격 시 불합격 사유를 상세히 안내드리고, 필요한 정비 견적을 제공합니다. 정비 진행 여부는 고객님께서 결정하시며, 당사에서 정비 시 재검사 대행은 무료로 제공됩니다.</p>
                     </div>
                 </div>
                 <div class="faq-item">
+                    <div class="faq-question">Q. 결제는 현장에서 하나요?</div>
+                    <div class="faq-answer">
+                        <p>네, 모든 결제는 서비스 완료 후 현장에서 진행됩니다. 현금, 카드, 계좌이체 모두 가능하며, 세금계산서 발행도 가능합니다. 예약 시에는 별도의 결제가 필요하지 않습니다.</p>
+                    </div>
+                </div>
+                <!-- 숨겨진 FAQ들 -->
+                <div class="faq-item hidden">
                     <div class="faq-question">Q. 대기 시간은 얼마나 걸리나요?</div>
                     <div class="faq-answer">
                         <p>예약 고객님은 대기 시간 없이 바로 서비스를 받으실 수 있습니다. 엔진오일 교환은 약 20~30분, 타이어 교체는 30~40분, 일반 점검은 1시간 정도 소요됩니다. 정비 내용에 따라 시간이 달라질 수 있으며, 정확한 소요 시간은 접수 시 안내드립니다.</p>
                     </div>
                 </div>
+                <button class="more-button" id="loadMoreFaq" onclick="loadMoreFaq()" style="display: none;">+ 더보기</button>
             </section>
 
             <!-- 근처 추천 카센터 섹션 -->
@@ -1155,10 +1410,18 @@
                             <img src="https://placehold.co/70x70/e0e0e0/ffffff?text=추천1" alt="추천 카센터 썸네일">
                         </div>
                         <div class="item-details">
-                            <div class="name-info">
-                                <span class="name">든든 카센터</span><span class="distance">3.2km</span>
+                            <div>
+                                <div class="carpos-mark">[카포스]</div>
+                                <div class="name-info">
+                                    <span class="name">든든 카센터</span><span class="distance">3.2km</span>
+                                </div>
                             </div>
-                            <div class="address">서울시 서초구 방배로 456</div>
+                            <div class="stats">정비 520 · 방문자 리뷰 5</div>
+                            <div class="tags">
+                                <span class="tag">#국산차</span>
+                                <span class="tag">#판금/도색</span>
+                                <span class="tag">#타이어</span>
+                            </div>
                         </div>
                     </div>
                     <div class="recommend-item" onclick="location.href='detail-01.html?id=2'">
@@ -1166,13 +1429,14 @@
                             <img src="https://placehold.co/70x70/e0e0e0/ffffff?text=추천2" alt="추천 카센터 썸네일">
                         </div>
                         <div class="item-details">
-                            <div>
-                              <div class="carpos-mark">[조합마크]</div>
-                              <div class="name-info">
-                                <span class="name">친절한 정비소</span><span class="distance">1.5km</span>
+                            <div class="name-info">
+                                <span class="name">스피드 정비소</span><span class="distance">3.5km</span>
                             </div>
-                        </div>        
-                            <div class="address">서울시 영등포구 여의도동 789</div>
+                            <div class="stats">정비 480 · 방문자 리뷰 7</div>
+                            <div class="tags">
+                                <span class="tag">#엔진오일</span>
+                                <span class="tag">#소모품교체</span>
+                            </div>
                         </div>
                     </div>
                     <div class="recommend-item" onclick="location.href='detail-01.html?id=3'">
@@ -1180,46 +1444,50 @@
                             <img src="https://placehold.co/70x70/e0e0e0/ffffff?text=추천3" alt="추천 카센터 썸네일">
                         </div>
                         <div class="item-details">
-                            <div class="name-info">
-                                <span class="name">스피드 정비소</span><span class="distance">3.5km</span>
+                            <div>
+                                <div class="carpos-mark">[카포스]</div>
+                                <div class="name-info">
+                                    <span class="name">믿음직한 정비</span><span class="distance">4.1km</span>
+                                </div>
                             </div>
-                            <div class="address">서울시 강남구 역삼동 456</div>
+                            <div class="stats">정비 300 · 방문자 리뷰 3</div>
+                            <div class="tags">
+                                <span class="tag">#전기차</span>
+                                <span class="tag">#하이브리드</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="recommend-item hidden" onclick="location.href='detail-01.html?id=4'">
+                    <div class="recommend-item" onclick="location.href='detail-01.html?id=4'">
                         <div class="thumbnail">
                             <img src="https://placehold.co/70x70/e0e0e0/ffffff?text=추천4" alt="추천 카센터 썸네일">
                         </div>
                         <div class="item-details">
                             <div class="name-info">
-                                <span class="name">믿음직한 정비</span><span class="distance">4.1km</span>
+                                <span class="name">베테랑 카케어</span><span class="distance">4.8km</span>
                             </div>
-                            <div class="address">서울시 송파구 잠실동 123</div>
+                            <div class="stats">정비 250 · 방문자 리뷰 2</div>
+                            <div class="tags">
+                                <span class="tag">#판금/도색</span>
+                                <span class="tag">#외형복원</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="recommend-item hidden" onclick="location.href='detail-01.html?id=5'">
+                    <div class="recommend-item" onclick="location.href='detail-01.html?id=5'">
                         <div class="thumbnail">
                             <img src="https://placehold.co/70x70/e0e0e0/ffffff?text=추천5" alt="추천 카센터 썸네일">
                         </div>
                         <div class="item-details">
                             <div>
-                              <div class="carpos-mark">[조합마크]</div>
-                              <div class="name-info">
-                                <span class="name">스마트 정비 센터</span><span class="distance">5.2km</span>
+                                <div class="carpos-mark">[카포스]</div>
+                                <div class="name-info">
+                                    <span class="name">스마트 정비 센터</span><span class="distance">5.2km</span>
+                                </div>
                             </div>
-                        </div>                            
-                            <div class="address">서울시 종로구 평창동 789</div>
-                        </div>
-                    </div>
-                    <div class="recommend-item hidden" onclick="location.href='detail-01.html?id=6'">
-                        <div class="thumbnail">
-                            <img src="https://placehold.co/70x70/e0e0e0/ffffff?text=추천6" alt="추천 카센터 썸네일">
-                        </div>
-                        <div class="item-details">
-                            <div class="name-info">
-                                <span class="name">베테랑 카케어</span><span class="distance">4.8km</span>
+                            <div class="stats">정비 600 · 방문자 리뷰 8</div>
+                            <div class="tags">
+                                <span class="tag">#수입차</span>
+                                <span class="tag">#진단</span>
                             </div>
-                            <div class="address">서울시 서초구 서초동 987</div>
                         </div>
                     </div>
                 </div>
@@ -1246,7 +1514,7 @@
                 <select id="carTypeSelect" class="dropdown-select">
                     <option value="">-- 선택 --</option>
                     <option value="경차">경차(경형)</option>
-                    <option value="소형차">소형차(10인승 이하)</option>
+                    <option value="소형차">소형차(10인승 이하 / 1t 이하)</option>
                     <option value="중형차" disabled>중형차(11인승 이상 / 2.5t 이하) (선택 불가)</option>
                     <option value="대형승합" disabled>대형 승합(35인승 이상) (선택 불가)</option>
                     <option value="대형화물10" disabled>대형 화물(10t 이하) (선택 불가)</option>
@@ -1292,7 +1560,7 @@
             <!-- 경고 메시지 (중형차 이상 선택 시 노출) -->
             <div id="warningMessage" class="warning-message">
                 <span class="icon">⚠️</span><strong>중형차 이상은 카센터에서 검사 대행이 어렵습니다.</strong>
-                가까운 검사소에서 직접 검사받으시기 바랍니다.
+                가까운 검사소에서 예약하세요.
             </div>
         </div>
         <div class="modal-footer">
@@ -1301,6 +1569,54 @@
     </div>
 
     <script>
+        // 공통 함수들
+        function shareContent() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '우리 정비소 - 차바',
+                    text: '우리 정비소 정보를 공유합니다.',
+                    url: window.location.href
+                }).catch((error) => console.log('공유 실패:', error));
+            } else {
+                alert('이 브라우저는 공유 기능을 지원하지 않습니다.');
+            }
+        }
+
+        function openNavigation() {
+            const address = '서울시 강남구 테헤란로 123';
+            const encodedAddress = encodeURIComponent(address);
+            
+            // 모바일 환경 체크
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                // 카카오맵 앱 스키마 시도
+                window.location.href = `kakaomap://search?q=${encodedAddress}`;
+                
+                // 앱이 없을 경우를 대비한 fallback
+                setTimeout(() => {
+                    window.open(`https://map.kakao.com/link/search/${encodedAddress}`, '_blank');
+                }, 500);
+            } else {
+                window.open(`https://map.kakao.com/link/search/${encodedAddress}`, '_blank');
+            }
+        }
+
+        function showProductDetail(productName) {
+            const productDetails = {
+                '자동차 검사': '정기 검사 대행 서비스입니다. 검사 전 무료 점검 포함.',
+                '엔진오일 에코': '연간 1만km 이내 주행 차량에 적합한 경제적인 엔진오일입니다.',
+                '엔진오일 스탠다드': '고성능 합성유로 엔진 보호와 연비 향상에 도움을 줍니다.',
+                '에어컨 필터': '차량 내부 공기질 개선을 위한 필터 교체 서비스입니다.',
+                '에코 실속 패키지': '엔진오일 에코 + 에어컨 필터 교체가 포함된 할인 패키지입니다.',
+                '스탠다드 실속 패키지': '엔진오일 스탠다드 + 에어컨 필터 교체가 포함된 할인 패키지입니다.',
+                '올인원 에코 패키지': '자동차 검사 + 엔진오일 에코 + 에어컨 필터가 모두 포함된 종합 패키지입니다.',
+                '올인원 스탠다드 패키지': '자동차 검사 + 엔진오일 스탠다드 + 에어컨 필터가 모두 포함된 프리미엄 패키지입니다.'
+            };
+            
+            alert(productDetails[productName] || '상품 정보를 불러올 수 없습니다.');
+        }
+
         // "소개글 더보기" 기능
         const readMoreBtn = document.getElementById('readMoreBtn');
         const introText = document.getElementById('introText');
@@ -1311,7 +1627,7 @@
                 if (introText.classList.contains('expanded')) {
                     readMoreBtn.textContent = '접기 ∧';
                 } else {
-                    readMoreBtn.textContent = '소개글 더보기 ∨';
+                    readMoreBtn.textContent = '+ 더보기';
                 }
             });
         }
@@ -1380,20 +1696,19 @@
                 const selectedProducts = [];
                 productCheckboxes.forEach(checkbox => {
                     if (checkbox.checked) {
-                    const productItem = checkbox.closest('.product-item');
-                    selectedProducts.push({
-                        name: productItem.dataset.productName,
-                        price: parseInt(productItem.dataset.productPrice)
-                    });
-                }
-            });
-
+                        const productItem = checkbox.closest('.product-item');
+                        selectedProducts.push({
+                            name: productItem.dataset.productName,
+                            price: parseInt(productItem.dataset.productPrice)
+                        });
+                    }
+                });
                     
-             // sessionStorage에 저장
-            sessionStorage.setItem('selectedProducts', JSON.stringify(selectedProducts));
+                // sessionStorage에 저장
+                sessionStorage.setItem('selectedProducts', JSON.stringify(selectedProducts));
         
-            // booking-01.html로 이동
-            window.location.href = 'booking-01.html';
+                // booking-01.html로 이동
+                window.location.href = 'booking-01.html';
             }
         });
 
@@ -1504,41 +1819,110 @@
         }
 
         function initializeCarInfoModalState() {
-            const savedCarInfo = sessionStorage.getItem('selectedCarInfoForDetail');
+            // 먼저 Search-01 페이지에서 저장한 데이터 확인
+            const searchPageState = sessionStorage.getItem('search01_searchPageState');
             
-            if (savedCarInfo && savedCarInfo !== '내 차 정보 등록하기') {
-                displayCarInfo.textContent = savedCarInfo;
-                
-                // 저장된 정보를 파싱하여 모달 상태 복원
-                const parts = savedCarInfo.split(' | ').map(s => s.trim());
-                
-                if (parts.length === 4) {
-                    const [type, model, size, fuel] = parts;
+            if (searchPageState) {
+                try {
+                    const state = JSON.parse(searchPageState);
+                    const carInfoText = state.carInfoText;
                     
-                    // 차량 유형 설정
-                    if (type.includes('경차')) {
-                        carTypeSelect.value = '경차';
-                    } else if (type.includes('소형차')) {
-                        carTypeSelect.value = '소형차';
+                    // "내 차 정보 등록하기"가 아닌 실제 차량 정보가 있는 경우
+                    if (carInfoText && carInfoText !== '내 차 정보 등록하기') {
+                        // 파이프(|)로 구분된 텍스트를 파싱
+                        const parts = carInfoText.split(' | ').map(s => s.trim());
+                        
+                        if (parts.length === 4) {
+                            // 차량 유형 매핑
+                            const typeMapping = {
+                                '경차': '경차',
+                                '소형차': '소형차'
+                            };
+                            
+                            // 연료 타입에서 괄호 안 내용 제거
+                            const fuelTypeClean = parts[3].split('(')[0].trim();
+                            
+                            // 화면에 표시 (쉼표로 구분)
+                            displayCarInfo.textContent = `${parts[0]}, ${parts[1]}, ${parts[2]}, ${fuelTypeClean}`;
+                            
+                            // 모달 상태 설정
+                            carTypeSelect.value = typeMapping[parts[0]] || '';
+                            selectedCarTypeModal = typeMapping[parts[0]] || '';
+                            
+                            toggleConditionalFieldsModal();
+                            
+                            // 토글 버튼 활성화
+                            if (parts[1]) {
+                                selectedCarModelModal = parts[1];
+                                const modelBtn = carModelToggle.querySelector(`[data-value="${parts[1]}"]`);
+                                if (modelBtn) modelBtn.classList.add('active');
+                            }
+                            
+                            if (parts[2]) {
+                                selectedCarSizeModal = parts[2];
+                                const sizeBtn = carSizeToggle.querySelector(`[data-value="${parts[2]}"]`);
+                                if (sizeBtn) sizeBtn.classList.add('active');
+                            }
+                            
+                            if (fuelTypeClean) {
+                                selectedFuelTypeModal = fuelTypeClean;
+                                const fuelBtn = fuelTypeToggle.querySelector(`[data-value="${fuelTypeClean}"]`);
+                                if (fuelBtn) fuelBtn.classList.add('active');
+                            }
+                            
+                            // 차량 정보를 새로운 형식으로도 저장
+                            const carInfo = {
+                                type: parts[0],
+                                model: parts[1],
+                                size: parts[2],
+                                fuel: fuelTypeClean
+                            };
+                            sessionStorage.setItem('selectedCarInfo', JSON.stringify(carInfo));
+                        }
                     }
+                } catch (e) {
+                    console.error('차량 정보 파싱 오류:', e);
+                }
+            }
+            
+            // 기존 selectedCarInfo 확인 (fallback)
+            const savedCarInfo = sessionStorage.getItem('selectedCarInfo');
+            if (!searchPageState && savedCarInfo) {
+                try {
+                    const carData = JSON.parse(savedCarInfo);
+                    
+                    carTypeSelect.value = carData.type || '';
+                    selectedCarTypeModal = carData.type || '';
                     
                     toggleConditionalFieldsModal();
                     
-                    // 토글 버튼 활성화
-                    const setToggleActive = (groupElement, value) => {
-                        const button = groupElement.querySelector(`[data-value="${value}"]`);
-                        if (button) {
-                            button.classList.add('active');
-                            return value;
-                        }
-                        return '';
-                    };
+                    if (carData.model) {
+                        selectedCarModelModal = carData.model;
+                        const modelBtn = carModelToggle.querySelector(`[data-value="${carData.model}"]`);
+                        if (modelBtn) modelBtn.classList.add('active');
+                    }
                     
-                    selectedCarModelModal = setToggleActive(carModelToggle, model);
-                    selectedCarSizeModal = setToggleActive(carSizeToggle, size);
-                    selectedFuelTypeModal = setToggleActive(fuelTypeToggle, fuel.split('(')[0]);
+                    if (carData.size) {
+                        selectedCarSizeModal = carData.size;
+                        const sizeBtn = carSizeToggle.querySelector(`[data-value="${carData.size}"]`);
+                        if (sizeBtn) sizeBtn.classList.add('active');
+                    }
+                    
+                    if (carData.fuel) {
+                        selectedFuelTypeModal = carData.fuel;
+                        const fuelBtn = fuelTypeToggle.querySelector(`[data-value="${carData.fuel}"]`);
+                        if (fuelBtn) fuelBtn.classList.add('active');
+                    }
+                    
+                    if (carData.type && carData.model && carData.size && carData.fuel) {
+                        displayCarInfo.textContent = `${carData.type}, ${carData.model}, ${carData.size}, ${carData.fuel}`;
+                    }
+                } catch (e) {
+                    console.error('차량 정보 로드 오류:', e);
                 }
-            } else {
+            }
+            
+            if (!searchPageState && !savedCarInfo) {
                 carTypeSelect.value = '';
                 resetToggleSelectionsModal();
                 toggleConditionalFieldsModal();
@@ -1561,32 +1945,176 @@
             const isSmallOrLight = (selectedCarTypeModal === '경차' || selectedCarTypeModal === '소형차');
 
             if (isSmallOrLight && submitCarInfoBtn.textContent === '완료') {
-                const carTypeName = carTypeSelect.options[carTypeSelect.selectedIndex].text.split('(')[0].trim();
-                displayCarInfo.textContent = `${carTypeName} · ${selectedCarModelModal} · ${selectedCarSizeModal} · ${selectedFuelTypeModal}`;
+                // 차량 정보 저장
+                const carInfo = {
+                    type: selectedCarTypeModal,
+                    model: selectedCarModelModal,
+                    size: selectedCarSizeModal,
+                    fuel: selectedFuelTypeModal
+                };
+                
+                // sessionStorage에 저장
+                sessionStorage.setItem('selectedCarInfo', JSON.stringify(carInfo));
+                
+                // 화면에 표시
+                displayCarInfo.textContent = `${selectedCarTypeModal}, ${selectedCarModelModal}, ${selectedCarSizeModal}, ${selectedFuelTypeModal}`;
                 closeCarInfoModal();
             } else if (selectedCarTypeModal && submitCarInfoBtn.textContent === '내 근처 검사소 찾기') {
-                alert('중형차 이상은 검사소에서 직접 검사받으셔야 합니다.\n가까운 검사소 찾기 페이지로 이동합니다. (HOME-01-01)');
+                alert('중형차 이상은 검사소에서 직접 검사받으셔야 합니다.\n가까운 검사소 찾기 페이지로 이동합니다.');
+                window.location.href = 'home-01-01.html';
                 closeCarInfoModal();
             }
         });
 
         // 페이지 로드 시 차량 정보 복원
         window.addEventListener('load', () => {
-            const savedCarInfo = sessionStorage.getItem('selectedCarInfoForDetail');
-            if (savedCarInfo && savedCarInfo !== '내 차 정보 등록하기') {
-                displayCarInfo.textContent = savedCarInfo;
+            // Search-01 페이지의 데이터 먼저 확인
+            const searchPageState = sessionStorage.getItem('search01_searchPageState');
+            
+            if (searchPageState) {
+                try {
+                    const state = JSON.parse(searchPageState);
+                    const carInfoText = state.carInfoText;
+                    
+                    if (carInfoText && carInfoText !== '내 차 정보 등록하기') {
+                        const parts = carInfoText.split(' | ').map(s => s.trim());
+                        if (parts.length === 4) {
+                            const fuelTypeClean = parts[3].split('(')[0].trim();
+                            displayCarInfo.textContent = `${parts[0]}, ${parts[1]}, ${parts[2]}, ${fuelTypeClean}`;
+                        }
+                    }
+                } catch (e) {
+                    console.error('차량 정보 로드 오류:', e);
+                }
+            } else {
+                // fallback to selectedCarInfo
+                const savedCarInfo = sessionStorage.getItem('selectedCarInfo');
+                if (savedCarInfo) {
+                    try {
+                        const carData = JSON.parse(savedCarInfo);
+                        if (carData.type && carData.model && carData.size && carData.fuel) {
+                            displayCarInfo.textContent = `${carData.type}, ${carData.model}, ${carData.size}, ${carData.fuel}`;
+                        }
+                    } catch (e) {
+                        console.error('차량 정보 로드 오류:', e);
+                    }
+                }
             }
         });
 
-        // --- '근처 추천 카센터' 더보기 기능 ---
+       // --- '근처 추천 카센터' 더보기 기능 ---
         const loadMoreRecommendationsBtn = document.getElementById('loadMoreRecommendations');
-        const hiddenRecommendations = document.querySelectorAll('#recommendationsList .recommend-item.hidden');
 
+        // 추가 추천 카센터 데이터 (숨겨진 상태로 미리 준비)
+        const additionalRecommendations = `
+            <div class="recommend-item hidden additional-recommendation" onclick="location.href='detail-01.html?id=6'">
+                <div class="thumbnail">
+                    <img src="https://placehold.co/70x70/e0e0e0/ffffff?text=추천6" alt="추천 카센터 썸네일">
+                </div>
+                <div class="item-details">
+                    <div class="name-info">
+                        <span class="name">프로 정비소</span><span class="distance">5.5km</span>
+                    </div>
+                    <div class="stats">정비 420 · 방문자 리뷰 6</div>
+                    <div class="tags">
+                        <span class="tag">#종합정비</span>
+                        <span class="tag">#빠른수리</span>
+                    </div>
+                </div>
+            </div>
+            <div class="recommend-item hidden additional-recommendation" onclick="location.href='detail-01.html?id=7'">
+                <div class="thumbnail">
+                    <img src="https://placehold.co/70x70/e0e0e0/ffffff?text=추천7" alt="추천 카센터 썸네일">
+                </div>
+                <div class="item-details">
+                    <div>
+                        <div class="carpos-mark">[카포스]</div>
+                        <div class="name-info">
+                            <span class="name">정직한 카센터</span><span class="distance">6.0km</span>
+                        </div>
+                    </div>
+                    <div class="stats">정비 380 · 방문자 리뷰 4</div>
+                    <div class="tags">
+                        <span class="tag">#국산차</span>
+                        <span class="tag">#정비보증</span>
+                    </div>
+                </div>
+            </div>
+            <div class="recommend-item hidden additional-recommendation" onclick="location.href='detail-01.html?id=8'">
+                <div class="thumbnail">
+                    <img src="https://placehold.co/70x70/e0e0e0/ffffff?text=추천8" alt="추천 카센터 썸네일">
+                </div>
+                <div class="item-details">
+                    <div class="name-info">
+                        <span class="name">24시 긴급출동</span><span class="distance">6.5km</span>
+                    </div>
+                    <div class="stats">정비 290 · 방문자 리뷰 3</div>
+                    <div class="tags">
+                        <span class="tag">#긴급출동</span>
+                        <span class="tag">#야간영업</span>
+                    </div>
+                </div>
+            </div>
+            <div class="recommend-item hidden additional-recommendation" onclick="location.href='detail-01.html?id=9'">
+                <div class="thumbnail">
+                    <img src="https://placehold.co/70x70/e0e0e0/ffffff?text=추천9" alt="추천 카센터 썸네일">
+                </div>
+                <div class="item-details">
+                    <div>
+                        <div class="carpos-mark">[카포스]</div>
+                        <div class="name-info">
+                            <span class="name">마스터 정비</span><span class="distance">7.0km</span>
+                        </div>
+                    </div>
+                    <div class="stats">정비 550 · 방문자 리뷰 9</div>
+                    <div class="tags">
+                        <span class="tag">#수입차</span>
+                        <span class="tag">#컴퓨터진단</span>
+                    </div>
+                </div>
+            </div>
+            <div class="recommend-item hidden additional-recommendation" onclick="location.href='detail-01.html?id=10'">
+                <div class="thumbnail">
+                    <img src="https://placehold.co/70x70/e0e0e0/ffffff?text=추천10" alt="추천 카센터 썸네일">
+                </div>
+                <div class="item-details">
+                    <div class="name-info">
+                        <span class="name">친환경 정비소</span><span class="distance">7.5km</span>
+                    </div>
+                    <div class="stats">정비 310 · 방문자 리뷰 5</div>
+                    <div class="tags">
+                        <span class="tag">#전기차</span>
+                        <span class="tag">#친환경</span>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // 페이지 로드 시 추가 추천 항목들을 DOM에 추가
+        window.addEventListener('DOMContentLoaded', () => {
+            const recommendationsList = document.getElementById('recommendationsList');
+            recommendationsList.insertAdjacentHTML('beforeend', additionalRecommendations);
+        });
+
+        // 더보기 버튼 클릭 이벤트 수정
         loadMoreRecommendationsBtn.addEventListener('click', () => {
-            hiddenRecommendations.forEach(item => {
-                item.classList.remove('hidden');
+            const hiddenRecommendations = document.querySelectorAll('.additional-recommendation.hidden');
+            let count = 0;
+            
+            // 5개씩 표시
+            hiddenRecommendations.forEach((item, index) => {
+                if (count < 5) {
+                    item.classList.remove('hidden');
+                    count++;
+                }
             });
-            loadMoreRecommendationsBtn.style.display = 'none';
+            
+            // 남은 숨겨진 항목 확인
+            const remainingHidden = document.querySelectorAll('.additional-recommendation.hidden');
+            if (remainingHidden.length === 0) {
+                // 더 이상 보여줄 항목이 없으면 더보기 버튼 숨기기
+                loadMoreRecommendationsBtn.style.display = 'none';
+            }
         });
 
         // 사진 갤러리 스크롤 기능
@@ -1616,18 +2144,130 @@
             });
         });
 
-        // 포스팅 모달 관련 코드 - 여기에 추가!
+        // 공지사항 더보기 기능
+        function loadMoreNotices() {
+            const hiddenNotices = document.querySelectorAll('#noticeList .notice-item.hidden');
+            let count = 0;
+            hiddenNotices.forEach(item => {
+                if (count < 5) {
+                    item.classList.remove('hidden');
+                    count++;
+                }
+            });
+            
+            // 모든 공지사항이 표시되었으면 더보기 버튼 숨기기
+            const remainingHidden = document.querySelectorAll('#noticeList .notice-item.hidden');
+            if (remainingHidden.length === 0) {
+                document.getElementById('loadMoreNotices').style.display = 'none';
+            }
+        }
+
+        // 포스팅 더보기 기능
+        function loadMorePosts() {
+            const hiddenPosts = document.querySelectorAll('#postList .post-item.hidden');
+            let count = 0;
+            hiddenPosts.forEach(item => {
+                if (count < 5) {
+                    item.classList.remove('hidden');
+                    count++;
+                }
+            });
+            
+            // 모든 포스팅이 표시되었으면 더보기 버튼 숨기기
+            const remainingHidden = document.querySelectorAll('#postList .post-item.hidden');
+            if (remainingHidden.length === 0) {
+                document.getElementById('loadMorePosts').style.display = 'none';
+            }
+        }
+
+        // FAQ 더보기 기능
+        function loadMoreFaq() {
+            const hiddenFaq = document.querySelectorAll('#faq .faq-item.hidden');
+            hiddenFaq.forEach(item => {
+                item.classList.remove('hidden');
+            });
+            document.getElementById('loadMoreFaq').style.display = 'none';
+        }
+
+        // 공지사항 모달 데이터
+        const notices = [
+            {
+                title: "여름 휴가 일정 안내",
+                content: "안녕하세요. 우리 정비소입니다.\n\n여름 휴가 일정을 안내드립니다.\n휴가 기간: 2025년 8월 5일(월) ~ 8월 9일(금)\n\n휴가 기간 중에는 영업을 하지 않으니 이용에 참고 부탁드립니다.\n8월 12일(월)부터 정상 영업합니다.\n\n감사합니다.",
+                date: "2025.07.24"
+            },
+            {
+                title: "신규 서비스 런칭 이벤트",
+                content: "차바 서비스 런칭을 기념하여 특별 이벤트를 진행합니다!\n\n이벤트 기간: 2025년 5월 14일 ~ 6월 30일\n이벤트 내용:\n- 엔진오일 교환 10% 할인\n- 검사 대행 서비스 5,000원 할인\n- 패키지 상품 15% 할인\n\n많은 이용 부탁드립니다!",
+                date: "2025.05.14"
+            },
+            {
+                title: "엔진오일 비용 인상 안내",
+                content: "안녕하세요. 우리 정비소입니다.\n\n원자재 가격 상승으로 인해 부득이하게 엔진오일 비용을 인상하게 되었습니다.\n\n변경 일시: 2024년 5월 1일부터\n인상 금액: 5,000원\n\n고객님들의 양해 부탁드립니다.",
+                date: "2024.04.12"
+            },
+            {
+                title: "봄맞이 차량 점검 이벤트",
+                content: "봄을 맞아 차량 점검 이벤트를 진행합니다.\n\n기간: 2024년 3월 20일 ~ 4월 30일\n내용: 무료 차량 점검 및 소모품 20% 할인\n\n안전한 봄 나들이를 위해 미리 점검받으세요!",
+                date: "2024.03.20"
+            },
+            {
+                title: "설 연휴 영업 안내",
+                content: "2024년 설 연휴 영업 일정을 안내드립니다.\n\n휴무: 2월 9일(금) ~ 2월 12일(월)\n정상 영업: 2월 13일(화)부터\n\n새해 복 많이 받으세요!",
+                date: "2024.02.15"
+            }
+        ];
+
+        // 공지사항 모달 표시 함수
+        function showNoticeModal(noticeIndex) {
+            const notice = notices[noticeIndex];
+            const modalContent = `
+                <div class="posting-modal-overlay active" id="notice-modal">
+                    <div class="posting-modal-content">
+                        <span class="posting-modal-close" onclick="closeNoticeModal()">&times;</span>
+                        <h2 class="posting-modal-title">${notice.title}</h2>
+                        <div class="posting-modal-body" style="white-space: pre-line;">${notice.content}</div>
+                        <button class="posting-modal-cta" onclick="closeNoticeModal()">닫기</button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalContent);
+        }
+
+        // 공지사항 모달 닫기 함수
+        function closeNoticeModal() {
+            const modal = document.getElementById('notice-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
         // 포스팅 데이터
         const postings = [
             {
-                title: "[정보] 여름철 에어컨 관리 꿀팁",
+                title: "여름철 에어컨 관리 꿀팁",
                 content: "여름철 에어컨 관리는 쾌적한 운전 환경과 연비 절감을 위해 매우 중요합니다. 에어컨 필터는 2~3개월마다 교체하고, 에바포레이터 청소는 연 1회 이상 실시하는 것이 좋습니다. 또한 냉매량 체크와 컴프레서 점검도 필수입니다.",
                 date: "2025.07.22"
             },
             {
-                title: "[정보] 초보운전자를 위한 타이어 점검법",
+                title: "초보운전자를 위한 타이어 점검법",
                 content: "타이어는 자동차의 안전과 직결되는 중요한 부품입니다. 타이어 공기압은 월 1회 이상 체크하고, 트레드 깊이는 1.6mm 이상 유지해야 합니다. 또한 타이어 측면의 균열이나 손상 여부도 꼼꼼히 확인하세요.",
                 date: "2025.07.10"
+            },
+            {
+                title: "엔진오일, 언제 갈아야 할까?",
+                content: "엔진오일 교체 주기는 차량 사용 환경에 따라 다릅니다. 일반적으로 1만km 또는 1년마다 교체를 권장하지만, 가혹 조건(짧은 거리 반복 주행, 먼지 많은 환경 등)에서는 5,000km마다 교체하는 것이 좋습니다.",
+                date: "2025.06.25"
+            },
+            {
+                title: "브레이크 패드 교체 시기 알아보기",
+                content: "브레이크 패드는 안전과 직결되는 중요한 부품입니다. 일반적으로 3~5만km마다 교체가 필요하며, 브레이크 밟을 때 소음이 나거나 제동력이 떨어진다면 즉시 점검이 필요합니다.",
+                date: "2025.06.10"
+            },
+            {
+                title: "겨울철 배터리 관리 방법",
+                content: "겨울철에는 배터리 성능이 떨어지기 쉽습니다. 배터리 단자 청소, 충전 상태 점검, 배터리 보온 등의 관리가 필요합니다. 3년 이상 된 배터리는 미리 교체를 고려하세요.",
+                date: "2025.05.28"
             }
         ];
 
@@ -1659,6 +2299,14 @@
         document.getElementById('posting-modal').addEventListener('click', function(e) {
             if (e.target === this) {
                 this.classList.remove('active');
+            }
+        });
+
+        // FAQ 항목이 더 있는지 확인하고 더보기 버튼 표시
+        window.addEventListener('DOMContentLoaded', () => {
+            const hiddenFaqItems = document.querySelectorAll('#faq .faq-item.hidden');
+            if (hiddenFaqItems.length > 0) {
+                document.getElementById('loadMoreFaq').style.display = 'block';
             }
         });
 
