@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예약내역</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            width: 420px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 80px;
+        }
+        
+        /* Header */
+        .header {
+            background-color: #ffffff;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .back-btn {
+            color: #4852EA;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #212529;
+        }
+        
+        /* Content */
+        .content {
+            padding: 20px;
+        }
+        
+        /* Booking Card */
+        .booking-card {
+            background-color: #ffffff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            padding: 12px 16px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .status {
+            font-size: 14px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        
+        .status.completed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status.finished {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+        
+        .status.visited {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .status.no-show {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .datetime {
+            font-size: 14px;
+            color: #6c757d;
+        }
+        
+        .card-body {
+            padding: 16px;
+        }
+        
+        .shop-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 12px;
+            text-decoration: none;
+            display: inline-block;
+            cursor: pointer;
+        }
+        
+        .shop-name:hover {
+            color: #4852EA;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .action-btn {
+            padding: 8px 16px;
+            border: 1px solid #e9ecef;
+            background-color: #ffffff;
+            color: #495057;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .action-btn:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .booking-details {
+            border-top: 1px solid #e9ecef;
+            padding-top: 16px;
+        }
+        
+        .detail-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 8px;
+        }
+        
+        .detail-item {
+            font-size: 14px;
+            color: #495057;
+            margin-bottom: 4px;
+        }
+        
+        .service-list {
+            margin: 8px 0;
+            padding-left: 8px;
+        }
+        
+        .service-item {
+            font-size: 14px;
+            color: #495057;
+            margin-bottom: 2px;
+        }
+        
+        .total-price {
+            font-size: 14px;
+            font-weight: 600;
+            color: #212529;
+            margin-top: 8px;
+            padding-left: 8px;
+        }
+        
+        .card-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .footer-btn {
+            padding: 6px 12px;
+            background-color: #ffffff;
+            border: 1px solid #4852EA;
+            color: #4852EA;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .footer-btn:hover {
+            background-color: #4852EA;
+            color: #ffffff;
+        }
+        
+        /* More Button */
+        .more-btn {
+            display: block;
+            width: 100px;
+            margin: 20px auto;
+            padding: 12px;
+            background-color: #ffffff;
+            border: 1px solid #e9ecef;
+            color: #495057;
+            text-decoration: none;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .more-btn:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* GNB */
+        .gnb {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 420px;
+            background-color: #ffffff;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+        }
+        
+        .gnb-item {
+            flex: 1;
+            text-align: center;
+            padding: 12px 8px;
+            text-decoration: none;
+            color: #6c757d;
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .gnb-item.active {
+            color: #4852EA;
+            font-weight: 600;
+        }
+        
+        .gnb-icon {
+            font-size: 18px;
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            width: 90%;
+            max-width: 380px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .modal-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #212529;
+        }
+        
+        .share-btn {
+            padding: 4px 8px;
+            background-color: #4852EA;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            padding: 20px 0;
+            text-align: center;
+            color: #495057;
+        }
+        
+        .close-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #ffffff;
+            border: 1px solid #e9ecef;
+            color: #495057;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+        
+        .close-btn:hover {
+            background-color: #f8f9fa;
+        }
+
+        .footer-btn.hidden {
+            display: none;
+        }
+        
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="my.html" class="back-btn">< 뒤로가기</a>
+        <h1 class="header-title">예약내역</h1>
+        <div></div>
+    </header>
+
+    <!-- Content -->
+    <main class="content">
+        <!-- Booking Card 1 -->
+        <div class="booking-card">
+            <div class="card-header">
+                <span class="status completed">예약완료</span>
+                <span class="datetime">2024.07.25 14:30</span>
+            </div>
+            <div class="card-body">
+                <a href="detail-01.html" class="shop-name">김포자동차정비</a>
+                <div class="action-buttons">
+                    <a href="#" class="action-btn">🗺️ 길찾기</a>
+                    <a href="#" class="action-btn">📞 전화걸기</a>
+                </div>
+                <div class="booking-details">
+                    <div class="detail-title">예약상세</div>
+                    <div class="detail-item">- 예약번호: R240725001</div>
+                    <div class="detail-item">- 차량번호: 12가3456</div>
+                    <div class="detail-item">- 예약상품:</div>
+                    <div class="service-list">
+                        <div class="service-item">엔진오일교환 - 45,000원</div>
+                        <div class="service-item">에어필터교환 - 25,000원</div>
+                    </div>
+                    <div class="total-price">총금액: 70,000원</div>
+                    <div class="card-footer">
+                        <button class="footer-btn" onclick="openModal()">정비리포트 ></button>
+                        <a href="res-01.html" class="footer-btn hidden">상세보기 ></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Card 2 -->
+        <div class="booking-card">
+            <div class="card-header">
+                <span class="status finished">정비완료</span>
+                <span class="datetime">2024.07.20 10:00</span>
+            </div>
+            <div class="card-body">
+                <a href="detail-01.html" class="shop-name">서울모터스</a>
+                <div class="action-buttons">
+                    <a href="#" class="action-btn">🗺️ 길찾기</a>
+                    <a href="#" class="action-btn">📞 전화걸기</a>
+                </div>
+                <div class="booking-details">
+                    <div class="detail-title">예약상세</div>
+                    <div class="detail-item">- 예약번호: R240720002</div>
+                    <div class="detail-item">- 차량번호: 34나5678</div>
+                    <div class="detail-item">- 예약상품:</div>
+                    <div class="service-list">
+                        <div class="service-item">브레이크패드교체 - 180,000원</div>
+                    </div>
+                    <div class="total-price">총금액: 180,000원</div>
+                    <div class="card-footer">
+                        <button class="footer-btn" onclick="openModal()">정비리포트 ></button>
+                        <a href="res-01.html" class="footer-btn hidden">상세보기 ></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Card 3 -->
+        <div class="booking-card">
+            <div class="card-header">
+                <span class="status completed">예약완료</span>
+                <span class="datetime">2024.07.18 16:45</span>
+            </div>
+            <div class="card-body">
+                <a href="detail-01.html" class="shop-name">강남자동차검사소</a>
+                <div class="action-buttons">
+                    <a href="#" class="action-btn">🗺️ 길찾기</a>
+                    <a href="#" class="action-btn">📞 전화걸기</a>
+                </div>
+                <div class="booking-details">
+                    <div class="detail-title">예약상세</div>
+                    <div class="detail-item">- 예약번호: I240718003</div>
+                    <div class="detail-item">- 차량번호: 56다7890</div>
+                    <div class="detail-item">- 예약상품:</div>
+                    <div class="service-list">
+                        <div class="service-item">정기검사 - 35,000원</div>
+                    </div>
+                    <div class="total-price">총금액: 35,000원</div>
+                    <div class="card-footer">
+                        <a href="res-01.html" class="footer-btn hidden">상세보기 ></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Card 4 -->
+        <div class="booking-card">
+            <div class="card-header">
+                <span class="status visited">방문완료</span>
+                <span class="datetime">2024.07.15 09:30</span>
+            </div>
+            <div class="card-body">
+                <a href="detail-01.html" class="shop-name">부산종합정비</a>
+                <div class="action-buttons">
+                    <a href="#" class="action-btn">🗺️ 길찾기</a>
+                    <a href="#" class="action-btn">📞 전화걸기</a>
+                </div>
+                <div class="booking-details">
+                    <div class="detail-title">예약상세</div>
+                    <div class="detail-item">- 예약번호: I240715004</div>
+                    <div class="detail-item">- 차량번호: 78라9012</div>
+                    <div class="detail-item">- 예약상품:</div>
+                    <div class="service-list">
+                        <div class="service-item">종합검사</div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="res-01.html" class="footer-btn hidden">상세보기 ></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Card 5 -->
+        <div class="booking-card">
+            <div class="card-header">
+                <span class="status no-show">미방문</span>
+                <span class="datetime">2024.07.12 11:00</span>
+            </div>
+            <div class="card-body">
+                <a href="detail-01.html" class="shop-name">인천자동차정비센터</a>
+                <div class="action-buttons">
+                    <a href="#" class="action-btn">🗺️ 길찾기</a>
+                    <a href="#" class="action-btn">📞 전화걸기</a>
+                </div>
+                <div class="booking-details">
+                    <div class="detail-title">예약상세</div>
+                    <div class="detail-item">- 예약번호: R240712005</div>
+                    <div class="detail-item">- 차량번호: 90마1234</div>
+                    <div class="detail-item">- 예약상품:</div>
+                    <div class="service-list">
+                        <div class="service-item">타이어교체 - 320,000원</div>
+                        <div class="service-item">휠얼라인먼트 - 80,000원</div>
+                    </div>
+                    <div class="total-price">총금액: 400,000원</div>
+                    <div class="card-footer">
+                        <a href="res-01.html" class="footer-btn hidden">상세보기 ></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- More Button -->
+        <a href="#" class="more-btn">더보기</a>
+    </main>
+
+    <!-- GNB -->
+    <nav class="gnb">
+        <a href="home.html" class="gnb-item">
+            <span class="gnb-icon">🏠</span>
+            <span>홈</span>
+        </a>
+        <a href="my-01.html" class="gnb-item active">
+            <span class="gnb-icon">🗓️</span>
+            <span>예약내역</span>
+        </a>
+        <a href="my.html" class="gnb-item">
+            <span class="gnb-icon">👤</span>
+            <span>마이페이지</span>
+        </a>
+    </nav>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title">정비리포트</h2>
+                <button class="share-btn">공유</button>
+            </div>
+            <div class="modal-body">
+                정비리포트가 보여집니다.
+            </div>
+            <button class="close-btn" onclick="closeModal()">닫기</button>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeModal(event) {
+            if (!event || event.target === event.currentTarget) {
+                document.getElementById('modalOverlay').classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>

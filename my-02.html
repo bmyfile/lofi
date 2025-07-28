@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 차량 관리</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            max-width: 420px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 헤더 */
+        .header {
+            background-color: #fff;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .back-button {
+            font-size: 24px;
+            margin-right: 16px;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            flex: 1;
+            text-align: center;
+            margin-right: 40px;
+        }
+        
+        /* 콘텐츠 영역 */
+        .content {
+            flex: 1;
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+        
+        /* 차량 추가 버튼 */
+        .add-car-button {
+            width: 100%;
+            padding: 16px;
+            background-color: #fff;
+            border: 2px dashed #4852EA;
+            border-radius: 8px;
+            color: #4852EA;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        /* 차량 카드 */
+        .car-card {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .car-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .car-info {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .car-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .action-button {
+            padding: 6px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background-color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .action-button:hover {
+            background-color: #f5f5f5;
+        }
+        
+        /* 모달 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 420px;
+            background-color: #fff;
+            border-radius: 16px 16px 0 0;
+            padding: 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .close-button {
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        
+        .form-input:disabled {
+            background-color: #f5f5f5;
+            color: #999;
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 16px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+        
+        .toggle-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        
+        .toggle-button {
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            background-color: #fff;
+            text-align: center;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .toggle-button.active {
+            background-color: #4852EA;
+            color: #fff;
+            border-color: #4852EA;
+        }
+        
+        /* 연료 버튼은 2개씩 배치 */
+        .fuel-toggle-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        
+        .divider {
+            height: 1px;
+            background-color: #e0e0e0;
+            margin: 20px 0;
+        }
+        
+        .submit-button {
+            width: 100%;
+            padding: 16px;
+            background-color: #4852EA;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        /* 하단 네비게이션 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 420px;
+            background-color: #fff;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+        }
+        
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            cursor: pointer;
+            color: #999;
+            font-size: 12px;
+        }
+        
+        .nav-item.active {
+            color: #4852EA;
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+        
+        .conditional-fields {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <div class="header">
+        <div class="back-button" onclick="location.href='my.html'">&lt;</div>
+        <div class="header-title">내 차량 관리</div>
+    </div>
+    
+    <!-- 콘텐츠 영역 -->
+    <div class="content">
+        <button class="add-car-button" onclick="openModal('add')">
+            <span>+</span>
+            <span>차량 추가 등록</span>
+        </button>
+        
+        <!-- 차량 카드 1 -->
+        <div class="car-card">
+            <div class="car-name">아반떼 CN7 (내 첫차)</div>
+            <div class="car-info">
+                차량 번호: 12가 3456<br>
+                검사차종: 준중형차<br>
+                연료: 가솔린(휘발유)
+            </div>
+            <div class="car-actions">
+                <button class="action-button" onclick="openModal('edit', 1)">수정</button>
+                <button class="action-button" onclick="deleteCar(1)">삭제</button>
+            </div>
+        </div>
+        
+        <!-- 차량 카드 2 -->
+        <div class="car-card">
+            <div class="car-name">레이 (업무용)</div>
+            <div class="car-info">
+                차량 번호: 78나 9012<br>
+                검사차종: 경차 (경형)<br>
+                차종: 승용차<br>
+                크기: 경형<br>
+                연료: 가솔린(휘발유)
+            </div>
+            <div class="car-actions">
+                <button class="action-button" onclick="openModal('edit', 2)">수정</button>
+                <button class="action-button" onclick="deleteCar(2)">삭제</button>
+            </div>
+        </div>
+        
+        <!-- 차량 카드 3 -->
+        <div class="car-card">
+            <div class="car-name">그랜저 (가족용)</div>
+            <div class="car-info">
+                차량 번호: 34다 5678<br>
+                검사차종: 대형차<br>
+                연료: 하이브리드
+            </div>
+            <div class="car-actions">
+                <button class="action-button" onclick="openModal('edit', 3)">수정</button>
+                <button class="action-button" onclick="deleteCar(3)">삭제</button>
+            </div>
+        </div>
+        
+        <!-- 차량 카드 4 -->
+        <div class="car-card">
+            <div class="car-name">투싼</div>
+            <div class="car-info">
+                차량 번호: 56라 9012<br>
+                검사차종: 소형차(10인승 이하 / 1t 이하)<br>
+                차종: SUV<br>
+                크기: 중형<br>
+                연료: 디젤
+            </div>
+            <div class="car-actions">
+                <button class="action-button" onclick="openModal('edit', 4)">수정</button>
+                <button class="action-button" onclick="deleteCar(4)">삭제</button>
+            </div>
+        </div>
+        
+        <!-- 차량 카드 5 -->
+        <div class="car-card">
+            <div class="car-name">포터2</div>
+            <div class="car-info">
+                차량 번호: 90마 3456<br>
+                검사차종: 소형차(10인승 이하 / 1t 이하)<br>
+                차종: 트럭<br>
+                크기: 소형<br>
+                연료: 디젤
+            </div>
+            <div class="car-actions">
+                <button class="action-button" onclick="openModal('edit', 5)">수정</button>
+                <button class="action-button" onclick="deleteCar(5)">삭제</button>
+            </div>
+        </div>
+        
+        <!-- 차량 카드 6 -->
+        <div class="car-card">
+            <div class="car-name">카니발</div>
+            <div class="car-info">
+                차량 번호: 23바 7890<br>
+                검사차종: 소형차(10인승 이하 / 1t 이하)<br>
+                차종: 승합차<br>
+                크기: 대형<br>
+                연료: 디젤
+            </div>
+            <div class="car-actions">
+                <button class="action-button" onclick="openModal('edit', 6)">수정</button>
+                <button class="action-button" onclick="deleteCar(6)">삭제</button>
+            </div>
+        </div>
+        
+        <!-- 차량 카드 7 -->
+        <div class="car-card">
+            <div class="car-name">아이오닉5</div>
+            <div class="car-info">
+                차량 번호: 45사 1234<br>
+                검사차종: 소형차(10인승 이하 / 1t 이하)<br>
+                차종: SUV<br>
+                크기: 중형<br>
+                연료: 전기
+            </div>
+            <div class="car-actions">
+                <button class="action-button" onclick="openModal('edit', 7)">수정</button>
+                <button class="action-button" onclick="deleteCar(7)">삭제</button>
+            </div>
+        </div>
+        
+        <!-- 차량 카드 8 -->
+        <div class="car-card">
+            <div class="car-name">봉고3 (업무용)</div>
+            <div class="car-info">
+                차량 번호: 67아 5678<br>
+                검사차종: 중형차(11인승 이상 / 2.5t 이하)
+            </div>
+            <div class="car-actions">
+                <button class="action-button" onclick="openModal('edit', 8)">수정</button>
+                <button class="action-button" onclick="deleteCar(8)">삭제</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 모달 -->
+    <div class="modal" id="carModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">내 차 정보 등록</div>
+                <div class="close-button" onclick="closeModal()">×</div>
+            </div>
+            
+            <form id="carForm">
+                <div class="form-group">
+                    <label class="form-label">차량 번호 (필수)</label>
+                    <input type="text" class="form-input" id="carNumber" placeholder="12가 3456">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">별명 (선택)</label>
+                    <input type="text" class="form-input" id="carNickname" placeholder="내 첫차">
+                </div>
+                
+                <div class="divider"></div>
+                
+                <div class="form-group">
+                    <label class="form-label">차량 유형을 선택해주세요 (필수)</label>
+                    <select class="form-select" id="carType" onchange="toggleConditionalFields()">
+                        <option value="">선택하세요</option>
+                        <option value="경차(경형)">경차(경형)</option>
+                        <option value="소형차(10인승 이하 / 1t 이하)">소형차(10인승 이하 / 1t 이하)</option>
+                        <option value="중형차(11인승 이상 / 2.5t 이하)">중형차(11인승 이상 / 2.5t 이하)</option>
+                        <option value="대형 승합(35인승 이상)">대형 승합(35인승 이상)</option>
+                        <option value="대형 화물(10t 이하)">대형 화물(10t 이하)</option>
+                        <option value="대형 화물(10~15t 미만)">대형 화물(10~15t 미만)</option>
+                        <option value="초대형 화물(15t 이상)">초대형 화물(15t 이상)</option>
+                    </select>
+                </div>
+                
+                <div class="divider"></div>
+                
+                <!-- 조건부 필드 -->
+                <div class="conditional-fields" id="conditionalFields">
+                    <div class="form-group">
+                        <label class="form-label">차종 (필수)</label>
+                        <div class="toggle-group">
+                            <button type="button" class="toggle-button" onclick="toggleSelect(this, 'carClass')">승용차</button>
+                            <button type="button" class="toggle-button" onclick="toggleSelect(this, 'carClass')">SUV</button>
+                            <button type="button" class="toggle-button" onclick="toggleSelect(this, 'carClass')">승합차</button>
+                            <button type="button" class="toggle-button" onclick="toggleSelect(this, 'carClass')">트럭</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">차량 크기 (필수)</label>
+                        <div class="toggle-group">
+                            <button type="button" class="toggle-button" onclick="toggleSelect(this, 'carSize')">경형</button>
+                            <button type="button" class="toggle-button" onclick="toggleSelect(this, 'carSize')">소형</button>
+                            <button type="button" class="toggle-button" onclick="toggleSelect(this, 'carSize')">준중형</button>
+                            <button type="button" class="toggle-button" onclick="toggleSelect(this, 'carSize')">중형</button>
+                            <button type="button" class="toggle-button" onclick="toggleSelect(this, 'carSize')">대형</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">연료 (필수)</label>
+                        <div class="fuel-toggle-group">
+                            <button type="button" class="toggle-button" onclick="toggleSelect(this, 'fuel')">가솔린(휘발유)</button>
+                            <button type="button" class="toggle-button" onclick="toggleSelect(this, 'fuel')">디젤</button>
+                            <button type="button" class="toggle-button" onclick="toggleSelect(this, 'fuel')">LPG</button>
+                            <button type="button" class="toggle-button" onclick="toggleSelect(this, 'fuel')">하이브리드</button>
+                            <button type="button" class="toggle-button" onclick="toggleSelect(this, 'fuel')">전기</button>
+                        </div>
+                    </div>
+                    
+                    <div class="divider"></div>
+                </div>
+                
+                <button type="button" class="submit-button" onclick="saveCar()">완료</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 하단 네비게이션 -->
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="location.href='home.html'">
+            <div class="nav-icon">🏠</div>
+            <div>홈</div>
+        </div>
+        <div class="nav-item" onclick="location.href='my-01.html'">
+            <div class="nav-icon">🗓️</div>
+            <div>예약내역</div>
+        </div>
+        <div class="nav-item active" onclick="location.href='my.html'">
+            <div class="nav-icon">👤</div>
+            <div>마이페이지</div>
+        </div>
+    </div>
+    
+    <script>
+        let editMode = false;
+        let editCarId = null;
+        
+        // 더미 데이터
+        const carData = {
+            1: { number: '12가 3456', nickname: '내 첫차', type: '준중형차', fuel: '가솔린(휘발유)' },
+            2: { number: '78나 9012', nickname: '업무용', type: '경차(경형)', carClass: '승용차', size: '경형', fuel: '가솔린(휘발유)' },
+            3: { number: '34다 5678', nickname: '가족용', type: '대형차', fuel: '하이브리드' },
+            4: { number: '56라 9012', nickname: '', type: '소형차(10인승 이하 / 1t 이하)', carClass: 'SUV', size: '중형', fuel: '디젤' },
+            5: { number: '90마 3456', nickname: '', type: '소형차(10인승 이하 / 1t 이하)', carClass: '트럭', size: '소형', fuel: '디젤' },
+            6: { number: '23바 7890', nickname: '', type: '소형차(10인승 이하 / 1t 이하)', carClass: '승합차', size: '대형', fuel: '디젤' },
+            7: { number: '45사 1234', nickname: '', type: '소형차(10인승 이하 / 1t 이하)', carClass: 'SUV', size: '중형', fuel: '전기' },
+            8: { number: '67아 5678', nickname: '업무용', type: '중형차(11인승 이상 / 2.5t 이하)' }
+        };
+        
+        function openModal(mode, carId) {
+            const modal = document.getElementById('carModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const carNumberInput = document.getElementById('carNumber');
+            
+            editMode = mode === 'edit';
+            editCarId = carId;
+            
+            // 폼 초기화
+            document.getElementById('carForm').reset();
+            document.querySelectorAll('.toggle-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            if (editMode && carData[carId]) {
+                modalTitle.textContent = '내 차 정보 수정';
+                carNumberInput.disabled = true;
+                
+                // 데이터 채우기
+                const data = carData[carId];
+                carNumberInput.value = data.number;
+                document.getElementById('carNickname').value = data.nickname || '';
+                document.getElementById('carType').value = data.type;
+                
+                // 조건부 필드 표시
+                toggleConditionalFields();
+                
+                // 토글 버튼 선택 상태 설정
+                if (data.carClass) {
+                    document.querySelectorAll('.toggle-button').forEach(btn => {
+                        if (btn.textContent === data.carClass && btn.parentElement.parentElement.querySelector('.form-label').textContent.includes('차종')) {
+                            btn.classList.add('active');
+                        }
+                    });
+                }
+                if (data.size) {
+                    document.querySelectorAll('.toggle-button').forEach(btn => {
+                        if (btn.textContent === data.size && btn.parentElement.parentElement.querySelector('.form-label').textContent.includes('차량 크기')) {
+                            btn.classList.add('active');
+                        }
+                    });
+                }
+                if (data.fuel) {
+                    document.querySelectorAll('.toggle-button').forEach(btn => {
+                        if (btn.textContent === data.fuel && btn.parentElement.parentElement.querySelector('.form-label').textContent.includes('연료')) {
+                            btn.classList.add('active');
+                        }
+                    });
+                }
+            } else {
+                modalTitle.textContent = '내 차 정보 등록';
+                carNumberInput.disabled = false;
+            }
+            
+            modal.style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('carModal').style.display = 'none';
+        }
+        
+        function toggleConditionalFields() {
+            const carType = document.getElementById('carType').value;
+            const conditionalFields = document.getElementById('conditionalFields');
+            
+            if (carType === '경차(경형)' || carType === '소형차(10인승 이하 / 1t 이하)') {
+                conditionalFields.style.display = 'block';
+            } else {
+                conditionalFields.style.display = 'none';
+            }
+        }
+        
+        function toggleSelect(button, group) {
+            // 같은 그룹의 다른 버튼들 비활성화
+            const buttons = button.parentElement.querySelectorAll('.toggle-button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // 선택한 버튼 활성화
+            button.classList.add('active');
+        }
+        
+        function saveCar() {
+            alert(editMode ? '차량 정보가 수정되었습니다.' : '차량이 등록되었습니다.');
+            closeModal();
+        }
+        
+        function deleteCar(carId) {
+            if (confirm('이 차량을 삭제하시겠습니까?')) {
+                alert('차량이 삭제되었습니다.');
+            }
+        }
+        
+        // 모달 외부 클릭 시 닫기
+        window.onclick = function(event) {
+            const modal = document.getElementById('carModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>

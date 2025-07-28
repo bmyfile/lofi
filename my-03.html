@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 정보 수정</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            width: 420px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 80px;
+        }
+        
+        /* Header */
+        .header {
+            background-color: #ffffff;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .back-btn {
+            color: #4852EA;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #212529;
+        }
+        
+        /* Content */
+        .content {
+            background-color: #ffffff;
+        }
+        
+        /* Section */
+        .section {
+            padding: 20px;
+            border-bottom: 8px solid #f8f9fa;
+        }
+        
+        .section-title {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 12px;
+        }
+        
+        /* Account Info Box */
+        .info-box {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 16px;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 4px;
+        }
+        
+        .info-value {
+            font-size: 16px;
+            color: #212529;
+            margin-bottom: 8px;
+        }
+        
+        .social-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: #6c757d;
+            background-color: #ffffff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .social-badge .icon {
+            font-weight: 700;
+            color: #FEE500;
+            background-color: #3C1E1E;
+            padding: 2px 4px;
+            border-radius: 2px;
+            font-size: 10px;
+        }
+        
+        /* Contact Box */
+        .contact-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 16px;
+        }
+        
+        .contact-input {
+            flex: 1;
+            background-color: transparent;
+            border: none;
+            font-size: 16px;
+            color: #212529;
+            outline: none;
+        }
+        
+        .change-btn {
+            padding: 6px 12px;
+            background-color: #ffffff;
+            border: 1px solid #4852EA;
+            color: #4852EA;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .change-btn:hover {
+            background-color: #4852EA;
+            color: #ffffff;
+        }
+        
+        /* Menu Items */
+        .menu-section {
+            background-color: #ffffff;
+        }
+        
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+            text-decoration: none;
+            color: #212529;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        .menu-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .menu-arrow {
+            color: #6c757d;
+        }
+        
+        /* GNB */
+        .gnb {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 420px;
+            background-color: #ffffff;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+        }
+        
+        .gnb-item {
+            flex: 1;
+            text-align: center;
+            padding: 12px 8px;
+            text-decoration: none;
+            color: #6c757d;
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .gnb-item.active {
+            color: #4852EA;
+            font-weight: 600;
+        }
+        
+        .gnb-icon {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="my.html" class="back-btn">< 뒤로가기</a>
+        <h1 class="header-title">내 정보 수정</h1>
+        <div></div>
+    </header>
+
+    <!-- Content -->
+    <main class="content">
+        <!-- Account Info Section -->
+        <div class="section">
+            <h2 class="section-title">계정 정보 (수정 불가)</h2>
+            <div class="info-box">
+                <div class="info-label">이메일 주소</div>
+                <div class="info-value">chaba@chaba.com</div>
+                <div class="social-badge">
+                    <span class="icon">K</span>
+                    <span>Kakao 계정으로 연결됨</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="section">
+            <h2 class="section-title">연락처 (인증 후 수정 가능)</h2>
+            <div class="contact-box">
+                <input type="tel" class="contact-input" value="010-1234-5678" readonly>
+                <button class="change-btn" onclick="changePhoneNumber()">변경</button>
+            </div>
+        </div>
+
+        <!-- Menu Section -->
+        <div class="menu-section">
+            <a href="#" class="menu-item" onclick="logout()">
+                <span>로그아웃</span>
+                <span class="menu-arrow">></span>
+            </a>
+            <a href="#" class="menu-item" onclick="withdrawAccount()">
+                <span>회원탈퇴</span>
+                <span class="menu-arrow">></span>
+            </a>
+        </div>
+    </main>
+
+    <!-- GNB -->
+    <nav class="gnb">
+        <a href="home.html" class="gnb-item">
+            <span class="gnb-icon">🏠</span>
+            <span>홈</span>
+        </a>
+        <a href="my-01.html" class="gnb-item">
+            <span class="gnb-icon">🗓️</span>
+            <span>예약내역</span>
+        </a>
+        <a href="my.html" class="gnb-item active">
+            <span class="gnb-icon">👤</span>
+            <span>마이페이지</span>
+        </a>
+    </nav>
+
+    <script>
+        function changePhoneNumber() {
+            // 전화번호 변경 로직
+            alert('SMS 인증 화면으로 이동합니다.');
+        }
+
+        function logout() {
+            if (confirm('로그아웃 하시겠습니까?')) {
+                // 로그아웃 처리
+                alert('로그아웃 되었습니다.');
+            }
+        }
+
+        function withdrawAccount() {
+            if (confirm('정말 회원탈퇴를 하시겠습니까?\n탈퇴 후에는 복구할 수 없습니다.')) {
+                // 회원탈퇴 처리
+                alert('회원탈퇴 처리되었습니다.');
+            }
+        }
+    </script>
+</body>
+</html>

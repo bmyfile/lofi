@@ -18,7 +18,7 @@
             background-color: rgba(0, 0, 0, 0.6);
             display: flex;
             justify-content: center;
-            align-items: flex-end;
+            align-items: center;  /* flex-end에서 center로 변경 */
             min-height: 100vh;
             overflow: hidden;
         }
@@ -28,13 +28,12 @@
             width: 420px;
             max-width: 100%;
             background-color: #fff;
-            border-top-left-radius: 16px;
-            border-top-right-radius: 16px;
-            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+            border-radius: 16px;  /* 모든 모서리 둥글게 변경 */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);  /* 그림자 방향 변경 */
             display: flex;
             flex-direction: column;
             max-height: 90vh;
-            overflow-y: auto;
+            overflow: hidden;  /* overflow-y: auto에서 hidden으로 변경 */
             transform: translateY(0);
             transition: transform 0.3s ease-out;
         }
@@ -76,7 +75,7 @@
 
         /* 모달 본문 */
         .modal-body {
-            padding: 20px 16px;
+            padding: 20px 16px 80px;  /* 하단 패딩 추가 */
             flex-grow: 1;
             overflow-y: auto;
         }
@@ -502,6 +501,23 @@
                         </label>
                     </div>
                 </div>
+
+                <!-- 소셜 로그인 버튼들 추가 -->
+                <div class="booking-actions" style="margin-top: 30px;">
+                    <button class="social-login-button google" data-social="Google">
+                        <span>35,000원 결제하고 예약 확정하기 (Google)</span>
+                    </button>
+                    <button class="social-login-button naver" data-social="Naver">
+                        <span>35,000원 결제하고 예약 확정하기 (Naver)</span>
+                    </button>
+                    <button class="social-login-button kakao" data-social="Kakao">
+                        <span>35,000원 결제하고 예약 확정하기 (Kakao)</span>
+                    </button>
+                    <div class="social-login-info">
+                        (버튼 클릭 시 소셜 로그인으로 연결됩니다)
+                    </div>
+                </div>
+
             </div>
 
             <!-- 2단계: 소셜 로그인/회원가입 화면 -->
@@ -531,8 +547,6 @@
                 <button class="action-button" onclick="completeReservation()">결제 완료</button>
             </div>
         </div>
-
-        <div class="modal-footer" id="modalFooter"></div>
     </div>
 
     <script>
@@ -634,30 +648,19 @@
 
         // 푸터 버튼 렌더링 함수
         function renderFooterButtons(step) {
-            modalFooter.innerHTML = '';
+            const bookingActions = document.querySelector('.booking-actions');
+            if (!bookingActions) return;
+            
             const formattedPrice = totalSelectedPrice.toLocaleString('ko-KR');
-
+            
             if (step === 'initial') {
-                const buttonsHtml = `
-                    <button class="social-login-button google" data-social="Google">
-                        <span>${formattedPrice}원 결제하고 예약 확정하기 (Google)</span>
-                    </button>
-                    <button class="social-login-button naver" data-social="Naver">
-                        <span>${formattedPrice}원 결제하고 예약 확정하기 (Naver)</span>
-                    </button>
-                    <button class="social-login-button kakao" data-social="Kakao">
-                        <span>${formattedPrice}원 결제하고 예약 확정하기 (Kakao)</span>
-                    </button>
-                    <div class="social-login-info">
-                        (버튼 클릭 시 소셜 로그인으로 연결됩니다)
-                    </div>
-                `;
-                modalFooter.innerHTML = buttonsHtml;
-                
-                modalFooter.querySelectorAll('.social-login-button').forEach(button => {
+                bookingActions.querySelectorAll('.social-login-button').forEach(button => {
+                    button.querySelector('span').textContent = 
+                        `${formattedPrice}원 결제하고 예약 확정하기 (${button.dataset.social})`;
                     button.addEventListener('click', handleSocialLoginButtonClick);
                 });
             }
+        }
         }
 
         // 날짜 선택 관련 변수 및 함수

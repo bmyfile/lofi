@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1:1 문의하기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            width: 420px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        /* Header */
+        .header {
+            background-color: #ffffff;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .back-btn {
+            color: #4852EA;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #212529;
+        }
+        
+        /* Content */
+        .content {
+            background-color: #ffffff;
+            padding: 20px;
+        }
+        
+        /* Form Section */
+        .form-section {
+            margin-bottom: 24px;
+        }
+        
+        .section-title {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+        
+        /* Form Group */
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 14px;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+        
+        .form-label.required::after {
+            content: "(필수)";
+            color: #dc3545;
+            font-size: 12px;
+            margin-left: 4px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #212529;
+            background-color: #ffffff;
+            transition: border-color 0.2s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #4852EA;
+        }
+        
+        .form-input::placeholder {
+            color: #adb5bd;
+        }
+        
+        /* Textarea */
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #212529;
+            background-color: #ffffff;
+            resize: vertical;
+            min-height: 150px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        
+        .form-textarea:focus {
+            outline: none;
+            border-color: #4852EA;
+        }
+        
+        .form-textarea::placeholder {
+            color: #adb5bd;
+        }
+        
+        /* Character Count */
+        .char-count {
+            text-align: right;
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 4px;
+        }
+        
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background-color: #4852EA;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 32px;
+            transition: background-color 0.2s;
+        }
+        
+        .submit-btn:hover {
+            background-color: #3943d5;
+        }
+        
+        .submit-btn:disabled {
+            background-color: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        /* Error Message */
+        .error-message {
+            font-size: 12px;
+            color: #dc3545;
+            margin-top: 4px;
+            display: none;
+        }
+        
+        .form-group.error .form-input,
+        .form-group.error .form-textarea {
+            border-color: #dc3545;
+        }
+        
+        .form-group.error .error-message {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="my.html" class="back-btn">< 뒤로가기</a>
+        <h1 class="header-title">1:1 문의하기</h1>
+        <div></div>
+    </header>
+
+    <!-- Content -->
+    <main class="content">
+        <form id="inquiryForm" onsubmit="submitInquiry(event)">
+            <!-- Sender Information -->
+            <div class="form-section">
+                <h2 class="section-title">보내는 사람</h2>
+                
+                <div class="form-group">
+                    <label class="form-label">성함</label>
+                    <input type="text" class="form-input" id="name" placeholder="이름을 입력해주세요">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">이메일</label>
+                    <input type="email" class="form-input" id="email" placeholder="example@email.com" required>
+                    <span class="error-message">올바른 이메일 주소를 입력해주세요.</span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">전화번호</label>
+                    <input type="tel" class="form-input" id="phone" placeholder="010-0000-0000">
+                </div>
+            </div>
+
+            <!-- Inquiry Content -->
+            <div class="form-section">
+                <div class="form-group">
+                    <label class="form-label required">제목</label>
+                    <input type="text" class="form-input" id="subject" placeholder="문의 제목을 입력해주세요" required>
+                    <span class="error-message">제목을 입력해주세요.</span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">내용</label>
+                    <textarea class="form-textarea" id="content" placeholder="자세한 내용을 입력해주세요. (최대 500자)" maxlength="500" required></textarea>
+                    <div class="char-count">
+                        <span id="charCount">0</span> / 500
+                    </div>
+                    <span class="error-message">내용을 입력해주세요.</span>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="submit-btn">
+                <span>✉️</span>
+                <span>문의하기</span>
+            </button>
+        </form>
+    </main>
+
+    <script>
+        // Character count
+        const contentTextarea = document.getElementById('content');
+        const charCountSpan = document.getElementById('charCount');
+        
+        contentTextarea.addEventListener('input', function() {
+            const currentLength = this.value.length;
+            charCountSpan.textContent = currentLength;
+        });
+
+        // Form validation and submission
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function submitInquiry(event) {
+            event.preventDefault();
+            
+            // Get form values
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const subject = document.getElementById('subject').value.trim();
+            const content = document.getElementById('content').value.trim();
+            
+            // Reset error states
+            document.querySelectorAll('.form-group').forEach(group => {
+                group.classList.remove('error');
+            });
+            
+            // Validate required fields
+            let isValid = true;
+            
+            if (!email || !validateEmail(email)) {
+                document.getElementById('email').closest('.form-group').classList.add('error');
+                isValid = false;
+            }
+            
+            if (!subject) {
+                document.getElementById('subject').closest('.form-group').classList.add('error');
+                isValid = false;
+            }
+            
+            if (!content) {
+                document.getElementById('content').closest('.form-group').classList.add('error');
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                return;
+            }
+            
+            // Prepare mailto link
+            const mailtoSubject = encodeURIComponent(`[차바 1:1 문의] ${subject}`);
+            const mailtoBody = encodeURIComponent(
+                `보내는 사람 정보:\n` +
+                `성함: ${name || '미입력'}\n` +
+                `이메일: ${email}\n` +
+                `전화번호: ${phone || '미입력'}\n\n` +
+                `문의 내용:\n${content}`
+            );
+            
+            // Open mailto link
+            window.location.href = `mailto:cs@chaba.co.kr?subject=${mailtoSubject}&body=${mailtoBody}`;
+            
+            // Show success message
+            alert('메일 프로그램이 열립니다. 문의 내용을 확인하고 전송해주세요.');
+        }
+    </script>
+</body>
+</html>

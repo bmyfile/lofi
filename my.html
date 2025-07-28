@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=420, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>마이페이지 - 차바</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            width: 420px;
+            margin: 0 auto;
+            position: relative;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background-color: #fff;
+            padding: 20px;
+            border-bottom: 1px solid #ddd;
+            font-size: 18px;
+            font-weight: 600;
+            position: fixed;
+            top: 0;
+            width: 420px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .back-btn {
+            position: absolute;
+            left: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+        
+        .content-wrapper {
+            padding-top: 60px;
+            padding-bottom: 90px;
+        }
+        
+        .profile-section {
+            background-color: #fff;
+            margin: 15px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #FEE500;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .user-details h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .user-details p {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .edit-btn {
+            padding: 8px 16px;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .menu-list {
+            background-color: #fff;
+            margin: 0 15px 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .menu-item {
+            padding: 18px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+        
+        .menu-item:hover {
+            background-color: #f8f8f8;
+        }
+        
+        .menu-item.logout {
+            color: #666;
+        }
+        
+        .accordion-content {
+            display: none;
+            padding: 0 20px 15px;
+            background-color: #f8f8f8;
+        }
+        
+        .accordion-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+            cursor: pointer;
+        }
+        
+        .accordion-item:last-child {
+            border-bottom: none;
+        }
+        
+        .accordion-item:hover {
+            color: #0066cc;
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 420px;
+            background-color: #fff;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 20px;
+            cursor: pointer;
+            color: #666;
+            font-size: 12px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        
+        .nav-item.active {
+            color: #fff;
+            font-weight: 600;
+            background-color: #4A90E2;
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 420px;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            width: 90%;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn" onclick="location.href='home.html'">&lt;</button>
+        마이페이지
+    </div>
+    
+    <div class="content-wrapper">
+        <div class="profile-section">
+            <div class="profile-info">
+                <div class="social-icon">K</div>
+                <div class="user-details">
+                    <h3>변무영님</h3>
+                    <p>chaba@chaba.com</p>
+                </div>
+            </div>
+            <button class="edit-btn" onclick="location.href='my-03.html'">정보 수정 &gt;</button>
+        </div>
+        
+        <div class="menu-list">
+            <div class="menu-item" onclick="location.href='my-02.html'">
+                <span>내 차량 관리</span>
+                <span>&gt;</span>
+            </div>
+            
+            <div class="menu-item" onclick="location.href='my-01.html'">
+                <span>나의 예약 내역</span>
+                <span>&gt;</span>
+            </div>
+            
+            <div class="menu-item" onclick="toggleAccordion('notice')">
+                <span>공지사항</span>
+                <span>&gt;</span>
+            </div>
+            <div id="notice" class="accordion-content">
+                <div class="accordion-item" onclick="showModal('notice1')">
+                    [공지] 차바 서비스 정식 오픈 안내
+                </div>
+                <div class="accordion-item" onclick="showModal('notice2')">
+                    [안내] 추석 연휴 고객센터 운영 안내
+                </div>
+                <div class="accordion-item" onclick="showModal('notice3')">
+                    [이벤트] 신규 가입 고객 첫 예약 할인 이벤트
+                </div>
+            </div>
+            
+            <div class="menu-item" onclick="toggleAccordion('faq')">
+                <span>FAQ</span>
+                <span>&gt;</span>
+            </div>
+            <div id="faq" class="accordion-content">
+                <div class="accordion-item" onclick="showModal('faq1')">
+                    Q. 예약은 어떻게 하나요?
+                </div>
+                <div class="accordion-item" onclick="showModal('faq2')">
+                    Q. 예약 취소는 언제까지 가능한가요?
+                </div>
+                <div class="accordion-item" onclick="showModal('faq3')">
+                    Q. 결제 수단은 어떤 것들이 있나요?
+                </div>
+                <div class="accordion-item" onclick="showModal('faq4')">
+                    Q. 정비 완료 후 차량 인수는 어떻게 하나요?
+                </div>
+                <div class="accordion-item" onclick="showModal('faq5')">
+                    Q. 정비 보증 기간은 얼마나 되나요?
+                </div>
+            </div>
+            
+            <div class="menu-item" onclick="location.href='my-04.html'">
+                <span>1:1 문의</span>
+                <span>&gt;</span>
+            </div>
+            
+            <div class="menu-item" onclick="showModal('terms')">
+                <span>이용약관 및 정책</span>
+                <span>&gt;</span>
+            </div>
+            
+            <div class="menu-item logout" onclick="handleLogout()">
+                <span>로그아웃</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="location.href='home.html'">
+            <span class="nav-icon">🏠</span>
+            <span>홈</span>
+        </div>
+        <div class="nav-item" onclick="location.href='my-01.html'">
+            <span class="nav-icon">🗓️</span>
+            <span>예약내역</span>
+        </div>
+        <div class="nav-item active">
+            <span class="nav-icon">👤</span>
+            <span>마이페이지</span>
+        </div>
+    </div>
+    
+    <!-- 모달 -->
+    <div id="modal" class="modal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleAccordion(id) {
+            const accordion = document.getElementById(id);
+            accordion.style.display = accordion.style.display === 'block' ? 'none' : 'block';
+        }
+        
+        function showModal(type) {
+            const modal = document.getElementById('modal');
+            const modalBody = document.getElementById('modal-body');
+            
+            const content = {
+                notice1: '<h2>[공지] 차바 서비스 정식 오픈 안내</h2><p>안녕하세요, 차바입니다.<br><br>드디어 차바 서비스가 정식 오픈했습니다. 앞으로 더 나은 서비스로 보답하겠습니다.</p>',
+                notice2: '<h2>[안내] 추석 연휴 고객센터 운영 안내</h2><p>추석 연휴 기간 동안 고객센터 운영 시간이 변경됩니다.<br><br>9/28~10/3: 오전 10시 ~ 오후 4시</p>',
+                notice3: '<h2>[이벤트] 신규 가입 고객 첫 예약 할인 이벤트</h2><p>신규 가입 고객님께 첫 예약 시 20% 할인 쿠폰을 드립니다!<br><br>이벤트 기간: 2025.8.1 ~ 2025.8.31</p>',
+                faq1: '<h2>Q. 예약은 어떻게 하나요?</h2><p>A. 홈 화면에서 원하시는 서비스와 날짜, 시간을 선택하신 후 예약하기 버튼을 눌러주세요.</p>',
+                faq2: '<h2>Q. 예약 취소는 언제까지 가능한가요?</h2><p>A. 예약 시간 24시간 전까지 무료 취소가 가능합니다. 이후에는 취소 수수료가 발생할 수 있습니다.</p>',
+                faq3: '<h2>Q. 결제 수단은 어떤 것들이 있나요?</h2><p>A. 신용카드, 체크카드, 카카오페이, 네이버페이 등 다양한 결제 수단을 지원합니다.</p>',
+                faq4: '<h2>Q. 정비 완료 후 차량 인수는 어떻게 하나요?</h2><p>A. 정비가 완료되면 알림을 보내드립니다. 예약하신 정비소에 방문하여 차량을 인수하시면 됩니다.</p>',
+                faq5: '<h2>Q. 정비 보증 기간은 얼마나 되나요?</h2><p>A. 정비 항목에 따라 3개월~1년의 보증 기간을 제공합니다. 자세한 내용은 정비 완료 시 안내드립니다.</p>',
+                terms: '<h2>이용약관 및 정책</h2><p>제1조 (목적)<br>이 약관은 차바 서비스 이용에 관한 조건 및 절차를 규정함을 목적으로 합니다.<br><br>제2조 (정의)<br>1. "서비스"란 차바가 제공하는 자동차 정비 예약 플랫폼을 의미합니다.<br>2. "회원"이란 서비스에 가입하여 이용하는 자를 의미합니다.</p>'
+            };
+            
+            modalBody.innerHTML = content[type] || '';
+            modal.style.display = 'block';
+        }
+        
+        function closeModal(event) {
+            if (!event || event.target.id === 'modal') {
+                document.getElementById('modal').style.display = 'none';
+            }
+        }
+        
+        function handleLogout() {
+            if (confirm('로그아웃 하시겠습니까?')) {
+                alert('로그아웃되었습니다.');
+                location.href = 'login.html';
+            }
+        }
+    </script>
+</body>
+</html>
