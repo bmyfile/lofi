@@ -1,0 +1,127 @@
+# 파트너 어드민 컴포넌트 가이드
+
+이 문서는 `partner` 프로젝트의 `src/components` 폴더에 있는 리액트 컴포넌트들의 구조와 사용법을 설명합니다.
+다른 개발자들이 컴포넌트를 쉽게 이해하고 재사용할 수 있도록 돕는 것을 목적으로 합니다.
+
+## 폴더 구조
+
+- **`src/components`**: 여러 페이지에서 공통으로 사용되는 재사용 가능한 UI 컴포넌트들이 위치합니다. (예: 레이아웃, 헤더, 모달 등)
+- **`src/pages`**: 각 페이지를 구성하는 메인 컴포넌트들이 위치합니다. 이 컴포넌트들은 `src/components`의 공통 컴포넌트들을 가져와 사용합니다.
+
+---
+
+## 주요 공통 컴포넌트
+
+### 1. 레이아웃 (Layout)
+
+#### `AppLayout.js`
+- **설명**: 애플리케이션의 전체적인 레이아웃을 담당하는 컴포넌트입니다. `Header`와 `LNB`(좌측 메뉴)를 포함하고, 페이지의 메인 콘텐츠를 렌더링하는 영역을 제공합니다.
+- **주요 역할**:
+  - 로그인/회원가입 페이지를 제외한 모든 페이지의 기본 구조를 제공합니다.
+  - `Header`와 `LNB`를 렌더링하고, `react-router-dom`의 `<Outlet />`을 통해 현재 경로에 맞는 페이지 컴포넌트를 표시합니다.
+- **사용법**:
+  ```javascript
+  // src/App.js
+  <Route element={<AppLayout />}>
+    <Route path="c-home-01" element={<Dashboard />} />
+    {/* ... other routes */}
+  </Route>
+  ```
+
+#### `Header.js`
+- **설명**: 화면 상단에 위치하는 헤더 컴포넌트입니다. 로고와 사용자 정보, 로그아웃 버튼 등을 포함합니다.
+- **주요 역할**:
+  - 사이트 로고 표시 및 홈으로 이동 기능.
+  - 로그인한 사용자 이름 표시 및 드롭다운 메뉴(계정 정보, 로그아웃) 제공.
+- **사용처**: `AppLayout.js` 내부에서 사용됩니다.
+
+#### `LNB.js` (Left Navigation Bar)
+- **설명**: 화면 좌측에 위치하는 메인 메뉴(GNB) 컴포넌트입니다.
+- **주요 역할**:
+  - 파트너 프로필 카드 표시 (카센터/검사소 전환 기능 포함).
+  - 각 서비스 페이지로 이동할 수 있는 메뉴 목록을 제공합니다.
+  - 현재 활성화된 메뉴를 시각적으로 표시합니다.
+  - 파트너 타입(카센터/검사소)에 따라 메뉴 항목의 활성화/비활성화 상태를 동적으로 변경합니다.
+- **사용처**: `AppLayout.js` 내부에서 사용됩니다.
+
+### 2. 모달 (Modals)
+
+모달 컴포넌트들은 `src/components/modals/` 와 같은 하위 폴더에 모아 관리하는 것을 권장합니다.
+
+#### `DateModal.js`
+- **설명**: 년/월을 선택할 수 있는 모달 컴포넌트입니다.
+- **주요 역할**:
+  - 특정 기간을 선택하여 데이터를 조회하는 기능에 사용됩니다. (예: 정산 관리, 성과/매출 현황)
+- **Props**: `isOpen`, `onClose`, `onConfirm`, `initialYear`, `initialMonth` 등
+
+#### `CertificateModal.js`
+- **설명**: 자격증 이름과 번호를 입력받아 추가하는 모달입니다.
+- **주요 역할**:
+  - 업체 정보 관리 페이지에서 자격증 정보를 추가할 때 사용됩니다.
+- **Props**: `isOpen`, `onClose`, `onConfirm`
+
+#### `SnsModal.js`
+- **설명**: SNS 종류와 URL을 입력받아 추가하는 모달입니다.
+- **주요 역할**:
+  - 업체 정보 관리 페이지에서 SNS 링크를 추가할 때 사용됩니다.
+- **Props**: `isOpen`, `onClose`, `onConfirm`
+
+#### `PhotoModal.js`
+- **설명**: 사진을 크게 보고, 이전/다음 사진으로 넘기며, 대표 사진으로 설정하는 기능을 제공하는 모달입니다.
+- **주요 역할**:
+  - 업체 정보 관리 페이지에서 등록된 사진을 관리할 때 사용됩니다.
+- **Props**: `isOpen`, `photos`, `selectedIndex`, `onClose`, `onPrevious`, `onNext`, `onSetMain`
+
+#### `SaveConfirmModal.js`
+- **설명**: 저장되지 않은 변경 사항이 있을 때 페이지를 이탈하려고 하면 나타나는 확인 모달입니다.
+- **주요 역할**:
+  - 사용자가 의도치 않게 작업 내용을 잃는 것을 방지합니다.
+- **Props**: `isOpen`, `onCancel`, `onConfirm` (저장 후 이동), `onSkip` (저장 안하고 이동)
+
+### 3. 기타
+
+#### `ErrorBoundary.js`
+- **설명**: 렌더링 중 발생하는 자바스크립트 오류를 감지하고, 앱 전체가 중단되는 대신 대체 UI를 보여주는 컴포넌트입니다.
+- **주요 역할**:
+  - 특정 컴포넌트나 페이지에서 오류 발생 시 앱의 안정성을 유지합니다.
+- **사용법**:
+  ```javascript
+  // src/index.js 또는 src/App.js
+  <ErrorBoundary>
+    <App />
+  </ErrorBoundary>
+  ```
+
+---
+
+## 컴포넌트 사용 예시
+
+```javascript
+// 예시: src/pages/SomePage.js
+import React, { useState } from 'react';
+import DateModal from '../components/modals/DateModal'; // 경로에 맞게 수정
+
+function SomePage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleConfirm = (year, month) => {
+    console.log(`선택된 기간: ${year}년 ${month}월`);
+    setIsModalOpen(false);
+  };
+
+  return (
+    <div>
+      <h1>페이지 제목</h1>
+      <button onClick={() => setIsModalOpen(true)}>기간 선택</button>
+      <DateModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleConfirm}
+      />
+    </div>
+  );
+}
+
+export default SomePage;
+```
+
